@@ -1,5 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+const dbContext = require('./dataBase/dbContext');
+const { TYPES } = require('tedious');
 
 var app = express();
 
@@ -13,5 +15,5 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 var router = require('./routes')();
- 
+
 app.use('/api', router);

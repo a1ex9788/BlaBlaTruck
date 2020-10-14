@@ -46,6 +46,7 @@ function spPostExecute(qry, params, callback) {
 
 
 function queryGetExecute(qry, params, isMultiSet, callback) {
+   // console.log("ejecutando query");
     var data = [];
     var dataset = [];
     var resultset = 0;
@@ -74,6 +75,7 @@ function queryGetExecute(qry, params, isMultiSet, callback) {
     });
 
     connection.execSql(request);
+    //console.log("query ejecutada");
 }
 
 function queryExecute(qry, params, isMultiSet, callback) {

@@ -9,9 +9,10 @@ module.exports = function (router) {
     router.route('/cliente/empresa')
         .get(clienteRepository.getMulti);
 
-    router.route('/cliente/:clienteDNI', clienteRepository.intercept);
+    router.use('/cliente/:clienteDNI', clienteRepository.intercept);
 
     router.route('/cliente/:clienteDNI')
         .get(clienteRepository.get)
-        .put(clienteRepository.put)    
+        .put(clienteRepository.put) 
+        .delete(clienteRepository.delete)   
 }
