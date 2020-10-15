@@ -93,7 +93,7 @@ function ClientRepository(dbContext) {
 
         var parameters = [];
 
-        if (req.data.Id) {
+        if (req.data.DNI) {
             var parameters = [];
 
             parameters.push({ name: 'Dni', type: TYPES.Int, val: req.data.DNI });
