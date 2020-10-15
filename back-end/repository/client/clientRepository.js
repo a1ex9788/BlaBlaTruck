@@ -41,11 +41,9 @@ function ClientRepository(dbContext) {
     }
     }
      function putCliente(req, res) {
-        console.log("esto funciona?");
         var parameters = [];
 
         Object.entries(req.data).forEach((property) => {
-
             if (req.body[property[0]]) {
                 parameters.push(
                     {
@@ -64,7 +62,7 @@ function ClientRepository(dbContext) {
             }
         });
 
-        dbContext.post("InsertCliente", parameters, function (error, data) {
+        dbContext.post("InsertOrUpdateClient", parameters, function (error, data) {
             return res.json(response(data, error));
         });
     }
@@ -75,7 +73,7 @@ function ClientRepository(dbContext) {
 
         //parameters.push({ name: 'Nombre', type: TYPES.VarChar, val: req.body.Nombre });
         //parameters.push({ name: 'Apellidos', type: TYPES.VarChar, val: req.body.Apellidos });
-        parameters.push({ name: 'DNI', type: TYPES.VarChar, val: req.body.personaDNI });
+        parameters.push({ name: 'DNI', type: TYPES.Char, val: req.body.DNI });
         //parameters.push({ name: 'telefono', type: TYPES.Int, val: req.body.telefono });
         //parameters.push({ name: 'email', type: TYPES.VarChar, val: req.body.email });
         //parameters.push({ name: 'usuario', type: TYPES.VarChar, val: req.body.usuario });
@@ -86,8 +84,7 @@ function ClientRepository(dbContext) {
         // Object.entries(employee).forEach((property)=>{
         //     parameters.push({name:'@'+property[0]})
         // });
-
-        dbContext.post("InsertOrUpdateCliente", parameters, function (error, data) {
+        dbContext.post("InsertOrUpdateClient", parameters, function (error, data) {
             return res.json(response(data, error));
         });
     }
