@@ -72,9 +72,9 @@ function TransportistaRepository(dbContext) {
 
         var parameters = [];
 
-        parameters.push({ name: 'DNI', type: TYPES.VarChar, val: req.body.DNI });
-        parameters.push({ name: 'NaturalezaCamion', type: TYPES.VarChar, val: req.body.NaturalaezaCamion});
-        parameters.push({ name: 'Capacidad', type: TYPES.decimal, val: req.body.Capacidad });
+        parameters.push({ name: 'DNI', type: TYPES.Char, val: req.body.DNI });
+        parameters.push({ name: 'NaturalezaCamion', type: TYPES.VarChar, val: req.body.NaturalezaCamion});
+        parameters.push({ name: 'Capacidad', type: TYPES.Numeric, val: req.body.Capacidad });
 
         // Object.entries(employee).forEach((property)=>{
         //     parameters.push({name:'@'+property[0]})
