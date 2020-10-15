@@ -1,3 +1,7 @@
+.DS_Store
+blablatruck-page/node_modules
+dist
+
 # Built application files
 *.apk
 *.aar
@@ -83,3 +87,23 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# local env files
+.env.local
+.env.*.local
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
