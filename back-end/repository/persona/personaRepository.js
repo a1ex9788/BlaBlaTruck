@@ -74,14 +74,14 @@ function PersonaRepository(dbContext) {
 
         parameters.push({ name: 'Nombre', type: TYPES.VarChar, val: req.body.Nombre });
         parameters.push({ name: 'Apellidos', type: TYPES.VarChar, val: req.body.Apellidos });
-        parameters.push({ name: 'DNI', type: TYPES.VarChar, val: req.body.personaDNI });
-        parameters.push({ name: 'telefono', type: TYPES.Int, val: req.body.telefono });
-        parameters.push({ name: 'email', type: TYPES.VarChar, val: req.body.email });
-        parameters.push({ name: 'usuario', type: TYPES.VarChar, val: req.body.usuario });
-        parameters.push({ name: 'contraseña', type: TYPES.Int, val: req.body.contraseña });
+        parameters.push({ name: 'DNI', type: TYPES.Char, val: req.body.DNI });
+        parameters.push({ name: 'Telefono', type: TYPES.Int, val: req.body.Telefono });
+        parameters.push({ name: 'Email', type: TYPES.VarChar, val: req.body.Email });
+        parameters.push({ name: 'Usuario', type: TYPES.VarChar, val: req.body.Usuario });
+        parameters.push({ name: 'Contraseña', type: TYPES.VarChar, val: req.body.Contraseña });
         parameters.push({ name: 'IBAN', type: TYPES.VarChar, val: req.body.IBAN });
-        parameters.push({ name: 'numeroCuentaBancaria', type: TYPES.Int, val: req.body.numeroCuentaBancaria});
-        parameters.push({ name: 'Empresa', type: TYPES.VarChar, val: req.body.Empresa });
+        parameters.push({ name: 'NumeroCuentaBancaria', type: TYPES.Int, val: req.body.NumeroCuentaBancaria});
+       // parameters.push({ name: 'Empresa', type: TYPES.VarChar, val: req.body.Empresa });
         // Object.entries(employee).forEach((property)=>{
         //     parameters.push({name:'@'+property[0]})
         // });
