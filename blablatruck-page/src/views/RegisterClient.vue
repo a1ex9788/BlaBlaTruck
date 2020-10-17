@@ -1,10 +1,8 @@
-<style> @import '/stylesheets/register.css'; </style>
 <template>
-    <div id="groupForm" class="container-fluid">
-       
+    <div id="groupForm" class="container-fluid">       
         <h2 class="mt-1">Información personal</h2>
 
-        <label class="mt-3"> Nombre </label>
+        <label id="labels" class="mt-3"> Nombre </label>
         <b-form-input type="text"> </b-form-input>
         <label class="mt-3"> Apellidos </label>
         <b-form-input type="text"> </b-form-input>
@@ -18,7 +16,21 @@
         <b-form-input type="text"> </b-form-input>
         <label class="mt-3"> Teléfono </label>
         <b-form-input type="number"> </b-form-input>
-        <button id="buttonLogin" @click="login" type="button" class="btn btn-primary mt-5 mb-2 mr-5">Cancelar</button>
-        <button id="buttonLogin" @click="login" type="button" class="btn btn-primary mt-5 mb-2 ml-5">Siguiente</button>
+        
+        <button id="buttons" class="btn btn-primary mb-2">Cancelar</button>
+        <button id="buttons" class="btn btn-primary mb-2">Siguiente</button>
     </div>
 </template>
+
+<style>
+    #groupForm {
+        max-width: 500px;
+    }
+    #buttons{
+        margin: 10%;
+        margin-top: 20%;
+    }
+    #labels{
+        margin-right: 0initial;
+    }
+</style>
