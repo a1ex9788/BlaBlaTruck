@@ -13,7 +13,7 @@
             <a id="links">¿Quiere registrase como transportista?</a>            
             <br>
             <router-link to="/registerClient1">
-            <a id="links">¿Quiere registrase como cliente para crear encargos?</a>
+                <a id="links">¿Quiere registrase como cliente para crear encargos?</a>
             </router-link>
         </div>
     </div>
