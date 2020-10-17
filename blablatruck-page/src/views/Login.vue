@@ -10,9 +10,11 @@
         <button id="buttonLogin" @click="login" type="button" class="btn btn-primary mt-2 mb-2 btn-block">Iniciar sesión</button>
         <!--<a id="links">¿Ha olvidado su contraseña?</a>-->
         <div id="linksBottom" class="fixed-bottom mb-3">
-            <a id="links">¿Quiere registrase como transportista?</a>
+            <a id="links">¿Quiere registrase como transportista?</a>            
             <br>
+            <router-link to="/registerClient">
             <a id="links">¿Quiere registrase como cliente para crear encargos?</a>
+            </router-link>
         </div>
     </div>
 </template>
