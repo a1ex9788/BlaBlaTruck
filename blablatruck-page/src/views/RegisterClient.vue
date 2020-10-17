@@ -1,3 +1,4 @@
+<style> @import '/stylesheets/register.css'; </style>
 <template>
     <div id="groupForm" class="container-fluid">
        
@@ -21,26 +22,3 @@
         <button id="buttonLogin" @click="login" type="button" class="btn btn-primary mt-5 mb-2 ml-5">Siguiente</button>
     </div>
 </template>
-
-
-<script>
-  export default {
-    data() {
-      return {
-        types: [
-          'text',
-          'number',
-          'email',
-          'password',
-          'search',
-          'url',
-          'tel',
-          'date',
-          'time',
-          'range',
-          'color'
-        ]
-      }
-    }
-  }
-</script>
