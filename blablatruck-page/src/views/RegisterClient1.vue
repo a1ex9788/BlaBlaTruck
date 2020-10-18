@@ -20,7 +20,7 @@
         <label id="labels" class="mt-3 mb-0"> Empresa </label>
         <b-form-input id="empresaText" type="text"> </b-form-input>
         <label id="labels" class="mt-3 mb-0"> Teléfono </label>
-        <b-form-input id="telefonoText" type="tel"> </b-form-input>
+        <b-form-input id="telefonoText" type="tel" pattern="[0-9]{9}"/> 
         <label id="labels" class="mt-3 mb-0"> Email </label>
         <b-form-input id="emailText" type="tel"> </b-form-input>
 
@@ -62,7 +62,7 @@ export default {
             this.dni = document.getElementById("dniText").value
             this.empresa = document.getElementById("empresaText").value
             this.telefono = document.getElementById("telefonoText").value
-            this.telefono = document.getElementById("emailText").value
+            this.email = document.getElementById("emailText").value
         }
     }
 }

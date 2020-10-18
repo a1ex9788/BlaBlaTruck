@@ -80,13 +80,14 @@ function PersonaRepository(dbContext) {
         parameters.push({ name: 'Usuario', type: TYPES.VarChar, val: req.body.Usuario });
         parameters.push({ name: 'Contraseña', type: TYPES.VarChar, val: req.body.Contraseña });
         parameters.push({ name: 'IBAN', type: TYPES.VarChar, val: req.body.IBAN });
-        parameters.push({ name: 'NumeroCuentaBancaria', type: TYPES.Int, val: req.body.NumeroCuentaBancaria});
+        parameters.push({ name: 'NumeroCuentaBancaria', type: TYPES.VarChar, val: req.body.NumeroCuentaBancaria});
        // parameters.push({ name: 'Empresa', type: TYPES.VarChar, val: req.body.Empresa });
         // Object.entries(employee).forEach((property)=>{
         //     parameters.push({name:'@'+property[0]})
         // });
         console.log("postPersona");
         dbContext.post("InsertOrUpdatePersona", parameters, function (error, data) {
+            console.log("response works!")
             return res.json(response(data, error));
         });
     }

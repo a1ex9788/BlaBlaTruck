@@ -43,11 +43,12 @@ export default {
         this.dni = this.$route.params.dni
         this.empresa = this.$route.params.empresa
         this.telefono = this.$route.params.telefono
+        this.email = this.$route.params.email
     },
     methods: {
-        //Conectarse a la api para crear un cliente
+        //Conectarse a la api para crear un cliente despues de pulsar el boton crear
         onClickCrear() {
-            /*axios.post('localhost:3300/api/personas', {
+            axios.post('http://localhost:3300/api/personas', {
                 Nombre: this.nombre,
                 Apellidos: this.apellidos,
                 DNI: this.dni,
@@ -57,27 +58,11 @@ export default {
                 Contraseña: this.contraseña,
                 IBAN: document.getElementById("ibanText").value,
                 NumeroCuentaBancaria: document.getElementById("ncCuentaBancariaText").value
-            }).then((response) => {
-                console.log(response);
+            }).then(() => {
+                console.log("created!"); //si se crea con exito en la DB el usuario
             }, (error) => {
-                console.log(error);
-            });*//*
-            axios.post('localhost:3300/api/personas', {
-                Nombre: 'Jesus',
-                Apellidos: 'Garcia',
-                DNI: '12345687Z',
-                Telefono: '620111111',
-                Email: 'correo@correo.com',
-                Usuario: 'user',
-                Contraseña: 'user',
-                IBAN: 'ES11',
-                NumeroCuentaBancaria: '618253694888314000'
-            }).then((response) => {
-                console.log(response);
-            }, (error) => {
-                console.log(error);
-            });*/
-            axios.get('localhost:3300/api/personas')
+                console.log(error); // si hay un error con la creacion o conexion
+            });
         }
     }
 }
