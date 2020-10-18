@@ -1,7 +1,7 @@
 <template>
     <div id="groupForm" class="container-fluid">      
         <b-row>
-            <b-img id="photo" src="../assets/clientLogo.png"></b-img>
+            <b-img id="photo" src="../../assets/clientLogo.png"></b-img>
             <h1 id="title" class="ml-4 mt-3 width 2">Registro usuario</h1>
         </b-row>
 

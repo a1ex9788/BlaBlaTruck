@@ -29,13 +29,13 @@ const routes = [
     path: "/registerClient1",
     name: "RegisterClient1",
     component: () =>
-      import("../views/RegisterClient1.vue")
+      import("../views/UserRegistrations/RegisterClient1.vue")
   },
   {
     path: "/registerClient2",
     name: "RegisterClient2",
     component: () =>
-      import("../views/RegisterClient2.vue")
+      import("../views/UserRegistrations/RegisterClient2.vue")
   },
   {
     path: "/registerNewPackage",
