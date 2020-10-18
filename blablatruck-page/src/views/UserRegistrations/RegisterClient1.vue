@@ -8,21 +8,21 @@
         <h3 id="subtitle" class="mt-3">Información personal</h3>
 
         <label id="labels" class="mt-3 mb-0"> Nombre </label>
-        <b-form-input id="nameText" type="text" :state="nameError" placeholder="Federico"> </b-form-input>
+        <b-form-input @input="nameError = undefined" id="nameText" type="text" :state="nameError" placeholder="Federico"> </b-form-input>
         <label id="labels" class="mt-3 mb-0"> Apellidos </label>
-        <b-form-input id="surnamesText" type="text" :state="surnamesError" placeholder="García Lorca"> </b-form-input>
+        <b-form-input @input="surnamesError = undefined" id="surnamesText" type="text" :state="surnamesError" placeholder="García Lorca"> </b-form-input>
         <label id="labels" class="mt-3 mb-0"> DNI </label>
-        <b-form-input id="dniText" type="text" :state="dniError" placeholder="12345678L"> </b-form-input>
+        <b-form-input @input="dniError = undefined" id="dniText" type="text" :state="dniError" placeholder="12345678L"> </b-form-input>
         <label id="labels" class="mt-3 mb-0"> Empresa </label>
-        <b-form-input id="companyText" type="text" :state="companyError" placeholder="Fracoped S.L."> </b-form-input>
+        <b-form-input @input="companyError = undefined" id="companyText" type="text" :state="companyError" placeholder="Fracoped S.L."> </b-form-input>
         <label id="labels" class="mt-3 mb-0"> Teléfono </label>
-        <b-form-input id="telephoneText" type="number" :state="telephoneError" placeholder="123456789"> </b-form-input>
+        <b-form-input @input="telephoneError = undefined" id="telephoneText" type="number" :state="telephoneError" placeholder="123456789"> </b-form-input>
         <label id="labels" class="mt-3 mb-0"> Correo electrónico </label>
-        <b-form-input id="emailText" type="text" :state="emailError" placeholder="federicoGL@gmail.com"> </b-form-input>
+        <b-form-input @input="emailError = undefined" id="emailText" type="text" :state="emailError" placeholder="federicoGL@gmail.com"> </b-form-input>
         <label id="labels" class="mt-3 mb-0"> Nombre de Usuario </label>
-        <b-form-input id="usernameText" type="text" :state="usernameError" placeholder="fedgalo"> </b-form-input>
+        <b-form-input @input="usernameError = undefined" id="usernameText" type="text" :state="usernameError" placeholder="fedgalo"> </b-form-input>
         <label id="labels" class="mt-3 mb-0"> Contraseña </label>
-        <b-form-input id="passwordText" type="password" :state="passwordError"> </b-form-input>
+        <b-form-input @input="passwordError = undefined" id="passwordText" type="password" :state="passwordError"> </b-form-input>
 
         <router-link to="/login">
             <button id="buttons" class="btn btn-primary mb-2">Cancelar</button>
@@ -83,7 +83,8 @@ export default {
             if (passwordText.value == "") { this.passwordError = false; error = true}
 
             //Pasar a RegisterClient2
-            if (!error) this.$router.push('/registerClient2');
+            if (!error) this.$router.push({name:'RegisterClient2', params:{ nombre:nameText.value, apellidos:surnamesText.value,
+             username:usernameText.value, contraseña:passwordText.value, dni:dniText.value, empresa:companyText.value, telefono:telephoneText.value, email:emailText.value}});
         }
     }
 
