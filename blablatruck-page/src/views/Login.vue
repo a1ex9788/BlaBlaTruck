@@ -12,9 +12,7 @@
         <div id="linksBottom" class="fixed-bottom mb-3">
             <a id="links">¿Quiere registrase como transportista?</a>            
             <br>
-            <router-link to="/registerClient1">
-                <a id="links">¿Quiere registrase como cliente para crear encargos?</a>
-            </router-link>
+            <router-link id="links" to="/registerClient1">¿Quiere registrase como cliente para crear encargos?</router-link>
         </div>
     </div>
 </template>
