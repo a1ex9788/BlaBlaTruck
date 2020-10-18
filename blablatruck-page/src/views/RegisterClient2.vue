@@ -47,8 +47,9 @@ export default {
     },
     methods: {
         //Conectarse a la api para crear un cliente despues de pulsar el boton crear
-        onClickCrear() {
-            axios.post('http://localhost:3300/api/personas', {
+        async onClickCrear() {
+            //creamos primero la persona mediante conexion a la api
+            await axios.post('http://localhost:3300/api/personas', {
                 Nombre: this.nombre,
                 Apellidos: this.apellidos,
                 DNI: this.dni,
@@ -58,8 +59,17 @@ export default {
                 Contraseña: this.contraseña,
                 IBAN: document.getElementById("ibanText").value,
                 NumeroCuentaBancaria: document.getElementById("ncCuentaBancariaText").value
-            }).then(() => {
-                console.log("created!"); //si se crea con exito en la DB el usuario
+            }).then((response) => {
+                console.log(response); //si se crea con exito en la DB el usuario
+            }, (error) => {
+                console.log(error); // si hay un error con la creacion o conexion
+            });
+            // luego creamos el cliente
+            await axios.post('http://localhost:3300/api/cliente', {
+                DNI: this.dni,
+                Empresa: this.empresa
+            }).then((response) => {
+                console.log(response); //si se crea con exito en la DB el usuario
             }, (error) => {
                 console.log(error); // si hay un error con la creacion o conexion
             });
