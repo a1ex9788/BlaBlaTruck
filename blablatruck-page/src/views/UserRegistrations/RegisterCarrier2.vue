@@ -12,16 +12,16 @@
             <label id="labels" class="mt-3 mb-0"> Naturaleza </label>
             <b-form-input id="natureText" type="text" :state="natureError"> </b-form-input>
             <label id="labels" class="mt-3 mb-0"> Capacidad </label>
-            <b-form-input id="capacityText" type="number" :state="capacityError"> </b-form-input>
+            <b-form-input id="capacityText" type="number" :state="capacityError" placeholder="350"> </b-form-input>
 
             <br><br>
 
             <h3 id="subtitle" class="mt-3">Datos bancarios</h3>
 
             <label id="labels" class="mt-3 mb-0"> IBAN </label>
-            <b-form-input id="ibanText" type="text" :state="ibanError"> </b-form-input>
+            <b-form-input id="ibanText" type="text" :state="ibanError" placeholder="ES57"> </b-form-input>
             <label id="labels" class="mt-3 mb-0"> Nº de cuenta bancaria </label>
-            <b-form-input id="bankAccountText" type="number" :state="bankAccountError"> </b-form-input>
+            <b-form-input id="bankAccountText" type="number" :state="bankAccountError" placeholder="01234567890123456789"> </b-form-input>
 
             <router-link to="/registerCarrier1">
                 <button id="buttons" class="btn btn-primary mb-2">Atrás</button>
