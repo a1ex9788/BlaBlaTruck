@@ -11,16 +11,18 @@
         <b-form-input id="nameText" type="text" :state="nameError"> </b-form-input>
         <label id="labels" class="mt-3 mb-0"> Apellidos </label>
         <b-form-input id="surnamesText" type="text" :state="surnamesError"> </b-form-input>
-        <label id="labels" class="mt-3 mb-0"> Nombre de Usuario </label>
-        <b-form-input id="usernameText" type="text" :state="usernameError"> </b-form-input>
-        <label id="labels" class="mt-3 mb-0"> Contraseña </label>
-        <b-form-input id="passwordText" type="password" :state="passwordError"> </b-form-input>
         <label id="labels" class="mt-3 mb-0"> DNI </label>
         <b-form-input id="dniText" type="text" :state="dniError"> </b-form-input>
         <label id="labels" class="mt-3 mb-0"> Empresa </label>
         <b-form-input id="companyText" type="text" :state="companyError"> </b-form-input>
         <label id="labels" class="mt-3 mb-0"> Teléfono </label>
         <b-form-input id="telephoneText" type="number" :state="telephoneError"> </b-form-input>
+        <label id="labels" class="mt-3 mb-0"> Correo electrónico </label>
+        <b-form-input id="emailText" type="text" :state="emailError"> </b-form-input>
+        <label id="labels" class="mt-3 mb-0"> Nombre de Usuario </label>
+        <b-form-input id="usernameText" type="text" :state="usernameError"> </b-form-input>
+        <label id="labels" class="mt-3 mb-0"> Contraseña </label>
+        <b-form-input id="passwordText" type="password" :state="passwordError"> </b-form-input>
 
         <router-link to="/login">
             <button id="buttons" class="btn btn-primary mb-2">Cancelar</button>
@@ -38,11 +40,12 @@ export default {
         return {
             nameError: undefined,
             surnamesError: undefined,
-            usernameError: undefined,
-            passwordError: undefined,
             dniError: undefined,
             companyError: undefined,
             telephoneError: undefined,
+            emailError: undefined,
+            usernameError: undefined,
+            passwordError: undefined,
         };
     },
     methods: {
@@ -53,20 +56,22 @@ export default {
             //Recoger los datos de los campos
             var nameText = document.getElementById("nameText")
             var surnamesText = document.getElementById("surnamesText")
-            var usernameText = document.getElementById("usernameText")
-            var passwordText = document.getElementById("passwordText")
             var dniText = document.getElementById("dniText")
             var companyText = document.getElementById("companyText")
             var telephoneText = document.getElementById("telephoneText")
+            var emailText = document.getElementById("emailText")
+            var usernameText = document.getElementById("usernameText")
+            var passwordText = document.getElementById("passwordText")
 
             //Comprobación de campos
             if (nameText.value == "") { this.nameError = false; error = true}
             if (surnamesText.value == "") { this.surnamesError = false; error = true}
-            if (usernameText.value == "") { this.usernameError = false; error = true}
-            if (passwordText.value == "") { this.passwordError = false; error = true}
             if (dniText.value == "" || dniText.value.length != 9) { this.dniError = false; error = true}
             if (companyText.value == "") { this.companyError = false; error = true}
             if (telephoneText.value == "" || telephoneText.value.length != 9) { this.telephoneError = false; error = true}
+            if (emailText.value == "") { this.emailError = false; error = true}
+            if (usernameText.value == "") { this.usernameError = false; error = true}
+            if (passwordText.value == "") { this.passwordError = false; error = true}
 
             //Pasar a RegisterClient2
             if (!error) this.$router.push('/registerClient2');

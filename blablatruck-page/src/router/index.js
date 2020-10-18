@@ -38,6 +38,18 @@ const routes = [
       import("../views/UserRegistrations/RegisterClient2.vue")
   },
   {
+    path: "/registerCarrier1",
+    name: "RegisterCarrier1",
+    component: () =>
+      import("../views/UserRegistrations/RegisterCarrier1.vue")
+  },
+  {
+    path: "/registerCarrier2",
+    name: "RegisterCarrier2",
+    component: () =>
+      import("../views/UserRegistrations/RegisterCarrier2.vue")
+  },
+  {
     path: "/registerNewPackage",
     name: "RegisterNewPackage",
     component: () =>

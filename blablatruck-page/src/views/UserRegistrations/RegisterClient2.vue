@@ -22,7 +22,7 @@
 <script>
 /* eslint-disable */
 export default {
-    name: "RegisterClient1",
+    name: "RegisterClient2",
     
     data() {
         return {
