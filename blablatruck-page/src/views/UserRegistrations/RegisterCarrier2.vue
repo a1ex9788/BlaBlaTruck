@@ -10,7 +10,7 @@
             <h3 id="subtitle" class="mt-3">Datos camión</h3>
 
             <label id="labels" class="mt-3 mb-0"> Naturaleza </label>
-            <b-form-input id="natureText" type="text" :state="natureError"> </b-form-input>
+            <b-form-select id="natureText" type="text" :state="natureError" :options="natureOptions"> </b-form-select>
             <label id="labels" class="mt-3 mb-0"> Capacidad </label>
             <b-form-input id="capacityText" type="number" :state="capacityError" placeholder="350"> </b-form-input>
 
@@ -42,6 +42,12 @@ export default {
             capacityError: undefined,
             ibanError: undefined,
             bankAccountError: undefined,
+
+            natureOptions: [
+                { value: '1', text: 'Producto frágil' },
+                { value: '2', text: 'Producto perecedero' },
+                { value: '3', text: 'Mercancia peligrosa'}
+            ]
         };
     },
     methods: {
@@ -56,8 +62,8 @@ export default {
             var bankAccountText = document.getElementById("bankAccountText")
 
             //Comprobación de campos
-            if (natureText.value == "" || natureText.value.length != 4) { this.natureError = false; error = true}
-            if (capacityText.value == "" || capacityText.value.length != 20) { this.capacityError = false; error = true}
+            if (natureText.value == "") { this.natureError = false; error = true}
+            if (capacityText.value == "") { this.capacityError = false; error = true}
             if (ibanText.value == "" || ibanText.value.length != 4) { this.ibanError = false; error = true}
             if (bankAccountText.value == "" || bankAccountText.value.length != 20) { this.bankAccountError = false; error = true}
 
