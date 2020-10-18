@@ -36,6 +36,12 @@ const routes = [
     name: "RegisterClient2",
     component: () =>
       import("../views/RegisterClient2.vue")
+  },
+  {
+    path: "/registerNewPackage",
+    name: "RegisterNewPackage",
+    component: () =>
+      import("../views/RegisterNewPackage.vue")
   }
 ];
 
