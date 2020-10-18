@@ -63,6 +63,14 @@ export default {
             var emailText = document.getElementById("emailText")
 
             //Comprobación de campos
+            this.nameError = true
+            this.surnamesError = true
+            this.usernameError = true
+            this.passwordError = true
+            this.dniError = true
+            this.telephoneError = true
+            this.emailError = true
+
             if (nameText.value == "") { this.nameError = false; error = true}
             if (surnamesText.value == "") { this.surnamesError = false; error = true}
             if (usernameText.value == "") { this.usernameError = false; error = true}

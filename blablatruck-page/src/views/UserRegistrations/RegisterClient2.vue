@@ -40,6 +40,9 @@ export default {
             var bankAccountText = document.getElementById("bankAccountText")
 
             //Comprobación de campos
+            this.ibanError = true
+            this.bankAccountError = true
+
             if (ibanText.value == "" || ibanText.value.length != 4) { this.ibanError = false; error = true}
             if (bankAccountText.value == "" || bankAccountText.value.length != 20) { this.bankAccountError = false; error = true}
 

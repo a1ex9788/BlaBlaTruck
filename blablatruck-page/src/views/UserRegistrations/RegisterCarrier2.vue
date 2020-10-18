@@ -62,6 +62,11 @@ export default {
             var bankAccountText = document.getElementById("bankAccountText")
 
             //Comprobación de campos
+            this.natureError = true
+            this.capacityError = true
+            this.ibanError = true
+            this.bankAccountError = true
+
             if (natureText.value == "") { this.natureError = false; error = true}
             if (capacityText.value == "") { this.capacityError = false; error = true}
             if (ibanText.value == "" || ibanText.value.length != 4) { this.ibanError = false; error = true}
