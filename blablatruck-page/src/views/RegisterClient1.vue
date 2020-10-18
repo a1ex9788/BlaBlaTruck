@@ -70,6 +70,7 @@ export default {
             if (companyText.value == "") { this.companyError = false; error = true}
             if (telephoneText.value == "") { this.telephoneError = false; error = true}
 
+            //que pase a RegisterClient2
             if (!error) ;
         }
     }

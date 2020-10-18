@@ -43,6 +43,7 @@ export default {
             if (ibanText.value == "") { this.ibanError = false; error = true}
             if (bankAccountText.value == "") { this.bankAccountError = false; error = true}
 
+            //Crear cliente en la BD
             if (!error) ;
         }
     }
