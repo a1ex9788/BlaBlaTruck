@@ -40,11 +40,14 @@ export default {
             var bankAccountText = document.getElementById("bankAccountText")
 
             //Comprobación de campos
-            if (ibanText.value == "") { this.ibanError = false; error = true}
-            if (bankAccountText.value == "") { this.bankAccountError = false; error = true}
+            if (ibanText.value == "" || ibanText.value.length != 4) { this.ibanError = false; error = true}
+            if (bankAccountText.value == "" || bankAccountText.value.length != 20) { this.bankAccountError = false; error = true}
 
             //Crear cliente en la BD
-            if (!error) ;
+            if (!error) console.log("asd");
+
+            //Ir al menú de cliente (todavía no implementado)
+            //if (!error) this.$router.push('/clientMenu');
         }
     }
 

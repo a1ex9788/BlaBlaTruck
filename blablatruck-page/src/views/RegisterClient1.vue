@@ -25,9 +25,7 @@
         <router-link to="/login">
             <button id="buttons" class="btn btn-primary mb-2">Cancelar</button>
         </router-link>
-        <router-link to="/registerClient2">
-            <button id="buttons" @click="next" class="btn btn-primary mb-2">Siguiente</button>
-        </router-link>
+        <button id="buttons" @click="next" class="btn btn-primary mb-2">Siguiente</button>
     </div>
 </template>
 
@@ -66,12 +64,12 @@ export default {
             if (surnamesText.value == "") { this.surnamesError = false; error = true}
             if (usernameText.value == "") { this.usernameError = false; error = true}
             if (passwordText.value == "") { this.passwordError = false; error = true}
-            if (dniText.value == "") { this.dniError = false; error = true}
+            if (dniText.value == "" || dniText.value.length != 9) { this.dniError = false; error = true}
             if (companyText.value == "") { this.companyError = false; error = true}
-            if (telephoneText.value == "") { this.telephoneError = false; error = true}
+            if (telephoneText.value == "" || telephoneText.value.length != 9) { this.telephoneError = false; error = true}
 
-            //que pase a RegisterClient2
-            if (!error) ;
+            //Pasar a RegisterClient2
+            if (!error) this.$router.push('/registerClient2');
         }
     }
 
