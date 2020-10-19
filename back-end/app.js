@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 const dbContext = require('./dataBase/dbContext');
 const { TYPES } = require('tedious');
+var cookieParser = require('cookie-parser');
 
 var app = express();
 

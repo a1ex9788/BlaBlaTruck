@@ -117,7 +117,7 @@ function PersonaRepository(dbContext) {
         console.log("searchPersonaTelefono")
         var query = "select * from Persona where telefono = @telefono"
 
-        dbContext.get(query, parameters, function (error, data){
+        dbContext.getQuery(query, parameters, true, function (error, data){
             return res.json(response(data,error));
         });
     }
@@ -125,13 +125,17 @@ function PersonaRepository(dbContext) {
     function getLoginToken (req, res) {
         var parameters = [];
         var dayToSeconds = 24*60*60;
+        
 
-        parameters.push({name: 'Usuario', type: TYPES.VarChar, val: req.query.Usuario});
-        parameters.push({name: 'Contraseña', type: TYPES.VarChar, val: req.query.Contraseña});
+        parameters.push({ name: 'Usuario', type: TYPES.VarChar, val: req.query.Usuario });
+        parameters.push({ name: 'Contraseña', type: TYPES.VarChar, val: req.query.Contraseña });
+        console.log(req.query.Usuario);
+        console.log(req.query.Contraseña);
 
-        var query = 'SELECT DNI FROM PERSONA WHERE Usuario = @Usuario and Contraseña = @Contraseña';
-        dbContext.get(query, parameters, function (error, data){
-            return res.cookie('loginToken',res.json(response(data,error)), {maxAge: dayToSeconds, httpOnly: true});
+        var query = 'select * from Persona where Usuario LIKE @Usuario and Contraseña LIKE @Contraseña';
+
+        dbContext.getQuery(query, parameters, true, function (error, data){
+            return res.cookie('loginToken', response(data,error), {expire: dayToSeconds, httpOnly: true}).send('cookie is set');
         });
     }
 

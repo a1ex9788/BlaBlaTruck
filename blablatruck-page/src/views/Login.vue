@@ -18,6 +18,7 @@
 </template>
 
 <script>
+const axios = require('axios');
 /* eslint-disable */
 export default {
     name: "Login",
@@ -29,20 +30,33 @@ export default {
         };
     },
     methods: {
-        login () {
+        async login () {
             // Campo para saber si hay error
             var errorLogin = false
             //Recoger los datos de los campos
             var usernameText = document.getElementById("usernameText")
             var passwordText = document.getElementById("passwordText")
+            
             //Comprobación de campos con api
-            if (usernameText.value == "") { this.isUsernameEmpty = false; errorLogin = true}
-            if (passwordText.value == "") { this.isPasswordEmpty = false; errorLogin = true}
+            if (usernameText.value ==  "" || usernameText.value ==  undefined)  { this.isUsernameEmpty = false; errorLogin = true}
+            if (passwordText.value == "" || passwordText.value == undefined) { this.isPasswordEmpty = false; errorLogin = true}
             //Conexion a la api mediante axios
-
+            console.log(usernameText.value);
+            if (!errorLogin) {
+                console.log("no ha habido error");
+                await axios.get('http://localhost:3300/api/personas/login', {
+                    params: {
+                        Usuario: usernameText.value,
+                        Contraseña: passwordText.value
+                    }
+                    }).then((response) => {
+                    console.log(response); //si se crea con exito en la DB el usuario
+                }, (error) => {
+                    console.log(error); // si hay un error con la creacion o conexion
+                });
+            }
             //Carga la interfaz del tipo de usuario si el login es satisfactorio 
             //(de momento avisar si se ha hecho login bien)
-            console.log(usernameText.value)
             if (!errorLogin) alert("Logged!")
             else alert("Not Logged!") 
         }

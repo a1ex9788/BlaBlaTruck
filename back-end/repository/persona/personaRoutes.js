@@ -6,7 +6,7 @@ module.exports = function (router) {
         .get(personaRepository.getAll)
         .post(personaRepository.post);
         
-
+    router.use('/personas/login', personaRepository.getMulti);
     router.use('/personas/:personaDNI', personaRepository.intercept);
 
     router.route('/personas/:personaDNI')
