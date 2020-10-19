@@ -75,9 +75,13 @@ export default {
             if (surnamesText.value == "") { this.surnamesError = false; error = true}
             if (usernameText.value == "") { this.usernameError = false; error = true}
             if (passwordText.value == "") { this.passwordError = false; error = true}
-            if (dniText.value == "" || dniText.value.length != 9) { this.dniError = false; error = true}
+            if (dniText.value == "" || dniText.value.length != 9
+                || isNaN(dniText.value.substring(0,8))
+                || !isNaN(dniText.value.substring(8,9))) { this.dniError = false; error = true}
             if (telephoneText.value == "" || telephoneText.value.length != 9) { this.telephoneError = false; error = true}
-            if (emailText.value == "") { this.emailError = false; error = true}
+            if (emailText.value == ""
+                || !emailText.value.includes('@')
+                || !emailText.value.includes('.')) { this.emailError = false; error = true}
 
             //Pasar a RegisterCarrier2
             if (!error) this.$router.push('/registerCarrier2');

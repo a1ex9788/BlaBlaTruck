@@ -62,7 +62,9 @@ export default {
             this.ibanError = true
             this.bankAccountError = true
 
-            if (ibanText.value == "" || ibanText.value.length != 4) { this.ibanError = false; error = true}
+            if (ibanText.value == "" || ibanText.value.length != 4
+                || !isNaN(ibanText.value.substring(0,2))
+                || isNaN(ibanText.value.substring(2,4))) { this.ibanError = false; error = true}
             if (bankAccountText.value == "" || bankAccountText.value.length != 20) { this.bankAccountError = false; error = true}
 
             //Crear cliente en la BD
