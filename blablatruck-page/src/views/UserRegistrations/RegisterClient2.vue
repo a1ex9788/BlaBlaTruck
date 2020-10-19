@@ -8,9 +8,9 @@
         <h3 id="subtitle" class="mt-3">Datos bancarios</h3>
 
         <label id="labels" class="mt-3 mb-0"> IBAN </label>
-        <b-form-input @input="ibanError = undefined" id="ibanText" type="text" :state="ibanError" placeholder="ES57"> </b-form-input>
+        <b-form-input @input="ibanError = undefined" id="ibanText" type="text" :state="ibanError" placeholder="(Ej.) ES57"> </b-form-input>
         <label id="labels" class="mt-3 mb-0"> Nº de cuenta bancaria </label>
-        <b-form-input @input="bankAccountError = undefined" id="bankAccountText" type="number" :state="bankAccountError" placeholder="01234567890123456789"> </b-form-input>
+        <b-form-input @input="bankAccountError = undefined" id="bankAccountText" type="number" :state="bankAccountError" placeholder="(Ej.) 01234567890123456789"> </b-form-input>
 
         <router-link to="/registerClient1">
             <button id="buttons" class="btn btn-primary mb-2">Atrás</button>
