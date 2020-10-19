@@ -122,12 +122,25 @@ function PersonaRepository(dbContext) {
         });
     }
 
+    function getLoginToken (req, res) {
+        var parameters = [];
+        var dayToSeconds = 24*60*60;
+
+        parameters.push({name: 'Usuario', type: TYPES.VarChar, val: req.query.Usuario});
+        parameters.push({name: 'Contraseña', type: TYPES.VarChar, val: req.query.Contraseña});
+
+        var query = 'SELECT DNI FROM PERSONA WHERE Usuario = @Usuario and Contraseña = @Contraseña';
+        dbContext.get(query, parameters, function (error, data){
+            return res.cookie('loginToken',res.json(response(data,error)), {maxAge: dayToSeconds, httpOnly: true});
+        });
+    }
+
     return {
             getAll: getPersonas,
             get: getPersona,
             put: putPersona,
             post: postPersona,
-         //   getMulti: getClienteEmpresa,
+            getMulti: getLoginToken,
             find: searchPersonaTelefono,
             intercept: findPersona,
             delete: deletePersona
