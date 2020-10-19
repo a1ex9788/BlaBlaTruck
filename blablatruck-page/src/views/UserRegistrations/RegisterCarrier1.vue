@@ -84,7 +84,8 @@ export default {
                 || !emailText.value.includes('.')) { this.emailError = false; error = true}
 
             //Pasar a RegisterCarrier2
-            if (!error) this.$router.push('/registerCarrier2');
+            if (!error) this.$router.push({name:'RegisterCarrier2', params:{ nombre:nameText.value, apellidos:surnamesText.value,
+             username:usernameText.value, contraseña:passwordText.value, dni:dniText.value, telefono:telephoneText.value, email:emailText.value}});
         }
     }
 

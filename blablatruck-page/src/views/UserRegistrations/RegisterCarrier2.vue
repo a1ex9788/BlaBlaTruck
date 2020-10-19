@@ -47,11 +47,27 @@ export default {
                 { value: '1', text: 'Producto frágil' },
                 { value: '2', text: 'Producto perecedero' },
                 { value: '3', text: 'Mercancia peligrosa'}
-            ]
+            ],
+
+            nombre: undefined,
+            apellidos: undefined,
+            username: undefined,
+            contraseña: undefined,
+            dni: undefined,
+            telefono: undefined
         };
     },
+    created() {
+        this.nombre = this.$route.params.nombre
+        this.apellidos = this.$route.params.apellidos
+        this.username = this.$route.params.username
+        this.contraseña = this.$route.params.contraseña
+        this.dni = this.$route.params.dni
+        this.telefono = this.$route.params.telefono
+        this.email = this.$route.params.email
+    },
     methods: {
-        createCarrier () {
+        async createCarrier () {
             // Campo para saber si hay error
             var error = false
 
@@ -74,8 +90,34 @@ export default {
                 || isNaN(ibanText.value.substring(2,4))) { this.ibanError = false; error = true}
             if (bankAccountText.value == "" || bankAccountText.value.length != 20) { this.bankAccountError = false; error = true}
 
-            //Crear carriere en la BD
-            if (!error) console.log("asd");
+            //Crear transportista en la BD
+            if (!error) {
+                await axios.post('http://localhost:3300/api/personas', {
+                Nombre: this.nombre,
+                Apellidos: this.apellidos,
+                DNI: this.dni,
+                Telefono: this.telefono,
+                Email: this.email,
+                Usuario: this.username,
+                Contraseña: this.contraseña,
+                IBAN: ibanText.value,
+                NumeroCuentaBancaria: bankAccountText.value
+                }).then((response) => {
+                    console.log(response); //si se crea con exito en la DB el usuario
+                }, (error) => {
+                    console.log(error); // si hay un error con la creacion o conexion
+                });
+                // luego creamos el cliente
+                await axios.post('http://localhost:3300/api/transportisa', {
+                    DNI: this.dni,
+                    Naturaleza: natureText,value,
+                    Capacidad: capacityText.value,
+                }).then((response) => {
+                    console.log(response); //si se crea con exito en la DB el usuario
+                }, (error) => {
+                    console.log(error); // si hay un error con la creacion o conexion
+                });
+            }
 
             //Ir al menú de transportista (todavía no implementado)
             //if (!error) this.$router.push('/carrierMenu');
