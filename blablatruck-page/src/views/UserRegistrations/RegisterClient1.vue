@@ -46,7 +46,7 @@
       variant="danger"
       placement="right"
     />
-    <label id="labels" class="mt-3 mb-0"> Empresa </label>
+    <label id="labels" class="mt-3 mb-0"> Empresa (Opcional) </label>
     <b-form-input
       @input="companyError = undefined"
       id="companyText"
@@ -189,10 +189,11 @@ export default {
             },
             (error) => {}
           );
-      if (companyText.value == "") {
+      // LA EMPRESA ES OPCIONAL    
+      /*if (companyText.value == "") {
         this.companyError = false;
         error = true;
-      }
+      }*/
       if (telephoneText.value == "" || telephoneText.value.length != 9) {
         this.telephoneError = false;
         error = true;
