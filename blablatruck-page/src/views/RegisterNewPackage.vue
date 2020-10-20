@@ -108,7 +108,7 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import {required, integer} from "vuelidate/lib/validators";
+import {required, integer, minValue, maxValue} from "vuelidate/lib/validators";
 
 export default {
   mixins: [validationMixin],
@@ -155,6 +155,8 @@ export default {
 
       weight: {
           required,
+          minValue: minValue(0),
+          maxValue: maxValue(32)
       },
 
       size: {
@@ -178,11 +180,12 @@ export default {
 
     onSubmit(evt) {
       evt.preventDefault();
-      alert(JSON.stringify(this.form));
     },
 
     showPrice() {
-      this.show = false;
+      this.$v.$touch()
+      if(!this.$v.$invalid) {
+        this.show = false;}
     },
 
     goBackPage() {
