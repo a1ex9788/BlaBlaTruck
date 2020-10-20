@@ -46,19 +46,27 @@ export default {
                 console.log("no ha habido error");
                 await axios.get('http://localhost:3300/api/personas/login', {
                     params: {
-                        Usuario: usernameText.value,
-                        Contraseña: passwordText.value
+                        Usuario: usernameText.value.trim(),
+                        Contraseña: passwordText.value.trim()
+                    }}, {
+                        withCredentials: true
                     }
-                    }).then((response) => {
-                    console.log(response); //si se crea con exito en la DB el usuario
+                ).then((response) => {
+                    console.log(response.data); //si se loguea con exito el usuario
+    
+                    if (response.status == 200) {
+                        let d = new Date();
+                        d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
+                        let expires = "expires=" + d.toUTCString();
+                        document.cookie =
+                            "loginToken=" + response.data + ";" + expires + ";path=/";
+                    }
                 }, (error) => {
-                    console.log(error); // si hay un error con la creacion o conexion
+                    console.log(error); // si hay un error con el logueo o conexion
                 });
             }
             //Carga la interfaz del tipo de usuario si el login es satisfactorio 
             //(de momento avisar si se ha hecho login bien)
-            if (!errorLogin) alert("Logged!")
-            else alert("Not Logged!") 
         }
     }
 

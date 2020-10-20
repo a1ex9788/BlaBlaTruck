@@ -135,7 +135,8 @@ function PersonaRepository(dbContext) {
         var query = 'select * from Persona where Usuario LIKE @Usuario and Contraseña LIKE @Contraseña';
 
         dbContext.getQuery(query, parameters, true, function (error, data){
-            return res.cookie('loginToken', response(data,error), {expire: dayToSeconds, httpOnly: true}).send('cookie is set');
+            //res.cookie('loginToken', response(data,error), {expire: dayToSeconds/*, httpOnly: true*/})
+            return res.send(response(data, error));
         });
     }
 
