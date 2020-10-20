@@ -34,7 +34,14 @@
                     <template v-slot:append>
                         <b-input-group-text><strong class="text">kg</strong></b-input-group-text>
                     </template>
-                    <b-form-input id="input-Weight" v-model="form.weight" max="32" min="0" value="1" type="number"></b-form-input>
+                    <b-form-input 
+                    id="input-Weight" 
+                    v-model="$v.form.weight.$model"
+                    :state="validateState('weight')"
+                    max="32"
+                     min="0" 
+                     value="1"
+                      type="number"></b-form-input>
                 </b-input-group>
 
             </b-form-group>
@@ -101,7 +108,7 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import {required} from "vuelidate/lib/validators";
+import {required, integer} from "vuelidate/lib/validators";
 
 export default {
   mixins: [validationMixin],
@@ -146,10 +153,14 @@ export default {
         required,
       },
 
+      weight: {
+          required,
+      },
+
       size: {
-        ancho: { required },
-        largo: { required },
-        alto: { required },
+        ancho: { required, integer},
+        largo: { required, integer},
+        alto: { required, integer},
       },
     },
   },
