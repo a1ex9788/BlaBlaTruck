@@ -77,8 +77,8 @@ export default {
                 Email: this.email,
                 Usuario: this.username,
                 Contraseña: this.contraseña,
-                IBAN: ibanText.value,
-                NumeroCuentaBancaria: bankAccountText.value
+                IBAN: ibanText.value.trim(),
+                NumeroCuentaBancaria: bankAccountText.value.trim()
                 }).then((response) => {
                     //console.log(response); //si se crea con exito en la DB el usuario
                 }, (error) => {
