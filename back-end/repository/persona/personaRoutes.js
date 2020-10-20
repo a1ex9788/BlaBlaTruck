@@ -5,7 +5,7 @@ module.exports = function (router) {
     router.route('/personas')
         .get(personaRepository.getAll)
         .post(personaRepository.post);
-        
+    router.use('/personas/userExists', personaRepository.usernameExists);
     router.use('/personas/login', personaRepository.getMulti);
     router.use('/personas/:personaDNI', personaRepository.intercept);
 
@@ -14,4 +14,5 @@ module.exports = function (router) {
         .put(personaRepository.put) 
         .delete(personaRepository.delete)
        // .get(personaRepository.find);  
+       
 }

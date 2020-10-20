@@ -15,10 +15,7 @@
         <router-link to="/registerClient1">
             <button id="buttons" class="btn btn-primary mb-2">Atrás</button>
         </router-link>
-        <router-link to="/Login">
         <button id="buttons" @click="createClient" class="btn btn-primary mb-2">Crear</button>
-        </router-link>
-        
     </div>
 </template>
 
@@ -83,19 +80,20 @@ export default {
                 IBAN: ibanText.value,
                 NumeroCuentaBancaria: bankAccountText.value
                 }).then((response) => {
-                    console.log(response); //si se crea con exito en la DB el usuario
+                    //console.log(response); //si se crea con exito en la DB el usuario
                 }, (error) => {
-                    console.log(error); // si hay un error con la creacion o conexion
+                    //console.log(error); // si hay un error con la creacion o conexion
                 });
                 // luego creamos el cliente
                 await axios.post('http://localhost:3300/api/cliente', {
                     DNI: this.dni,
                     Empresa: this.empresa
                 }).then((response) => {
-                    console.log(response); //si se crea con exito en la DB el usuario
+                    //console.log(response); //si se crea con exito en la DB el usuario
                 }, (error) => {
-                    console.log(error); // si hay un error con la creacion o conexion
+                    //console.log(error); // si hay un error con la creacion o conexion
                 });
+                this.$router.go(-2)
             }
 
             //Ir al menú de cliente (todavía no implementado)

@@ -140,6 +140,17 @@ function PersonaRepository(dbContext) {
         });
     }
 
+    function isUsernameAlreadyExists(req, res) {
+        var parameters = [];
+        parameters.push({ name: 'Usuario', type: TYPES.VarChar, val: req.query.Usuario });
+
+        var query = 'select * from Persona where Usuario LIKE @Usuario';
+        dbContext.getQuery(query, parameters, true, function(error, data) {
+            return res.send(response(data, error));
+        });
+    }
+
+
     return {
             getAll: getPersonas,
             get: getPersona,
@@ -148,7 +159,8 @@ function PersonaRepository(dbContext) {
             getMulti: getLoginToken,
             find: searchPersonaTelefono,
             intercept: findPersona,
-            delete: deletePersona
+            delete: deletePersona,
+            usernameExists: isUsernameAlreadyExists
         }
 }
 module.exports = PersonaRepository;
