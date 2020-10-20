@@ -14,13 +14,15 @@
             <label id="labels" class="mt-3 mb-0"> Apellidos </label>
             <b-form-input id="surnamesText" type="text" :state="surnamesError" placeholder="(Ej.) García Lorca"> </b-form-input>
             <label id="labels" class="mt-3 mb-0"> DNI </label>
-            <b-form-input id="dniText" type="text" :state="dniError" placeholder="(Ej.) 12345678L"> </b-form-input>
+            <b-form-input @input="dniError = undefined;showDniTextError = false;" id="dniText" type="text" :state="dniError" placeholder="(Ej.) 12345678L" > </b-form-input>
+            <b-tooltip :show="showDniTextError" target="dniText" id="messageErrorDni" :title="dniTextError" triggers="manual" variant="danger" placement="right" />
             <label id="labels" class="mt-3 mb-0"> Teléfono </label>
             <b-form-input id="telephoneText" type="number" :state="telephoneError" placeholder="(Ej.) 123456789"> </b-form-input>
             <label id="labels" class="mt-3 mb-0"> Correo electrónico </label>
             <b-form-input id="emailText" type="text" :state="emailError" placeholder="(Ej.) federicoGL@gmail.com"> </b-form-input>
             <label id="labels" class="mt-3 mb-0"> Nombre de Usuario </label>
             <b-form-input id="usernameText" type="text" :state="usernameError" placeholder="(Ej.) fedgalo"> </b-form-input>
+            <b-tooltip :show="showUsernameTextError" target="usernameText" id="messageErrorUsername" :title="usernameTextError" triggers="manual" variant="danger" placement="right"/>
             <label id="labels" class="mt-3 mb-0"> Contraseña </label>
             <b-form-input id="passwordText" type="password" :state="passwordError"> </b-form-input>
 
@@ -33,12 +35,17 @@
 </template>
 
 <script>
+const axios = require("axios");
 /* eslint-disable */
 export default {
     name: "RegisterCarrier1",
     
     data() {
         return {
+            showDniTextError: false,
+            dniTextError: "El DNI introducido ya está registrado en otra cuenta",
+            showUsernameTextError: false,
+            usernameTextError: "El nombre de usuario introducido ya está registrado en otra cuenta",
             nameError: undefined,
             surnamesError: undefined,
             usernameError: undefined,
@@ -49,7 +56,7 @@ export default {
         };
     },
     methods: {
-        next () {
+        async next () {
             // Campo para saber si hay error
             var error = false
 
@@ -74,10 +81,41 @@ export default {
             if (nameText.value == "") { this.nameError = false; error = true}
             if (surnamesText.value == "") { this.surnamesError = false; error = true}
             if (usernameText.value == "") { this.usernameError = false; error = true}
+                else {
+                await axios
+                .get("http://localhost:3300/api/personas/userExists/", {
+                    params: { Usuario: usernameText.value.trim() },
+                })
+                .then(
+                    (response) => {
+                    if (response.data) {
+                        this.showUsernameTextError = true;
+                        this.usernameError = false;
+                        error = true;
+                    }
+                    },
+                    (error) => {}
+                );
+                }
             if (passwordText.value == "") { this.passwordError = false; error = true}
             if (dniText.value == "" || dniText.value.length != 9
                 || isNaN(dniText.value.substring(0,8))
-                || !isNaN(dniText.value.substring(8,9))) { this.dniError = false; error = true}
+                || !isNaN(dniText.value.substring(8,9))) {
+                    this.dniError = false; error = true
+                }else{
+                await axios
+                        .get("http://localhost:3300/api/personas/" + dniText.value.trim())
+                        .then(
+                            (response) => {
+                            if (response.status == 200) {
+                                this.showDniTextError = true;
+                                this.dniError = false;
+                                error = true;
+                            }
+                            },
+                            (error) => {}
+                        );
+                }
             if (telephoneText.value == "" || telephoneText.value.length != 9) { this.telephoneError = false; error = true}
             if (emailText.value == ""
                 || !emailText.value.includes('@')
