@@ -26,7 +26,9 @@
             <router-link to="/registerCarrier1">
                 <button id="buttons" class="btn btn-primary mb-2">Atrás</button>
             </router-link>
+            <router-link to="/Login">
             <button id="buttons" @click="createCarrier" class="btn btn-primary mb-2">Crear</button>
+            </router-link>
         </div>
     </div>
 </template>
@@ -121,6 +123,7 @@ export default {
 
             //Ir al menú de transportista (todavía no implementado)
             //if (!error) this.$router.push('/carrierMenu');
+
         }
     }
 

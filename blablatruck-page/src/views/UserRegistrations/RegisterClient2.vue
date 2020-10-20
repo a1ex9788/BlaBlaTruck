@@ -15,7 +15,10 @@
         <router-link to="/registerClient1">
             <button id="buttons" class="btn btn-primary mb-2">Atrás</button>
         </router-link>
+        <router-link to="/Login">
         <button id="buttons" @click="createClient" class="btn btn-primary mb-2">Crear</button>
+        </router-link>
+        
     </div>
 </template>
 
