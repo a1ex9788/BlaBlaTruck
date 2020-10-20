@@ -10,16 +10,15 @@
         <button id="buttonLogin" @click="login" type="button" class="btn btn-primary mt-2 mb-2 btn-block">Iniciar sesión</button>
         <!--<a id="links">¿Ha olvidado su contraseña?</a>-->
         <div id="linksBottom" class="fixed-bottom mb-3">
-            <a id="links">¿Quiere registrase como transportista?</a>            
+            <router-link id="links" to="/registerCarrier1">¿Quiere registrase como transportista?</router-link>
             <br>
-            <router-link to="/registerClient1">
-                <a id="links">¿Quiere registrase como cliente para crear encargos?</a>
-            </router-link>
+            <router-link id="links" to="/registerClient1">¿Quiere registrase como cliente para crear encargos?</router-link>
         </div>
     </div>
 </template>
 
 <script>
+const axios = require('axios');
 /* eslint-disable */
 export default {
     name: "Login",
@@ -31,22 +30,43 @@ export default {
         };
     },
     methods: {
-        login () {
+        async login () {
             // Campo para saber si hay error
             var errorLogin = false
             //Recoger los datos de los campos
             var usernameText = document.getElementById("usernameText")
             var passwordText = document.getElementById("passwordText")
+            
             //Comprobación de campos con api
-            if (usernameText.value == "") { this.isUsernameEmpty = false; errorLogin = true}
-            if (passwordText.value == "") { this.isPasswordEmpty = false; errorLogin = true}
+            if (usernameText.value ==  "" || usernameText.value ==  undefined)  { this.isUsernameEmpty = false; errorLogin = true}
+            if (passwordText.value == "" || passwordText.value == undefined) { this.isPasswordEmpty = false; errorLogin = true}
             //Conexion a la api mediante axios
-
+            console.log(usernameText.value);
+            if (!errorLogin) {
+                console.log("no ha habido error");
+                await axios.get('http://localhost:3300/api/personas/login', {
+                    params: {
+                        Usuario: usernameText.value.trim(),
+                        Contraseña: passwordText.value.trim()
+                    }}, {
+                        withCredentials: true
+                    }
+                ).then((response) => {
+                    console.log(response.data); //si se loguea con exito el usuario
+    
+                    if (response.status == 200) {
+                        let d = new Date();
+                        d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
+                        let expires = "expires=" + d.toUTCString();
+                        document.cookie =
+                            "loginToken=" + response.data + ";" + expires + ";path=/";
+                    }
+                }, (error) => {
+                    console.log(error); // si hay un error con el logueo o conexion
+                });
+            }
             //Carga la interfaz del tipo de usuario si el login es satisfactorio 
             //(de momento avisar si se ha hecho login bien)
-            console.log(usernameText.value)
-            if (!errorLogin) alert("Logged!")
-            else alert("Not Logged!") 
         }
     }
 

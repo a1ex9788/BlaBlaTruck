@@ -54,7 +54,6 @@ function queryGetExecute(qry, params, isMultiSet, callback) {
     console.log('hi')
     request = new Request(qry, function (err, rowCount) {
         utility.sendDbResponse(err, rowCount, dataset, callback);
-
     });
 
     params.forEach(param => {

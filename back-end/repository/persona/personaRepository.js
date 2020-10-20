@@ -80,13 +80,14 @@ function PersonaRepository(dbContext) {
         parameters.push({ name: 'Usuario', type: TYPES.VarChar, val: req.body.Usuario });
         parameters.push({ name: 'Contraseña', type: TYPES.VarChar, val: req.body.Contraseña });
         parameters.push({ name: 'IBAN', type: TYPES.VarChar, val: req.body.IBAN });
-        parameters.push({ name: 'NumeroCuentaBancaria', type: TYPES.Int, val: req.body.NumeroCuentaBancaria});
+        parameters.push({ name: 'NumeroCuentaBancaria', type: TYPES.VarChar, val: req.body.NumeroCuentaBancaria});
        // parameters.push({ name: 'Empresa', type: TYPES.VarChar, val: req.body.Empresa });
         // Object.entries(employee).forEach((property)=>{
         //     parameters.push({name:'@'+property[0]})
         // });
         console.log("postPersona");
         dbContext.post("InsertOrUpdatePersona", parameters, function (error, data) {
+            console.log("response works!")
             return res.json(response(data, error));
         });
     }
@@ -116,8 +117,26 @@ function PersonaRepository(dbContext) {
         console.log("searchPersonaTelefono")
         var query = "select * from Persona where telefono = @telefono"
 
-        dbContext.get(query, parameters, function (error, data){
+        dbContext.getQuery(query, parameters, true, function (error, data){
             return res.json(response(data,error));
+        });
+    }
+
+    function getLoginToken (req, res) {
+        var parameters = [];
+        var dayToSeconds = 24*60*60;
+        
+
+        parameters.push({ name: 'Usuario', type: TYPES.VarChar, val: req.query.Usuario });
+        parameters.push({ name: 'Contraseña', type: TYPES.VarChar, val: req.query.Contraseña });
+        console.log(req.query.Usuario);
+        console.log(req.query.Contraseña);
+
+        var query = 'select * from Persona where Usuario LIKE @Usuario and Contraseña LIKE @Contraseña';
+
+        dbContext.getQuery(query, parameters, true, function (error, data){
+            //res.cookie('loginToken', response(data,error), {expire: dayToSeconds/*, httpOnly: true*/})
+            return res.send(response(data, error));
         });
     }
 
@@ -126,7 +145,7 @@ function PersonaRepository(dbContext) {
             get: getPersona,
             put: putPersona,
             post: postPersona,
-         //   getMulti: getClienteEmpresa,
+            getMulti: getLoginToken,
             find: searchPersonaTelefono,
             intercept: findPersona,
             delete: deletePersona

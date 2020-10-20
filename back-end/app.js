@@ -1,7 +1,9 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var cors = require('cors');
 const dbContext = require('./dataBase/dbContext');
 const { TYPES } = require('tedious');
+var cookieParser = require('cookie-parser');
 
 var app = express();
 
@@ -13,6 +15,8 @@ app.listen(port, () => {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cors());
+app.use(cookieParser());
 
 var router = require('./routes')();
 
