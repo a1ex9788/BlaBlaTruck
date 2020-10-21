@@ -126,18 +126,36 @@ function PersonaRepository(dbContext) {
         var parameters = [];
         var dayToSeconds = 24*60*60;
         
-
         parameters.push({ name: 'Usuario', type: TYPES.VarChar, val: req.query.Usuario });
         parameters.push({ name: 'Contraseña', type: TYPES.VarChar, val: req.query.Contraseña });
         console.log(req.query.Usuario);
         console.log(req.query.Contraseña);
 
-        var query = 'select * from Persona where Usuario LIKE @Usuario and Contraseña LIKE @Contraseña';
+        var query = 'select DNI from Persona where Usuario LIKE @Usuario and Contraseña LIKE @Contraseña';
 
         dbContext.getQuery(query, parameters, true, function (error, data){
-            //res.cookie('loginToken', response(data,error), {expire: dayToSeconds/*, httpOnly: true*/})
-            return res.send(response(data, error));
-        });
+            var parameters2 = [];
+            //var aux = res.json(response(data,error));
+            if(data != false) {
+                var DNI = data[0][0].DNI;
+                parameters2.push({ name: 'DNI', type: TYPES.VarChar, val: DNI });
+                query = 'select * from Cliente where DNI = @DNI'
+                dbContext.getQuery(query, parameters2, true, function (error, data){
+                    //var aux = res.json(response(data,error));
+                    if(data != false) {
+                        var dni = data[0][0];
+                        console.log(dni);
+                        res.send('Cliente');
+                    }
+                    else {
+                        res.send('Transportista')
+                    }
+                });
+            }
+            else {
+                res.send('NotLoged');
+            }
+            });
     }
 
     function isUsernameAlreadyExists(req, res) {

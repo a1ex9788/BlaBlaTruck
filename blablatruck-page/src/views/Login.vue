@@ -58,6 +58,7 @@ export default {
                         let d = new Date();
                         d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
                         let expires = "expires=" + d.toUTCString();
+                        console.log(response.data[0][0].DNI);
                         document.cookie =
                             "loginToken=" + response.data + ";" + expires + ";path=/";
                     }
