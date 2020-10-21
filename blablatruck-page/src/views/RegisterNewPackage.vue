@@ -36,8 +36,8 @@
                     </template>
                     <b-form-input 
                     id="input-Weight" 
-                    v-model="$v.form.weight.$model"
-                    :state="validateState('weight')"
+                    v-model="$v.form.weight.value.$model"
+                    :state="validateStateWithPrize('weight')"
                     max="32"
                      min="0" 
                      value="1"
@@ -47,7 +47,7 @@
             </b-form-group>
 
             <b-form-group id="input-group-Nature" label="Naturaleza:" label-for="input-Nature">
-                <b-form-select id="input-Nature"  v-model="$v.form.nature.$model" :options="optionsNature" :state="validateState('nature')"></b-form-select>
+                <b-form-select id="input-Nature"  v-model="$v.form.nature.value.$model" :options="optionsNature" :state="validateStateWithPrize('nature')"></b-form-select>
             </b-form-group>
 
             <label>Tamaño</label>
@@ -59,8 +59,8 @@
                         <b-input-group-text><strong class="text">m</strong></b-input-group-text>
                     </template>
                     <b-form-input 
-                    v-model= "$v.form.size.ancho.$model"
-                    :state= "validateSize('ancho')"
+                    v-model= "$v.form.size.value.ancho.$model"
+                    :state= "validateSizeWithPrice('ancho')"
                     placeholder="Ancho"></b-form-input>
                 </b-input-group>
 
@@ -71,8 +71,8 @@
                         <b-input-group-text><strong class="text">m</strong></b-input-group-text>
                     </template>
                     <b-form-input 
-                     v-model= "$v.form.size.alto.$model" 
-                     :state= "validateSize('alto')"
+                     v-model= "$v.form.size.value.alto.$model" 
+                     :state= "validateSizeWithPrice('alto')"
                      placeholder="Alto"></b-form-input>
                 </b-input-group>
 
@@ -83,8 +83,8 @@
                         <b-input-group-text><strong class="text">m</strong></b-input-group-text>
                     </template>
                     <b-form-input 
-                    v-model= "$v.form.size.largo.$model" 
-                    :state= "validateSize('largo')"
+                    v-model= "$v.form.size.value.largo.$model" 
+                    :state= "validateSizeWithPrice('largo')"
                     placeholder="Largo">
                     </b-form-input>
                 </b-input-group>
@@ -98,7 +98,8 @@
     </div>
 
     <div id="showPriceCalculated" v-if="!show">
-        <h2> [Precio calculado]</h2>
+        <h2> Precio calculado </h2>
+        <h3> {{precioTotal }} euros </h3>
         <b-button class="mt-2 mx-4" type="submit" variant="primary">Crear encargo</b-button>
         <b-button @click="goBack" class="mt-2" type="button">Volver</b-button>
     </div>
@@ -116,27 +117,47 @@ export default {
   data() {
     return {
       form: {
-        name: null,
         origin: "",
         destination: "",
-        weight: "0",
-        nature: null,
+
+        weight: {
+          value: "",
+          prize: "3"
+        },
+  
+         nature: {
+          value: null,
+          prize: "2" //tiene que ser dinámico acorde a la opción seleccionada
+        },
+
         size: {
+          value:{
           ancho: "",
           largo: "",
           alto: "",
+          },
+          prize: "1"
         },
       },
 
       optionsNature: [
         { value: null, text: "Selecciona una opción" },
-        { value: "Frágil", text: "Frágil" },
-        { value: "Congelado", text: "Congelado" },
-        { value: "Normal", text: "Normal" },
+        { value: "Frágil", text: "Frágil", prize:"3"},
+        { value: "Congelado", text: "Congelado", prize:"2"},
+        { value: "Normal", text: "Normal", prize:"1" }
       ],
 
       show: true,
     };
+  },
+
+  computed: {
+    precioTotal:function(){
+    return (this.form.weight.prize)*(this.form.weight.value)
+          + (this.form.nature.prize)
+          + ((this.form.size.value.ancho)*(this.form.size.value.largo)*(this.form.size.value.alto))*(this.form.size.prize);
+    }
+
   },
 
   validations: {
@@ -150,33 +171,46 @@ export default {
       },
 
       nature: {
+        value:{
         required,
+        }
       },
 
       weight: {
+        value: {
           required,
           minValue: minValue(0),
           maxValue: maxValue(32)
+        }
       },
 
       size: {
+        value:{
         ancho: { required, integer},
         largo: { required, integer},
         alto: { required, integer},
+        },
       },
     },
   },
 
   methods: {
+
+    validateStateWithPrize(prop) {
+      const { $dirty, $error } = this.$v.form[prop].value;
+      return $dirty ? !$error : null;
+    },
+
+     validateSizeWithPrice(prop) {
+      const { $dirty, $error } = this.$v.form.size.value[prop]
+      return $dirty ? !$error : null;
+    },
+
     validateState(prop) {
       const { $dirty, $error } = this.$v.form[prop];
       return $dirty ? !$error : null;
     },
 
-    validateSize(prop) {
-      const { $dirty, $error } = this.$v.form.size[prop];
-      return $dirty ? !$error : null;
-    },
 
     onSubmit(evt) {
       evt.preventDefault();
