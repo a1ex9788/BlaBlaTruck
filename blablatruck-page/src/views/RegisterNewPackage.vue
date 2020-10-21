@@ -47,7 +47,7 @@
             </b-form-group>
 
             <b-form-group id="input-group-Nature" label="Naturaleza:" label-for="input-Nature">
-                <b-form-select id="input-Nature"  v-model="$v.form.nature.value.$model" :options="optionsNature" :state="validateStateWithPrize('nature')"></b-form-select>
+                <b-form-select @input="prizeNature()" id="input-Nature"  v-model="$v.form.nature.value.$model" :options="optionsNature" :state="validateStateWithPrize('nature')"></b-form-select>
             </b-form-group>
 
             <label>Tamaño</label>
@@ -127,7 +127,7 @@ export default {
   
          nature: {
           value: null,
-          prize: "2" //tiene que ser dinámico acorde a la opción seleccionada
+          prize: "" //tiene que ser dinámico acorde a la opción seleccionada
         },
 
         size: {
@@ -142,9 +142,9 @@ export default {
 
       optionsNature: [
         { value: null, text: "Selecciona una opción" },
-        { value: "Frágil", text: "Frágil", prize:"3"},
-        { value: "Congelado", text: "Congelado", prize:"2"},
-        { value: "Normal", text: "Normal", prize:"1" }
+        { value: "Frágil", text: "Frágil"},
+        { value: "Congelado", text: "Congelado"},
+        { value: "Normal", text: "Normal"}
       ],
 
       show: true,
@@ -153,9 +153,9 @@ export default {
 
   computed: {
     precioTotal:function(){
-    return (this.form.weight.prize)*(this.form.weight.value)
-          + (this.form.nature.prize)
-          + ((this.form.size.value.ancho)*(this.form.size.value.largo)*(this.form.size.value.alto))*(this.form.size.prize);
+    return ((this.form.weight.prize)*(this.form.weight.value)
+           //+ (this.form.nature.prize)*(this.form.nature.value)
+          + (this.form.size.prize)*((this.form.size.value.ancho)*(this.form.size.value.largo)*(this.form.size.value.alto)))
     }
 
   },
@@ -196,6 +196,13 @@ export default {
 
   methods: {
 
+    prizeNature(){
+      if(this.form.nature.value == "Frágil") {this.form.nature.prize= "3"}
+      if(this.form.nature.value == "Congelado") {this.form.nature.prize= "2"}
+      if(this.form.nature.value == "Normal") {this.form.nature.prize= "1"}
+      if(this.form.nature.value == null) {this.form.nature.prize= "";}
+    },
+    
     validateStateWithPrize(prop) {
       const { $dirty, $error } = this.$v.form[prop].value;
       return $dirty ? !$error : null;
