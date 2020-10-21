@@ -154,8 +154,8 @@ export default {
   computed: {
     precioTotal:function(){
     return ((this.form.weight.prize)*(this.form.weight.value)
-           //+ (this.form.nature.prize)*(this.form.nature.value)
-          + (this.form.size.prize)*((this.form.size.value.ancho)*(this.form.size.value.largo)*(this.form.size.value.alto)))
+             * (this.form.nature.prize)
+             + (this.form.size.prize)*((this.form.size.value.ancho)*(this.form.size.value.largo)*(this.form.size.value.alto)))
     }
 
   },
