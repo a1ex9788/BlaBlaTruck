@@ -26,14 +26,13 @@
             <router-link to="/registerCarrier1">
                 <button id="buttons" class="btn btn-primary mb-2">Atrás</button>
             </router-link>
-            <router-link to="/Login">
             <button id="buttons" @click="createCarrier" class="btn btn-primary mb-2">Crear</button>
-            </router-link>
         </div>
     </div>
 </template>
 
 <script>
+const axios = require('axios');
 /* eslint-disable */
 export default {
     name: "RegisterCarrier2",
@@ -84,7 +83,6 @@ export default {
             this.capacityError = true
             this.ibanError = true
             this.bankAccountError = true
-
             if (natureText.value == "") { this.natureError = false; error = true}
             if (capacityText.value == "") { this.capacityError = false; error = true}
             if (ibanText.value == "" || ibanText.value.length != 4
@@ -112,13 +110,14 @@ export default {
                 // luego creamos el cliente
                 await axios.post('http://localhost:3300/api/transportisa', {
                     DNI: this.dni,
-                    Naturaleza: natureText,value,
+                    Naturaleza: natureText.value,
                     Capacidad: capacityText.value,
                 }).then((response) => {
-                    console.log(response); //si se crea con exito en la DB el usuario
+                    //console.log(response); //si se crea con exito en la DB el usuario
                 }, (error) => {
-                    console.log(error); // si hay un error con la creacion o conexion
+                    //console.log(error); // si hay un error con la creacion o conexion
                 });
+                this.$router.go(-2)
             }
 
             //Ir al menú de transportista (todavía no implementado)
