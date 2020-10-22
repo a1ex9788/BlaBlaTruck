@@ -5,9 +5,10 @@
         <h2 class="mt-3">Inicio de sesión</h2>
         <h5 class="mt-2">La nueva app de transportes eficientes!</h5>
 
-        <b-input class="mt-3" @input="isUsernameEmpty = undefined" :state="isUsernameEmpty" type="text" placeholder="Nombre de usuario" id="usernameText" trim/>
-        <b-input class="mt-2" @input="isPasswordEmpty = undefined" :state="isPasswordEmpty" type="password" placeholder="Contraseña" id="passwordText" trim/>
+        <b-input class="mt-3" @input="isUsernameEmpty = undefined; isLoginFailed= false" :state="isUsernameEmpty" type="text" placeholder="Nombre de usuario" id="usernameText" trim/>
+        <b-input class="mt-2" @input="isPasswordEmpty = undefined; isLoginFailed= false" :state="isPasswordEmpty" type="password" placeholder="Contraseña" id="passwordText" trim/>
         <button id="buttonLogin" @click="login" type="button" class="btn btn-primary mt-2 mb-2 btn-block">Iniciar sesión</button>
+        <b-tooltip :show="isLoginFailed" placement="bottom" target="buttonLogin" title="El usuario y/o la contraseña no son correctos" triggers="manual" variant="danger"/>
         <!--<a id="links">¿Ha olvidado su contraseña?</a>-->
         <div id="linksBottom" class="fixed-bottom mb-3">
             <router-link id="links" to="/registerCarrier1">¿Quiere registrase como transportista?</router-link>
@@ -26,7 +27,8 @@ export default {
     data() {
         return {
             isUsernameEmpty: undefined,
-            isPasswordEmpty: undefined
+            isPasswordEmpty: undefined,
+            isLoginFailed: false,
         };
     },
     methods: {
@@ -41,7 +43,6 @@ export default {
             if (usernameText.value ==  "" || usernameText.value ==  undefined)  { this.isUsernameEmpty = false; errorLogin = true}
             if (passwordText.value == "" || passwordText.value == undefined) { this.isPasswordEmpty = false; errorLogin = true}
             //Conexion a la api mediante axios
-            console.log(usernameText.value);
             if (!errorLogin) {
                 console.log("no ha habido error");
                 await axios.get('http://localhost:3300/api/personas/login', {
@@ -52,7 +53,7 @@ export default {
                         withCredentials: true
                     }
                 ).then((response) => {
-                    console.log(response.data); //si se loguea con exito el usuario
+                    console.log(response); //si se loguea con exito el usuario
     
                     if (response.status == 200) {
                         let d = new Date();
@@ -65,8 +66,12 @@ export default {
                     console.log(error); // si hay un error con el logueo o conexion
                 });
             }
-            //Carga la interfaz del tipo de usuario si el login es satisfactorio 
-            //(de momento avisar si se ha hecho login bien)
+            //Comprueba si ha fallado el login y muestra un mensaje de error
+            if(this.$cookies.get("loginToken") === 'false') {
+                this.isLoginFailed = true
+            }else {
+                //Carga la interfaz del tipo de usuario si el login es satisfactorio 
+            }
         }
     }
 
