@@ -1,8 +1,11 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
+import VueCookies from 'vue-cookies';
+//import { FormRadioPlugin } from "bootstrap-vue";
 
 Vue.use(VueRouter);
+Vue.use(VueCookies);
 
 const routes = [
   {
@@ -16,8 +19,9 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () =>
+    component: () => {
       import(/* webpackChunkName: "about" */ "../views/About.vue")
+    }
   },
   {
     path: "/login",
@@ -54,6 +58,12 @@ const routes = [
     name: "RegisterNewPackage",
     component: () =>
       import("../views/RegisterNewPackage.vue")
+  },
+  {
+    path: "/accessForbidden",
+    name: "AccessForbidden",
+    component: () => 
+      import("../views/AccessForbidden.vue")
   }
 ];
 
@@ -62,5 +72,31 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
+
+router.beforeEach((to, _, next) => {
+  var cookieValue = Vue.$cookies.get('loginToken')
+  console.log(checkPagesWithoutPermissions(to.name))
+  if(!checkPagesWithoutPermissions(to.name) && (cookieValue == null || cookieValue == 'false'))
+    next('/accessForbidden')
+  else
+    next()
+})
+
+function checkPagesWithoutPermissions(name) {
+  var pageNames = [
+    'Home',
+    'Login',
+    'RegisterCarrier1',
+    'RegisterCarrier2',
+    'RegisterClient1',
+    'RegisterClient2',
+    'AccessForbidden'
+  ]
+  var res = false;
+  pageNames.forEach(pageName => {
+    res = res || pageName === name
+  });
+  return res
+}
 
 export default router;
