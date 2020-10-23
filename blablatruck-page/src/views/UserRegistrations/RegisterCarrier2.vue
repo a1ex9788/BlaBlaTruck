@@ -10,7 +10,7 @@
             src="../../assets/carrierLogo.png"
           ></b-img>
         </div>
-        <div class="col-md-10">
+        <div class="col-md-10" id="titleDiv">
           <h2 id="title" class="mt-4">Registro transportista</h2>
         </div>
       </div>
@@ -194,6 +194,14 @@ export default {
 #groupTitle {
   max-width: 500px;
   text-align: center;
+}
+#titleDiv {
+  padding-right: 12%;
+}
+@media (max-width: 480px) {
+  #titleDiv {
+    padding-right: 0%;
+  }
 }
 #groupForm2 {
   max-width: 500px;

@@ -10,7 +10,7 @@
             src="../../assets/carrierLogo.png"
           ></b-img>
         </div>
-        <div class="col-md-10">
+        <div class="col-md-10" id="titleDiv">
           <h2 id="title" class="mt-4">Registro transportista</h2>
         </div>
       </div>
@@ -35,12 +35,8 @@
       </b-form-input>
       <label id="labels" class="mt-3 mb-0"> DNI </label>
       <b-form-input
-        @input="
-          dniError = undefined;
-        "
-        @click="
-          showDniTextError = false;
-        "
+        @input="dniError = undefined"
+        @click="showDniTextError = false"
         id="dniText"
         type="text"
         :state="dniError"
@@ -75,12 +71,8 @@
       <label id="labelUsername" class="mt-3 mb-0"> Nombre de Usuario </label>
       <b-form-input
         id="usernameText"
-        @input="
-          usernameError = undefined
-        "
-        @click="
-          showUsernameTextError = false
-        "
+        @input="usernameError = undefined"
+        @click="showUsernameTextError = false"
         type="text"
         :state="usernameError"
         placeholder="(Ej.) fedgalo"
@@ -253,6 +245,14 @@ export default {
 #groupTitle {
   max-width: 500px;
   text-align: center;
+}
+#titleDiv {
+  padding-right: 12%;
+}
+@media (max-width: 480px) {
+  #titleDiv {
+    padding-right: 0%;
+  }
 }
 #groupForm2 {
   max-width: 500px;
