@@ -19,20 +19,44 @@
     <div id="groupForm2" class="container-fluid">
       <label id="labels" class="mt-3 mb-0"> Nombre </label>
       <b-form-input
+        @input="nameError = undefined"
+        @click="showNameTextError = false"
         id="nameText"
         type="text"
         :state="nameError"
         placeholder="(Ej.) Federico"
       >
       </b-form-input>
+      <b-tooltip
+        :show="showNameTextError"
+        target="nameText"
+        id="messageErrorName"
+        :title="nameTextError"
+        triggers="manual"
+        variant="danger"
+        placement="top"
+      />
+
       <label id="labels" class="mt-3 mb-0"> Apellidos </label>
       <b-form-input
+        @input="surnamesError = undefined"
+        @click="showSurnamesTextError = false"
         id="surnamesText"
         type="text"
         :state="surnamesError"
         placeholder="(Ej.) García Lorca"
       >
       </b-form-input>
+      <b-tooltip
+        :show="showSurnamesTextError"
+        target="surnamesText"
+        id="messageErrorSurnames"
+        :title="surnamesTextError"
+        triggers="manual"
+        variant="danger"
+        placement="top"
+      />
+
       <label id="labels" class="mt-3 mb-0"> DNI </label>
       <b-form-input
         @input="dniError = undefined"
@@ -101,6 +125,15 @@
 </template>
 
 <script>
+
+function containsANumber(y) {
+  let x = 0;
+  while (!y.includes(x) && x<10) {
+  x++;
+  }
+  return y.includes(x);
+}
+
 const axios = require("axios");
 /* eslint-disable */
 export default {
@@ -111,8 +144,11 @@ export default {
       showDniTextError: false,
       dniTextError: "El DNI introducido ya está registrado en otra cuenta",
       showUsernameTextError: false,
-      usernameTextError:
-        "El nombre de usuario introducido ya está registrado en otra cuenta",
+      usernameTextError: "El nombre de usuario introducido ya está registrado en otra cuenta",
+      showNameTextError: false,
+      nameTextError: "El nombre no puede contener números",
+      showSurnamesTextError: false,
+      surnamesTextError: "Los apellidos no pueden contener números",
       nameError: undefined,
       surnamesError: undefined,
       usernameError: undefined,
@@ -122,7 +158,9 @@ export default {
       emailError: undefined,
     };
   },
+    
   methods: {
+    
     async next() {
       // Campo para saber si hay error
       var error = false;
@@ -145,11 +183,14 @@ export default {
       this.telephoneError = true;
       this.emailError = true;
 
-      if (nameText.value.trim() == "") {
+      
+      if (nameText.value.trim() == "" || containsANumber(nameText.value.trim())) {
+        this.showNameTextError = true;
         this.nameError = false;
         error = true;
       }
-      if (surnamesText.value.trim() == "") {
+      if (surnamesText.value.trim() == "" || containsANumber(surnamesText.value.trim())) {
+        this.showSurnamesTextError = true;
         this.surnamesError = false;
         error = true;
       }
@@ -216,6 +257,8 @@ export default {
             (error) => {}
           );
       }
+
+      
 
       //Pasar a RegisterCarrier2
       if (!error)

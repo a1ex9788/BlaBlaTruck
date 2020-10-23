@@ -27,12 +27,24 @@
       </b-form-select>
       <label id="labels" class="mt-3 mb-0"> Capacidad </label>
       <b-form-input
+        @input="capacityError = undefined"
         id="capacityText"
+        @click="showCapacityTextError = false"
         type="number"
         :state="capacityError"
         placeholder="(Ej.) 350"
       >
       </b-form-input>
+
+      <b-tooltip
+        :show="showCapacityTextError"
+        target="capacityText"
+        id="messageErrorCapacity"
+        :title="capacityTextError"
+        triggers="manual"
+        variant="danger"
+        placement="top"
+      />
 
       <br /><br />
       <div id="groupTitle" class="container-fluid mt-3">
@@ -72,6 +84,8 @@ export default {
 
   data() {
     return {
+      showCapacityTextError: false,
+      capacityTextError: "La capacidad solo acepta numeros positivos.",
       natureError: undefined,
       capacityError: undefined,
       ibanError: undefined,
@@ -120,7 +134,8 @@ export default {
         this.natureError = false;
         error = true;
       }
-      if (capacityText.value == "") {
+      if (capacityText.value == "" || capacityText.value.trim().includes("-") || capacityText.value.trim().includes("e") ) {
+        this.showCapacityTextError = true;
         this.capacityError = false;
         error = true;
       }
