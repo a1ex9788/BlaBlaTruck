@@ -76,7 +76,7 @@ const router = new VueRouter({
 router.beforeEach((to, _, next) => {
   var cookieValue = Vue.$cookies.get('loginToken')
   console.log(checkPagesWithoutPermissions(to.name))
-  if(!checkPagesWithoutPermissions(to.name) && (cookieValue == null || cookieValue == 'false'))
+  if(!checkPagesWithoutPermissions(to.name) && (cookieValue == null || cookieValue === 'NotLoged'))
     next('/accessForbidden')
   else
     next()

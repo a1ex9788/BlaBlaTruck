@@ -68,7 +68,7 @@ export default {
                 });
             }
             //Comprueba si ha fallado el login y muestra un mensaje de error
-            if(this.$cookies.get("loginToken") === 'false') {
+            if(this.$cookies.get("loginToken") === 'NotLoged') {
                 this.isLoginFailed = true
             }else {
                 //Carga la interfaz del tipo de usuario si el login es satisfactorio 
