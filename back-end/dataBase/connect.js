@@ -1,6 +1,6 @@
 var Connection = require('tedious').Connection;
 var config = {
-    server: 'wap-server.database.windows.net',
+    server: 'wpa-server.database.windows.net',
     authentication: {
         type: 'default',
         options: {
@@ -10,7 +10,7 @@ var config = {
     },
     options: {
         encrypt: true,
-        database: 'wap-db'
+        database: 'blablatruckdb'
     }
 }
 var connection = new Connection(config);
