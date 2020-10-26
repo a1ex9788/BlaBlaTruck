@@ -175,11 +175,12 @@ export default {
               console.log(error); // si hay un error con la creacion o conexion
             }
           );
+          console.log("test");
         // luego creamos el cliente
         await axios
           .post("http://localhost:3300/api/transportista", {
             DNI: this.dni,
-            Naturaleza: natureText.value,
+            NaturalezaCamion: natureText.value,
             Capacidad: capacityText.value,
           })
           .then(

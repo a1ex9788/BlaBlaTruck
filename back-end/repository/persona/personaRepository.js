@@ -63,7 +63,7 @@ function PersonaRepository(dbContext) {
             }
         });
 
-        dbContext.post("InsertPersona", parameters, function (error, data) {
+        dbContext.post("InsertOrUpdatePersona", parameters, function (error, data) {
             return res.json(response(data, error));
         });
     }

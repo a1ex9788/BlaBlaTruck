@@ -63,7 +63,7 @@ function TransportistaRepository(dbContext) {
             }
         });
 
-        dbContext.post("InsertTransportista", parameters, function (error, data) {
+        dbContext.post("InsertOrUpdateTransportista", parameters, function (error, data) {
             return res.json(response(data, error));
         });
     }
@@ -74,12 +74,12 @@ function TransportistaRepository(dbContext) {
 
         parameters.push({ name: 'DNI', type: TYPES.Char, val: req.body.DNI });
         parameters.push({ name: 'NaturalezaCamion', type: TYPES.VarChar, val: req.body.NaturalezaCamion});
-        parameters.push({ name: 'Capacidad', type: TYPES.Numeric, val: req.body.Capacidad });
+        parameters.push({ name: 'Capacidad', type: TYPES.Decimal, val: req.body.Capacidad });
 
         // Object.entries(employee).forEach((property)=>{
         //     parameters.push({name:'@'+property[0]})
         // });
-        console.log("postPersona");
+        console.log("postTransportista");
         dbContext.post("InsertOrUpdateTransportista", parameters, function (error, data) {
             return res.json(response(data, error));
         });
