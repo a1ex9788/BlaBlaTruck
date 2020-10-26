@@ -14,7 +14,7 @@
 CREATE TABLE Transportista (
     DNI char(9),
     NaturalezaCamion varchar(10) NOT NULL,
-    Capacidad numeric(5,2) NOT NULL,
+    Capacidad decimal(5,2) NOT NULL,
     PRIMARY KEY(DNI),
     CONSTRAINT Fk_transportista_persona FOREIGN KEY (DNI)
     REFERENCES Persona(DNI)
