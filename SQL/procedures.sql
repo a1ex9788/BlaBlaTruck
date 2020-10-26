@@ -72,3 +72,7 @@ END
 ELSE
 BEGIN UPDATE Transportista SET NaturalezaCamion = @NaturalezaCamion, Capacidad = @Capacidad WHERE DNI = @DNI
 END
+
+GO;
+
+Alter table Persona add unique (usuario)
