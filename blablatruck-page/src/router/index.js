@@ -64,6 +64,12 @@ const routes = [
     name: "AccessForbidden",
     component: () => 
       import("../views/AccessForbidden.vue")
+  },
+  {
+    path: "/navegator",
+    name: "Navegator",
+    component: () =>
+      import("../views/Navegator.vue")
   }
 ];
 
@@ -90,7 +96,8 @@ function checkPagesWithoutPermissions(name) {
     'RegisterCarrier2',
     'RegisterClient1',
     'RegisterClient2',
-    'AccessForbidden'
+    'AccessForbidden',
+    'Navegator'
   ]
   var res = false;
   pageNames.forEach(pageName => {
