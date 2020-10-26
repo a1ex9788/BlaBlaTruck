@@ -177,7 +177,7 @@ export default {
           );
         // luego creamos el cliente
         await axios
-          .post("http://localhost:3300/api/transportisa", {
+          .post("http://localhost:3300/api/transportista", {
             DNI: this.dni,
             Naturaleza: natureText.value,
             Capacidad: capacityText.value,
