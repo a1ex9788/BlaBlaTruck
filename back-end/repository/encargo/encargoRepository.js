@@ -123,19 +123,43 @@ function EncargoRepository(dbContext) {
 
     function getEncargosByDNI(req, res)
     {
-        if(req.params.clienteDNI){
-            var parameters=[];
+        var parameters=[];
+        if(req.params.userDNI){
+            //////////////////////
+            var isClient
+            var parameters2=[];
+            parameters2.push({name: 'userDni', type: TYPES.VarChar, val: req.params.userDNI});
 
-            parameters.push({name: 'clienteDni', type: TYPES.VarChar, val: req.params.clienteDNI});
-
-            var query = "select * from Encargo where DNICliente LIKE @clienteDni";
-            dbContext.getQuery(query, parameters, false, function(err, data) {
+            var query = "select * from Cliente where DNI LIKE @userDni";
+            dbContext.getQuery(query, parameters2, false, function(err, data) {
+                console.log(data)
                 if(data) {
-                    return res.json(data)
+                    isClient = true
                 }
-                console.log("error 404");
-                return res.sendStatus(404);
+                else {
+                    isClient = false
+                }
+
+                parameters.push({name: 'userDni', type: TYPES.VarChar, val: req.params.userDNI});
+
+                console.log(isClient)
+                if (isClient) 
+                {atributo = "DNICliente"}
+                else
+                {atributo = "DNITransportista"}
+
+                var query = "select * from Encargo where " + atributo + " LIKE @userDni";
+                console.log(query)
+                dbContext.getQuery(query, parameters, false, function(err, data) {
+                    if(data) {
+                        return res.json(data)
+                    }
+                    console.log("error 404");
+                    return res.sendStatus(404);
+                });
             });
+            //////////////////////
+            
         }else{
             console.log(req.params);
             console.log("esto no funcionaaa");

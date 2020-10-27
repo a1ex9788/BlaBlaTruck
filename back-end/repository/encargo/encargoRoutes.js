@@ -18,6 +18,6 @@ module.exports = function (router) {
         .delete(encargoRepository.delete)
        //.get(encargoRepository.find);  
        
-    router.route('/encargos/:clienteDNI')
+    router.route('/encargos/:userDNI')
       .get(encargoRepository.getEncargosByDNI)
   }
