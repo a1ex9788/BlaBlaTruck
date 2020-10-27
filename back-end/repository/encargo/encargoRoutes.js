@@ -2,22 +2,18 @@ const _encargoRepository = require('./encargoRepository');
 const dbContext = require('../../dataBase/dbContext');
 module.exports = function (router) {
     const encargoRepository = _encargoRepository(dbContext);
-    router.route('/encargos')
-        .get(encargoRepository.getAll)
-        .post(encargoRepository.post);
-    /** Por ejemplo:
-      * router.use('/encargos/naturaleza', encargoRepository.getNaturalezaEncargo);
-      */
-
-    //deberia usarse el dni del cliente??
-    router.use('/encargo/:clienteDNI', encargoRepository.intercept);
-
-    router.route('/encargo/:clienteDNI')
-        .get(encargoRepository.get)
-        .put(encargoRepository.put) 
-        .delete(encargoRepository.delete)
-       //.get(encargoRepository.find);  
-       
-    router.route('/encargos/:clienteDNI')
-      .get(encargoRepository.getEncargosByDNI)
+    router.route('/encargos').get(encargoRepository.getAll)
+  
+    router.use('/encargo/naturalezaEncargosCliente', encargoRepository.getEncargosPorNaturalezaCliente);
+    router.use('/encargo/naturalezaEncargosTransportista', encargoRepository.getEncargosPorNaturalezaTransportista);
+    router.route('/encargo/transportista')
+    .get(encargoRepository.getEncargosPorTransportista)
+    .delete(encargoRepository.deleteEncargoTransportista)
+    .find(encargoRepository.getEncargosPorId);
+    router.route('/encargos/cliente')
+    .get(encargoRepository.getEncargosPorCliente)
+    .delete(encargoRepository.deleteEncargoCliente)
+    .post(encargoRepository.postEncargo).find(encargoRepository.getEncargosPorId);
+   
+           
   }
