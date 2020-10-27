@@ -121,6 +121,27 @@ function EncargoRepository(dbContext) {
 
     //se pueden hacer funciones para encontrar paquetes 
 
+    function getEncargosByDNI(req, res)
+    {
+        if(req.params.clienteDNI){
+            var parameters=[];
+
+            parameters.push({name: 'clienteDni', type: TYPES.VarChar, val: req.params.clienteDNI});
+
+            var query = "select * from Encargo where DNICliente LIKE @clienteDni";
+            dbContext.getQuery(query, parameters, false, function(err, data) {
+                if(data) {
+                    return res.json(data)
+                }
+                console.log("error 404");
+                return res.sendStatus(404);
+            });
+        }else{
+            console.log(req.params);
+            console.log("esto no funcionaaa");
+        }
+    }
+
     return {
         getAll: getEncargos,
         get: getEncargo,
@@ -131,6 +152,7 @@ function EncargoRepository(dbContext) {
         intercept: findEncargo,
         delete: deleteEncargo,
         //usernameExists: isUsernameAlreadyExists
+        getEncargosByDNI: getEncargosByDNI
     }
 }
 module.exports = EncargoRepository;

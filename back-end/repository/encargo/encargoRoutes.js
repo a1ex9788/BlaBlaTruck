@@ -11,10 +11,13 @@ module.exports = function (router) {
 
     //deberia usarse el dni del cliente??
     router.use('/encargo/:clienteDNI', encargoRepository.intercept);
-    router.route('/encargos/:clienteDNI')
+
+    router.route('/encargo/:clienteDNI')
         .get(encargoRepository.get)
         .put(encargoRepository.put) 
         .delete(encargoRepository.delete)
        //.get(encargoRepository.find);  
        
-}
+    router.route('/encargos/:clienteDNI')
+      .get(encargoRepository.getEncargosByDNI)
+  }
