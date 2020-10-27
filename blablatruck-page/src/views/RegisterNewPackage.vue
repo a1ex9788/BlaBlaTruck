@@ -178,9 +178,9 @@ export default {
 
     computed: {
         precioTotal: function () {
-            return ((this.form.weight.price) * (this.form.weight.value) +
+            return (Math.round((this.form.weight.price) * (this.form.weight.value) +
                 (this.form.nature.price) +
-                (this.form.size.price) * ((this.form.size.price) * (this.form.size.price)))
+                (this.form.size.price) * ((this.form.size.price) * (this.form.size.price))),-2)
         }
 
     },
