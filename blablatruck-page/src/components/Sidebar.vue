@@ -6,6 +6,10 @@
         <router-link to="/navegator">
             <b-button class="button-nav sidebar-item" squared variant="outline-secondary">Navegador</b-button>
         </router-link>
+        <hr style="background-color:white">
+        <router-link to="/registerNewPackage">
+            <b-button class="button-nav sidebar-item" squared variant="outline-secondary">Registrar paquete</b-button>
+        </router-link>
       </div>
     </b-sidebar>
         <nav class="navbar navbar-dark bg-dark">

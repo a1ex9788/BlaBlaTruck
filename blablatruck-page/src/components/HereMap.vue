@@ -43,7 +43,9 @@ export default {
         // center object { lat: 40.730610, lng: -73.935242 }
       });
 
-      addEventListener("resize", () => map.getViewPort().resize());
+      
+      window.addEventListener('resize', 
+	      () => map.getViewPort().resize());
 
       // add behavior control
       new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
@@ -58,13 +60,11 @@ export default {
 
 <style scoped>
 #map {
-  width: 60vw;
-  min-width: 360px;
-  text-align: center;
   background-color: #ccc;
-  position: absolute; top: 0; left: 0; height: 100%; width: 100%;
+
 }
-#mapContainer{
-  position: absolute; top: 0; left: 0; height: 95%; width: 100%;
+#mapContainer {
+  width: 500px;
+  height: 500px;
 }
 </style>
