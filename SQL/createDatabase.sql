@@ -24,7 +24,7 @@ CREATE TABLE Cliente (
     Empresa varchar(25) NOT NULL,
     PRIMARY KEY(DNI),
 )
-CREATE TABLE ENCARGO (
+CREATE TABLE Encargo (
     Id char(15) PRIMARY KEY,
     NaturalezaEncargo varchar(10) NOT NULL,
     Peso decimal(10,2) NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE ENCARGO (
     Precio decimal(10,2) NOT NULL,
     Pagado boolean NOT NULL,
     DNICliente char(9) NOT NULL,
-    DNITransportista char(9) NOT NULL,
+    DNITransportista char(9), /*Cuando se crea el encargo no necesariamente tiene un transportista asignado*/
     CONSTRAINT Fk_Encargo_Transportista FOREIGN KEY (DNITransportista)
     REFERENCES Transportista(DNI),
     CONSTRAINT Fk_Encargo_Cliente FOREIGN KEY (DNICliente)
