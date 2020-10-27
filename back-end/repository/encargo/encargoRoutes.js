@@ -10,7 +10,7 @@ module.exports = function (router) {
     .get(encargoRepository.getEncargosPorTransportista)
     .delete(encargoRepository.deleteEncargoTransportista)
     //.find(encargoRepository.getEncargosPorId);
-    router.route('/encargos/cliente')
+    router.route('/encargo/cliente')
     .get(encargoRepository.getEncargosPorCliente)
     .delete(encargoRepository.deleteEncargoCliente)
     .post(encargoRepository.postEncargo)

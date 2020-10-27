@@ -166,9 +166,12 @@ function EncargoRepository(dbContext) {
         parameters.push({ name: 'Pagado', type: TYPES.Decimal, val: req.body.Pagado });
         parameters.push({ name: 'DNICliente', type: TYPES.Char, val: req.body.DNICliente});
         
-        var query= "INSERT INTO Encargo (id,NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,AltitudOrigen,AltitudDestino,LongitudOrigen,LongitudDestino,Precio,Pagado,DNICliente) "+
+       /* var query= "INSERT INTO Encargo (id,NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,AltitudOrigen,AltitudDestino,LongitudOrigen,LongitudDestino,Precio,Pagado,DNICliente) "+
         "VALUES(@id,@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@AltitudOrigen,@AltitudDestino,@LongitudOrigen,@LongitudDestino,@Precio,@Pagado,@DNICliente)";
-
+        */
+       var query= "INSERT INTO Encargo (id,NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,Precio,Pagado,DNICliente) "+
+        "VALUES(@id,@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@Precio,@Pagado,@DNICliente)";
+       
         dbContext.post(query, parameters, function (error, data) {
         return res.json(response(data, error));
         });
@@ -216,7 +219,7 @@ function EncargoRepository(dbContext) {
      
         }
     }
-    
+
     return {
         getAll: getEncargos,
         //put: putEncargo,

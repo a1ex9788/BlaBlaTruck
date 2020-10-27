@@ -3,7 +3,7 @@
 
     <div id="priceCalculation">
 
-        <h1 class="mt-0">Calcula el presupuesto de tu pedido :)</h1>
+        <h2 class="mt-5">Calcula tu presupuesto</h2>
 
         <b-form @submit="onSubmit" @reset="onReset" v-if="show">
 
@@ -75,7 +75,7 @@
     <div id="showPriceCalculated" v-if="!show">
         <h2> Precio calculado </h2>
         <h3> {{precioTotal }} euros </h3>
-        <b-button class="mt-2 mx-4" type="submit" variant="primary">Continuar</b-button>
+        <b-button @click="crearEncargo" class="mt-2 mx-4" type="submit" variant="primary">Continuar</b-button>
         <b-button @click="goBack" class="mt-2" type="button">Volver</b-button>
     </div>
 
@@ -101,14 +101,14 @@ export default {
             form: {
                 origin: {
                     value: "",
-                    altitud: "",
-                    longitud: "",
+                    altitud: "122",
+                    longitud: "122",
                 },
 
                 destination: {
                     value: "",
-                    altitud: "",
-                    longitud: "",
+                    altitud: "122",
+                    longitud: "122",
 
                 },
 
@@ -277,25 +277,36 @@ export default {
             axios.post('http://localhost:3300/api/encargo/cliente', {
 
                 params: {
-
-                    //DNICliente: ,
+                    
+                    DNICliente: this.$cookies.get("loginToken").Dni,
                     NaturalezaEncargo: this.form.nature.value,
                     Peso: this.form.weight.value,
-                    Alto: this.form.size.alto.value,
-                    Ancho: this.form.size.ancho.value,
-                    Largo: this.form.size.largo.value,
+                    Alto: this.form.size.value.alto,
+                    Ancho: this.form.size.value.ancho,
+                    Largo: this.form.size.value.largo,
                     Origen: this.form.origin.value,
                     Destino: this.form.destination.value,
-                    AltitudOrigen: this.origin.altitud.value,
-                    AltitudDestino: this.destination.altitud.value,
-                    LongitudOrigen: this.origin.longitud.value,
-                    LongitudDestion: this.destination.longitud.value,
+                    //AltitudOrigen: this.origin.altitud.value,
+                    //AltitudDestino: this.destination.altitud.value,
+                    //LongitudOrigen: this.origin.longitud.value,
+                    //LongitudDestion: this.destination.longitud.value,
                     Precio: this.precioTotal.value,
                     Pagado: false,
 
                 }
 
-            })
+            }).then((response) => {
+    
+                    if (response.status == 200) {
+                        
+                        console.log("Se ha guardado correctamente");
+                    }
+                },(error) => {
+
+                    console.log("No se ha podido crear!");
+                    console.log(error);
+
+                });
 
         }
 
