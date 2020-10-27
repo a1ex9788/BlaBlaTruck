@@ -3,22 +3,98 @@ var TYPES = require('tedious').TYPES;
 
 function EncargoRepository(dbContext) {
     function getEncargos(req, res) {
-            var parameters = [];
-        //getEncargos: por id, por naturaleza, por peso, por dnicliente, por dni transportista??
-            var query = "select * from Encargo"
-            parameters.push({name: 'clienteDni', type: TYPES.VarChar, val: req.params.DNICliente});
-            dbContext.getQuery(query, parameters, true, function (error, data) {
-                console.log("esto va bien");
-                return res.json(response(data, error));
+        var parameters = [];
+        
+        
+        parameters.push({name: 'DNICliente', type: TYPES.Char, val: req.params.DNICliente});
+        var query = "select * from Encargo where DNICliente LIKE @DNICliente"
+
+        dbContext.getQuery(query, parameters, true, function (error, data) {
+            console.log("esto va bien");
+            return res.json(response(data, error));
+        });
+    }
+   
+    function getEncargosPorId(req,res) {
+
+        var parameters = [];
+        
+        parameters.push({name: 'Id', type: TYPES.Char, val: req.params.Id});
+        var query = "select * from Encargo where Id LIKE @Id"
+
+        dbContext.getQuery(query, parameters, true, function (error, data) {
+            console.log("esto va bien");
+            return res.json(response(data, error));
+        });
+    
+    }
+
+
+    function getEncargosPorDniCliente(req, res)
+    {
+            var parameters=[];
+
+            parameters.push({name: 'DNICliente', type: TYPES.VarChar, val: req.params.DNICliente});
+
+            var query = "select * from Encargo where DNICliente LIKE @DNICliente";
+            dbContext.getQuery(query, parameters, true, function(err, data) {
+                if(data) {
+                    return res.json(data)
+                }
+                console.log("error 404");
+                return res.sendStatus(404);
             });
+       
+    }
+
+    function getEncargosPorDniTransportista(req,res) {
+        
+        var parameters = [];
+        
+        parameters.push({name: 'DNITransportista', type: TYPES.Char, val: req.params.DNITransportista});
+        var query = "select * from Encargo where DNITransportista LIKE @DNITransportista"
+
+        dbContext.getQuery(query, parameters, true, function (error, data) {
+            console.log("esto va bien");
+            return res.json(response(data, error));
+        });
+    
+    }
+
+    function getEncargosPorNaturalezaCliente(req,res) {
+        
+        var parameters = [];
+        
+        parameters.push({name: 'DNICliente', type: TYPES.VarChar, val: req.params.DNICliente});
+        parameters.push({name: 'NaturalezaEncargo', type: TYPES.VarChar, val: req.params.NaturalezaEncargo});
+
+        var query = "select * from Encargo where NaturalezaEncargo LIKE @NaturalezaEncargo AND DNICliente LIKE @DNICliente"
+
+        dbContext.getQuery(query, parameters, true, function (error, data) {
+            console.log("esto va bien");
+            return res.json(response(data, error));
+        });
+  
+    }
+
+    function getEncargosPorNaturalezaTransportista(req,res) {
+       
+        var parameters = [];
+        
+        parameters.push({name: 'DNITransportista', type: TYPES.VarChar, val: req.params.DNITransportista});
+        parameters.push({name: 'NaturalezaEncargo', type: TYPES.VarChar, val: req.params.NaturalezaEncargo});
+        var query = "select * from Encargo where NaturalezaEncargo LIKE @NaturalezaEncargo  AND DNITransportista LIKE @DNITransportista"
+
+        dbContext.getQuery(query, parameters, true, function (error, data) {
+            console.log("esto va bien");
+            return res.json(response(data, error));
+        });
+   
     }
 
 
-    function getEncargo(req,res) {
-        return res.json(req.data);
-    }
-
-    function findEncargo(req,res,next){
+    /* Buscar un encargo? hara falta si ya hay get?
+    function findEncargo(req,res,next){ 
         if(req.params.DNICliente){
             var parameters=[];
 
@@ -38,9 +114,9 @@ function EncargoRepository(dbContext) {
             console.log(req.params);
             console.log("esto no funciona");
         }
-    }
-
-    function putEncargo(req, res) {
+    }*/
+    /*
+    function putEncargo(req, res) { //Modifica si existe o lo añade si no existe
         var parameters = [];
 
         Object.entries(req.data).forEach((property) => {
@@ -61,43 +137,58 @@ function EncargoRepository(dbContext) {
                     });
             }
         });
-        
+        //parameters.push({ name: 'DNITransportista', type: TYPES.Char, val: req.body.DNITransportista});
+
         dbContext.post("InsertOrUpdateEncargo", parameters, function (error, data) {
             return res.json(response(data, error));
         });
-    }
+    }*/
+
     function postEncargo(req, res) {
 
         var parameters = [];
 
-        parameters.push({ name: 'Id', type: TYPES.Char, val: req.body.Id});
-        parameters.push({ name: 'NaturalezaEncargo', type: TYPES.VarChar, val: req.body.NaturalezaEncargo });
-        parameters.push({ name: 'Peso', type: TYPES.Decimal, val: req.body.Peso });
-        parameters.push({ name: 'Alto', type: TYPES.Decimal, val: req.body.Alto });
-        parameters.push({ name: 'Ancho', type: TYPES.Decimal, val: req.body.Ancho });
-        parameters.push({ name: 'Largo', type: TYPES.Decimal, val: req.body.Largo });
-        parameters.push({ name: 'Origen', type: TYPES.VarChar, val: req.body.Origen });
-        parameters.push({ name: 'Destino', type: TYPES.VarChar, val: req.body.Destino });
-        parameters.push({ name: 'Precio', type: TYPES.Decimal, val: req.body.Precio });
-        parameters.push({ name: 'DNICliente', type: TYPES.Char, val: req.body.DNICliente});
-        //parameters.push({ name: 'DNITransportista', type: TYPES.Char, val: req.body.DNITransportista});
-    
-        dbContext.post("InsertOrUpdateEncargo", parameters, function (error, data) {
-            return res.json(response(data, error));
+        parameters.push({ name: 'Id', type: TYPES.Char, val: req.body.params.Id});
+        parameters.push({ name: 'NaturalezaEncargo', type: TYPES.VarChar, val: req.body.params.NaturalezaEncargo });
+        parameters.push({ name: 'Peso', type: TYPES.Decimal, val: req.body.params.Peso });
+        parameters.push({ name: 'Alto', type: TYPES.Decimal, val: req.body.params.Alto });
+        parameters.push({ name: 'Ancho', type: TYPES.Decimal, val: req.body.params.Ancho });
+        parameters.push({ name: 'Largo', type: TYPES.Decimal, val: req.body.params.Largo });
+        parameters.push({ name: 'Origen', type: TYPES.VarChar, val: req.body.params.Origen });
+        parameters.push({ name: 'Destino', type: TYPES.VarChar, val: req.body.params.Destino });
+
+        parameters.push({ name: 'AltitudOrigen', type: TYPES.VarChar, val: req.body.params.AltitudOrigen });
+        parameters.push({ name: 'AltitudDestino', type: TYPES.VarChar, val: req.body.params.Destino });
+        parameters.push({ name: 'LongitudOrigen', type: TYPES.VarChar, val: req.body.params.Origen });
+        parameters.push({ name: 'LongitudDestino', type: TYPES.VarChar, val: req.body.params.Destino });
+
+        parameters.push({ name: 'Precio', type: TYPES.Decimal, val: req.body.params.Precio });
+        parameters.push({ name: 'Pagado', type: TYPES.Decimal, val: req.body.params.Pagado });
+        parameters.push({ name: 'DNICliente', type: TYPES.Char, val: req.body.params.DNICliente});
+        
+       /* var query= "INSERT INTO Encargo (id,NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,AltitudOrigen,AltitudDestino,LongitudOrigen,LongitudDestino,Precio,Pagado,DNICliente) "+
+        "VALUES(@id,@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@AltitudOrigen,@AltitudDestino,@LongitudOrigen,@LongitudDestino,@Precio,@Pagado,@DNICliente)";
+        */
+       var query= "INSERT INTO Encargo (Id,NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,Precio,Pagado,DNICliente) "+
+        "VALUES(@Id,@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@Precio,@Pagado,@DNICliente)";
+       
+        console.log(req.body.params.Id);
+        dbContext.getQuery(query, parameters, true, function (error, data) {
+        return res.json(response(data, error));
         });
     }
 
-    function deleteEncargo(req, res) {
+    function deleteEncargoCliente(req, res) {
 
         var parameters = [];
 
         if (req.data.Id) {
             var parameters = [];
 
-            parameters.push({ name: 'Id', type: TYPES.Int, val: req.data.DNICliente });
-            parameters.push({ name: 'ClienteDni', type: TYPES.Int, val: req.data.DNICliente });
+            parameters.push({ name: 'Id', type: TYPES.Int, val: req.data.Id });
+            parameters.push({ name: 'DNICLiente', type: TYPES.Int, val: req.data.DNICliente });
           
-            var query = "delete from Encargo where persona DNICLiente = @ClienteDni AND Id = @Id"
+            var query = "delete from Encargo where persona DNICLiente LIKE @DNICLiente AND Id LIKE @Id"
            
             dbContext.getQuery(query, parameters, false, function (error, data, rowCount) {
                 if (rowCount > 0) {
@@ -107,76 +198,43 @@ function EncargoRepository(dbContext) {
             });
         }
     }
-    /*
-    function searchPersonaTelefono(req,res) {
+
+    function deleteEncargoTransportista(req, res) {
+
         var parameters = [];
-        parameters.push({name: 'telefono', type: TYPES.VarChar, val: req.query.telefono});
-        console.log("searchPersonaTelefono")
-        var query = "select * from Persona where telefono = @telefono"
 
-        dbContext.getQuery(query, parameters, true, function (error, data){
-            return res.json(response(data,error));
-        });
-    }*/
+        if (req.data.Id) {
+            var parameters = [];
 
-    //se pueden hacer funciones para encontrar paquetes 
-
-    function getEncargosByDNI(req, res)
-    {
-        var parameters=[];
-        if(req.params.userDNI){
-            //////////////////////
-            var isClient
-            var parameters2=[];
-            parameters2.push({name: 'userDni', type: TYPES.VarChar, val: req.params.userDNI});
-
-            var query = "select * from Cliente where DNI LIKE @userDni";
-            dbContext.getQuery(query, parameters2, false, function(err, data) {
-                console.log(data)
-                if(data) {
-                    isClient = true
+            parameters.push({ name: 'Id', type: TYPES.Int, val: req.data.Id });
+            parameters.push({ name: 'DNITransportista', type: TYPES.Int, val: req.data.DNITransportista });
+          
+            var query = "delete from Encargo where persona DNITransportista LIKE @DNITransportista AND Id LIKE @Id"
+           
+            dbContext.getQuery(query, parameters, false, function (error, data, rowCount) {
+                if (rowCount > 0) {
+                    return res.json('Record is deleted');
                 }
-                else {
-                    isClient = false
-                }
-
-                parameters.push({name: 'userDni', type: TYPES.VarChar, val: req.params.userDNI});
-
-                console.log(isClient)
-                if (isClient) 
-                {atributo = "DNICliente"}
-                else
-                {atributo = "DNITransportista"}
-
-                var query = "select * from Encargo where " + atributo + " LIKE @userDni";
-                console.log(query)
-                dbContext.getQuery(query, parameters, false, function(err, data) {
-                    if(data) {
-                        return res.json(data)
-                    }
-                    console.log("error 404");
-                    return res.sendStatus(404);
-                });
+                return res.sendStatus(404);
             });
-            //////////////////////
-            
-        }else{
-            console.log(req.params);
-            console.log("esto no funcionaaa");
+     
         }
     }
 
     return {
         getAll: getEncargos,
-        get: getEncargo,
-        put: putEncargo,
-        post: postEncargo,
-        //getMulti: getLoginToken,
-        //find: searchPersonaTelefono,
-        intercept: findEncargo,
-        delete: deleteEncargo,
-        //usernameExists: isUsernameAlreadyExists
-        getEncargosByDNI: getEncargosByDNI
+        //put: putEncargo,
+        postEncargo: postEncargo,
+        //intercept: findEncargo,
+        deleteEncargoCliente: deleteEncargoCliente,
+        deleteEncargoTransportista: deleteEncargoTransportista,
+        getEncargosPorId: getEncargosPorId,
+        getEncargosPorCliente: getEncargosPorDniCliente,
+        getEncargosPorTransportista: getEncargosPorDniTransportista,
+        getEncargosPorNaturalezaCliente: getEncargosPorNaturalezaCliente,
+        getEncargosPorNaturalezaTransportista: getEncargosPorNaturalezaTransportista
+
+
     }
 }
 module.exports = EncargoRepository;

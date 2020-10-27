@@ -3,22 +3,22 @@
 
     <div id="priceCalculation">
 
-        <h1 class="mt-0">Calcula el presupuesto de tu pedido :)</h1>
+        <h2 class="mt-5">Calcula tu presupuesto</h2>
 
         <b-form @submit="onSubmit" @reset="onReset" v-if="show">
 
             <b-form-group class="mt-4" id="input-group-1" label="Origen:" label-for="input-1">
-                <b-form-input id="input-Origin" v-model="$v.form.origin.$model" :state="validateState('origin')" type="text" placeholder="Direccion: Calle | nrº | planta | puerta">
+                <b-form-input id="input-Origin" v-model="$v.form.origin.value.$model" :state="validateState('origin')" type="text" placeholder="Direccion: Calle | nrº | planta | puerta">
                 </b-form-input>
             </b-form-group>
 
             <b-form-group id="input-group-2" label="Destino:" label-for="input-2">
-                <b-form-input id="input-Destination" v-model="$v.form.destination.$model" :state="validateState('destination')" type="text" placeholder="Direccion: Calle | nrº | planta | puerta">
+                <b-form-input id="input-Destination" v-model="$v.form.destination.value.$model" :state="validateState('destination')" type="text" placeholder="Direccion: Calle | nrº | planta | puerta">
                 </b-form-input>
             </b-form-group>
 
             <b-form-group id="input-group-Nature" label="Naturaleza:" label-for="input-Nature">
-                <b-form-select @input="priceNature()" id="input-Nature" v-model="$v.form.nature.value.$model" :options="optionsNature" :state="validateStateWithPrice('nature')"></b-form-select>
+                <b-form-select id="input-Nature" v-model="$v.form.nature.value.$model" :options="optionsNature" :state="validateStateWithPrice('nature')"></b-form-select>
             </b-form-group>
 
             <b-form-group id="input-group-3" label="Peso mercancia:" label-for="input-3">
@@ -26,40 +26,9 @@
                     <template v-slot:append>
                         <b-input-group-text><strong class="text">kg</strong></b-input-group-text>
                     </template>
-                    <b-form-input id="input-Weight" v-model="$v.form.weight.value.$model" :state="validateStateWithPrice('weight')" max="100" min="1" value="1" placeholder="1" type="number"></b-form-input>
+                    <b-form-input id="input-Weight" v-model="$v.form.weight.value.$model" :state="validateStateWithPrice('weight')" max="32000" min="1" value="1" placeholder="1" type="number"></b-form-input>
                 </b-input-group>
             </b-form-group>
-
-            <label hidden>Tamaño</label>
-
-            <b-form hidden inline class="mt-2">
-
-                <b-input-group class="w-25">
-                    <template v-slot:append>
-                        <b-input-group-text><strong class="text">cm</strong></b-input-group-text>
-                    </template>
-                    <b-form-input v-model="$v.form.size.value.ancho.$model" :state="validateSizeWithPrice('ancho')" type="number" max="120" min="1" value="1" placeholder="Ancho"></b-form-input>
-                </b-input-group>
-
-                <label class="mt-2 mx-3">x</label>
-
-                <b-input-group class="w-25">
-                    <template v-slot:append>
-                        <b-input-group-text><strong class="text">cm</strong></b-input-group-text>
-                    </template>
-                    <b-form-input v-model="$v.form.size.value.alto.$model" :state="validateSizeWithPrice('alto')" type="number" max="120" min="1" value="1" placeholder="Alto"></b-form-input>
-                </b-input-group>
-
-                <label class="mt-2 mx-3">x</label>
-
-                <b-input-group class="w-25">
-                    <template v-slot:append>
-                        <b-input-group-text><strong class="text">cm</strong></b-input-group-text>
-                    </template>
-                    <b-form-input v-model="$v.form.size.value.largo.$model" :state="validateSizeWithPrice('largo')" type="number" max="120" min="1" value="1" placeholder="Largo">
-                    </b-form-input>
-                </b-input-group>
-            </b-form>
 
             <div>
                 <b-nav vertical class=" mx-auto mt-3 w-50">
@@ -71,7 +40,7 @@
                             <template v-slot:append>
                                 <b-input-group-text><strong class="text">cm</strong></b-input-group-text>
                             </template>
-                            <b-form-input v-model="$v.form.size.value.ancho.$model" :state="validateSizeWithPrice('ancho')" type="number" max="120" min="1" value="1" placeholder="(Ej.) 20"></b-form-input>
+                            <b-form-input v-model="$v.form.size.value.ancho.$model" :state="validateSizeWithPrice('ancho')" type="number" max="240" min="1" value="1" placeholder="(Ej.) 20"></b-form-input>
                         </b-input-group>
 
                         <b-input-group class="mt-3">
@@ -80,7 +49,7 @@
                             <template v-slot:append>
                                 <b-input-group-text><strong class="text">cm</strong></b-input-group-text>
                             </template>
-                            <b-form-input v-model="$v.form.size.value.alto.$model" :state="validateSizeWithPrice('alto')" type="number" max="120" min="1" value="1" placeholder="(Ej.) 20"></b-form-input>
+                            <b-form-input v-model="$v.form.size.value.alto.$model" :state="validateSizeWithPrice('alto')" type="number" max="300" min="1" value="1" placeholder="(Ej.) 20"></b-form-input>
                         </b-input-group>
 
                         <b-input-group class="mt-3">
@@ -89,7 +58,7 @@
                             <template v-slot:append>
                                 <b-input-group-text><strong class="text">cm</strong></b-input-group-text>
                             </template>
-                            <b-form-input v-model="$v.form.size.value.largo.$model" :state="validateSizeWithPrice('largo')" type="number" max="120" min="1" value="1" placeholder="(Ej.) 20">
+                            <b-form-input v-model="$v.form.size.value.largo.$model" :state="validateSizeWithPrice('largo')" type="number" max="1400" min="1" value="1" placeholder="(Ej.) 20">
                             </b-form-input>
                         </b-input-group>
 
@@ -105,8 +74,8 @@
 
     <div id="showPriceCalculated" v-if="!show">
         <h2> Precio calculado </h2>
-        <h3> {{precioTotal }} euros </h3>
-        <b-button class="mt-2 mx-4" type="submit" variant="primary">Crear encargo</b-button>
+        <h3> {{this.calcularPrecio() }} euros </h3>
+        <b-button @click="crearEncargo" class="mt-2 mx-4" type="submit" variant="primary">Continuar</b-button>
         <b-button @click="goBack" class="mt-2" type="button">Volver</b-button>
     </div>
 
@@ -123,22 +92,32 @@ import {
     minValue,
     maxValue
 } from "vuelidate/lib/validators";
-
+const axios = require('axios');
 export default {
     mixins: [validationMixin],
     name: "FormComponent",
     data() {
         return {
             form: {
-                origin: "",
-                destination: "",
+                origin: {
+                    value: "",
+                    altitud: "122",
+                    longitud: "122",
+                },
+
+                destination: {
+                    value: "",
+                    altitud: "122",
+                    longitud: "122",
+
+                },
 
                 weight: {
                     value: "",
                     price: "3.54"
                 },
 
-                nature: {//en la realidad esto no es importante para calcular el precio 
+                nature: { //en la realidad esto no es importante para calcular el precio 
                     value: null,
                     price: "" //tiene que ser dinámico acorde a la opción seleccionada
                 },
@@ -152,8 +131,15 @@ export default {
                     },
                     price: "9.45"
                 },
+                
+               
             },
 
+            precio: {
+                value: undefined,
+
+            },
+            
             optionsNature: [{
                     value: null,
                     text: "Selecciona una opción"
@@ -177,10 +163,11 @@ export default {
     },
 
     computed: {
+
         precioTotal: function () {
-            return (Math.round((this.form.weight.price) * (this.form.weight.value) +
-                (this.form.nature.price) +
-                (this.form.size.price) * ((this.form.size.price) * (this.form.size.price))),-2)
+             return ((this.form.weight.price) * (this.form.weight.value) +
+                (this.form.size.price) * ((this.form.size.price) * (this.form.size.price)));
+           
         }
 
     },
@@ -188,11 +175,17 @@ export default {
     validations: {
         form: {
             origin: {
-                required,
+                value: {
+                    required,
+                },
+
             },
 
             destination: {
-                required,
+                value: {
+                    required,
+                }
+
             },
 
             nature: {
@@ -204,8 +197,8 @@ export default {
             weight: {
                 value: {
                     required,
-                    minValue: minValue(0),
-                    maxValue: maxValue(100)
+                    minValue: minValue(1),
+                    maxValue: maxValue(3200)
                 }
             },
 
@@ -225,24 +218,17 @@ export default {
                     },
                 },
             },
+            precio:{
+                value: "",
+            }
         },
     },
 
     methods: {
 
-        priceNature() {
-            if (this.form.nature.value == "Frágil") {
-                this.form.nature.price = "3"
-            }
-            if (this.form.nature.value == "Congelado") {
-                this.form.nature.price = "2"
-            }
-            if (this.form.nature.value == "Normal") {
-                this.form.nature.price = "1"
-            }
-            if (this.form.nature.value == null) {
-                this.form.nature.price = "";
-            }
+        calcularPrecio(){
+            return ((this.form.weight.price) * (this.form.weight.value) +
+                (this.form.size.price) * ((this.form.size.price) * (this.form.size.price)));
         },
 
         validateStateWithPrice(prop) {
@@ -288,7 +274,7 @@ export default {
             this.show = true;
         },
 
-        onReset(evt) {
+        onReset(evt) { //este metodo no lo llegamos a usar de momento
             evt.preventDefault();
             // Reset our form values
             this.form.origin = "";
@@ -300,6 +286,49 @@ export default {
                 this.show = true;
             });
         },
+
+        crearEncargo() {
+
+            this.precio.value = this.calcularPrecio();
+
+            axios.post('http://localhost:3300/api/encargo/cliente', {
+
+                params: {
+                    
+                    Id: "5",
+                    DNICliente: this.$cookies.get("loginToken").Dni,
+                    NaturalezaEncargo: this.form.nature.value,
+                    Peso: this.form.weight.value,
+                    Alto: this.form.size.value.alto,
+                    Ancho: this.form.size.value.ancho,
+                    Largo: this.form.size.value.largo,
+                    Origen: this.form.origin.value,
+                    Destino: this.form.destination.value,
+                    //AltitudOrigen: this.origin.altitud.value,
+                    //AltitudDestino: this.destination.altitud.value,
+                    //LongitudOrigen: this.origin.longitud.value,
+                    //LongitudDestion: this.destination.longitud.value,
+                    Precio: this.precio.value,
+                    Pagado: 1,
+
+                }
+
+            }).then((response) => {
+    
+                    if (response.status == 200) {
+                        
+                        console.log("Se ha guardado correctamente");
+                        console.log(response);
+                    }
+                },(error) => {
+
+                    console.log("No se ha podido crear!");
+                    console.log(error);
+
+                });
+
+        }
+
     },
 };
 </script>
