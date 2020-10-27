@@ -14,6 +14,4 @@ module.exports = function (router) {
     .get(encargoRepository.getEncargosPorCliente)
     .delete(encargoRepository.deleteEncargoCliente)
     .post(encargoRepository.postEncargo).find(encargoRepository.getEncargosPorId);
-   
-           
   }

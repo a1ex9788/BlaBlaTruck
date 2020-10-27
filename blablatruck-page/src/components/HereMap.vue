@@ -2,7 +2,7 @@
 <template>
   <div id="map">
   <!--In the following div the HERE Map will render-->
-    <div id="mapContainer" style="height:600px;width:100%" ref="hereMap"></div>
+    <div id="mapContainer" ref="hereMap"></div>
   </div>
 </template>
 
@@ -61,7 +61,10 @@ export default {
   width: 60vw;
   min-width: 360px;
   text-align: center;
-  margin: 5% auto;
   background-color: #ccc;
+  position: absolute; top: 0; left: 0; height: 100%; width: 100%;
+}
+#mapContainer{
+  position: absolute; top: 0; left: 0; height: 95%; width: 100%;
 }
 </style>

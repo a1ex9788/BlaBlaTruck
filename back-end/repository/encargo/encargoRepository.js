@@ -213,11 +213,10 @@ function EncargoRepository(dbContext) {
                 }
                 return res.sendStatus(404);
             });
+     
         }
     }
-
-      
-
+    
     return {
         getAll: getEncargos,
         //put: putEncargo,
