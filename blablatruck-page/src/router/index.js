@@ -103,7 +103,8 @@ function checkPagesWithoutPermissions(name) {
     'RegisterClient1',
     'RegisterClient2',
     'AccessForbidden',
-    'Navegator'
+    'Navegator',
+    'Historical'
   ]
   var res = false;
   pageNames.forEach(pageName => {

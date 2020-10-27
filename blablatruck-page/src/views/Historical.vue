@@ -4,7 +4,7 @@
         <b-list-group-item v-for="item in items" v-bind:key="item.id">
             <div>{{item.nombre}}</div>
             <div>
-                {{item.origen}}-{{item.destino}} {{item.fReserva}}-{{item.fEntrega}}
+                {{item.Origen}}-{{item.Destino}} {{item.FechaRecogida}}-{{item.FechaEntrega}}
             </div>
         </b-list-group-item>
     </b-list-group>
@@ -17,54 +17,51 @@
     export default {
         data () {
             return {
-                items: []
+                items: [],
+                personDNI: undefined,
+                isCarrier: undefined
             }
         },
         created ()
         {
-            var historical = getHistorical()
+            this.personDNI = this.$route.params.dni;
+            this.isCarrier = this.$route.params.isCarrier;
 
-            historical.forEach(element => {
-                this.items.push(element)
-            });
+            // Pruebas manuales. Cuando se llame a este view será necesario pasar sus parámetros
+            if (!this.personDNI) this.personDNI = "11111111r"
+            if (!this.isCarrier) this.isCarrier = false
+
+            updateHistorical(this.personDNI, this.items)
         }
     }
 
-    async function getHistorical()
+    async function updateHistorical(personDNI, items)
     {
-        try
-        {
-            var personDNI = this.$route.params.dni;
-        }
-        catch
-        {
-            alert("Es nesario pasar como parámetro el DNI del usuario. Uno por defecto se utilizará a modo de prueba.")
+        var historical = await getHistorical(personDNI)
 
-            personDNI = "11111111r"
-        }
+            historical.forEach(element => {
+                console.log(element)
+                items.push(element)
+            });
+    }
+
+    async function getHistorical(personDNI)
+    {
+        var res;
 
         // preguntar al backend por el historico
         await axios
-          .get("http://localhost:3300/api/encargo", {
-            clienteDNI: personDNI
-          })
+          .get("http://localhost:3300/api/encargos/" + personDNI)
           .then(
             (response) => {
-                console.log(response)
-              return response.body
+                res = response.data
             },
             (error) => {
-              console.log(error);
+                console.log(error);
             }
           );
 
-        return [
-                {nombre: "Antonio Perez",
-                origen: "Valencia",
-                destino: "Madrid",
-                fReserva: "19/08/2020",
-                fEntrega: "23/08/2020"}
-            ]
+        return res
     }
 </script>
 
