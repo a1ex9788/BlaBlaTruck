@@ -70,6 +70,12 @@ const routes = [
     name: "Navegator",
     component: () =>
       import("../views/Navegator.vue")
+  },
+  {
+    path: "/historical",
+    name: "Historical",
+    component: () =>
+      import("../views/Historical.vue")
   }
 ];
 
