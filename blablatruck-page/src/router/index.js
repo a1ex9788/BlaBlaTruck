@@ -1,6 +1,5 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
 import VueCookies from 'vue-cookies';
 //import { FormRadioPlugin } from "bootstrap-vue";
 
@@ -11,17 +10,7 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: Home
-  },
-  {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => {
-      import(/* webpackChunkName: "about" */ "../views/About.vue")
-    }
+    redirect: "/login"
   },
   {
     path: "/login",
@@ -88,7 +77,7 @@ const router = new VueRouter({
 router.beforeEach((to, _, next) => {
   var cookieValue = Vue.$cookies.get('loginToken')
   console.log(checkPagesWithoutPermissions(to.name))
-  if(!checkPagesWithoutPermissions(to.name) && (cookieValue == null || cookieValue === 'NotLoged'))
+  if(!checkPagesWithoutPermissions(to.name) && (cookieValue == null || cookieValue.Type === 'NotLogged'))
     next('/accessForbidden')
   else
     next()

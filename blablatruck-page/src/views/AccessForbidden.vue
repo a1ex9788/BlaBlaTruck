@@ -1,5 +1,5 @@
 <template>
-  <div id="groupForm"  class="container-fluid">
+  <div id="groupForm"  class="container-fluid mt-5">
       <h2 class="mb-5"><strong>No tienes acceso a esta página</strong></h2>
       <b-img class="mb-5" center fluid src="../assets/forbidden.png"/>
       <b-button variant="primary" @click="onClickVolver">Ir a login</b-button>

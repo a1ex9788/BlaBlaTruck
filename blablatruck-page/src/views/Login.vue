@@ -1,6 +1,6 @@
 <template>
     <div id="groupForm" class="container-fluid">
-        <b-img src="../assets/logo-login.png" fluid alt="Fluid image"></b-img>
+        <b-img src="../assets/logo-login.png" fluid alt="Fluid image" class="mt-5"></b-img>
         
         <h2 class="mt-3">Inicio de sesión</h2>
         <h5 class="mt-2">La nueva app de transportes eficientes!</h5>
@@ -53,22 +53,21 @@ export default {
                         withCredentials: true
                     }
                 ).then((response) => {
-                    console.log(response); //si se loguea con exito el usuario
     
                     if (response.status == 200) {
                         let d = new Date();
                         d.setTime(d.getTime() + 1 * 24 * 60 * 60 * 1000);
                         let expires = "expires=" + d.toUTCString();
-                        console.log(response.data[0][0].DNI);
                         document.cookie =
-                            "loginToken=" + response.data + ";" + expires + ";path=/";
+                            "loginToken=" + JSON.stringify(response.data) + ";"
+                            + expires + ";path=/"
                     }
                 }, (error) => {
                     console.log(error); // si hay un error con el logueo o conexion
                 });
             }
             //Comprueba si ha fallado el login y muestra un mensaje de error
-            if(this.$cookies.get("loginToken") === 'NotLoged') {
+            if(this.$cookies.get("loginToken").Type === 'NotLogged') {
                 this.isLoginFailed = true
             }else {
                 //Carga la interfaz del tipo de usuario si el login es satisfactorio 

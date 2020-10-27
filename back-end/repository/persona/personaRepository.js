@@ -137,23 +137,23 @@ function PersonaRepository(dbContext) {
             var parameters2 = [];
             //var aux = res.json(response(data,error));
             if(data != false) {
-                var DNI = data[0][0].DNI;
+                let DNI = data[0][0].DNI;
+                console.log(DNI)
                 parameters2.push({ name: 'DNI', type: TYPES.VarChar, val: DNI });
                 query = 'select * from Cliente where DNI = @DNI'
                 dbContext.getQuery(query, parameters2, true, function (error, data){
                     //var aux = res.json(response(data,error));
                     if(data != false) {
-                        var dni = data[0][0];
-                        console.log(dni);
-                        res.send('Cliente');
+                        var body = data[0][0];
+                        res.json({Type: 'Cliente', Dni: body.DNI});
                     }
                     else {
-                        res.send('Transportista')
+                        res.json({Type: 'Transportista', Dni: DNI});
                     }
                 });
             }
             else {
-                res.send('NotLoged');
+                res.json({Type: 'NotLogged', Dni: undefined});
             }
             });
     }
