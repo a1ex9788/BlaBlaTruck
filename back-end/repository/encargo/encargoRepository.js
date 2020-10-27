@@ -148,31 +148,32 @@ function EncargoRepository(dbContext) {
 
         var parameters = [];
 
-        parameters.push({ name: 'Id', type: TYPES.Char, val: req.body.Id});
-        parameters.push({ name: 'NaturalezaEncargo', type: TYPES.VarChar, val: req.body.NaturalezaEncargo });
-        parameters.push({ name: 'Peso', type: TYPES.Decimal, val: req.body.Peso });
-        parameters.push({ name: 'Alto', type: TYPES.Decimal, val: req.body.Alto });
-        parameters.push({ name: 'Ancho', type: TYPES.Decimal, val: req.body.Ancho });
-        parameters.push({ name: 'Largo', type: TYPES.Decimal, val: req.body.Largo });
-        parameters.push({ name: 'Origen', type: TYPES.VarChar, val: req.body.Origen });
-        parameters.push({ name: 'Destino', type: TYPES.VarChar, val: req.body.Destino });
+        parameters.push({ name: 'Id', type: TYPES.Char, val: req.body.params.Id});
+        parameters.push({ name: 'NaturalezaEncargo', type: TYPES.VarChar, val: req.body.params.NaturalezaEncargo });
+        parameters.push({ name: 'Peso', type: TYPES.Decimal, val: req.body.params.Peso });
+        parameters.push({ name: 'Alto', type: TYPES.Decimal, val: req.body.params.Alto });
+        parameters.push({ name: 'Ancho', type: TYPES.Decimal, val: req.body.params.Ancho });
+        parameters.push({ name: 'Largo', type: TYPES.Decimal, val: req.body.params.Largo });
+        parameters.push({ name: 'Origen', type: TYPES.VarChar, val: req.body.params.Origen });
+        parameters.push({ name: 'Destino', type: TYPES.VarChar, val: req.body.params.Destino });
 
-        parameters.push({ name: 'AltitudOrigen', type: TYPES.VarChar, val: req.body.AltitudOrigen });
-        parameters.push({ name: 'AltitudDestino', type: TYPES.VarChar, val: req.body.Destino });
-        parameters.push({ name: 'LongitudOrigen', type: TYPES.VarChar, val: req.body.Origen });
-        parameters.push({ name: 'LongitudDestino', type: TYPES.VarChar, val: req.body.Destino });
+        parameters.push({ name: 'AltitudOrigen', type: TYPES.VarChar, val: req.body.params.AltitudOrigen });
+        parameters.push({ name: 'AltitudDestino', type: TYPES.VarChar, val: req.body.params.Destino });
+        parameters.push({ name: 'LongitudOrigen', type: TYPES.VarChar, val: req.body.params.Origen });
+        parameters.push({ name: 'LongitudDestino', type: TYPES.VarChar, val: req.body.params.Destino });
 
-        parameters.push({ name: 'Precio', type: TYPES.Decimal, val: req.body.Precio });
-        parameters.push({ name: 'Pagado', type: TYPES.Decimal, val: req.body.Pagado });
-        parameters.push({ name: 'DNICliente', type: TYPES.Char, val: req.body.DNICliente});
+        parameters.push({ name: 'Precio', type: TYPES.Decimal, val: req.body.params.Precio });
+        parameters.push({ name: 'Pagado', type: TYPES.Decimal, val: req.body.params.Pagado });
+        parameters.push({ name: 'DNICliente', type: TYPES.Char, val: req.body.params.DNICliente});
         
        /* var query= "INSERT INTO Encargo (id,NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,AltitudOrigen,AltitudDestino,LongitudOrigen,LongitudDestino,Precio,Pagado,DNICliente) "+
         "VALUES(@id,@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@AltitudOrigen,@AltitudDestino,@LongitudOrigen,@LongitudDestino,@Precio,@Pagado,@DNICliente)";
         */
-       var query= "INSERT INTO Encargo (id,NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,Precio,Pagado,DNICliente) "+
-        "VALUES(@id,@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@Precio,@Pagado,@DNICliente)";
+       var query= "INSERT INTO Encargo (Id,NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,Precio,Pagado,DNICliente) "+
+        "VALUES(@Id,@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@Precio,@Pagado,@DNICliente)";
        
-        dbContext.post(query, parameters, function (error, data) {
+        console.log(req.body.params.Id);
+        dbContext.getQuery(query, parameters, true, function (error, data) {
         return res.json(response(data, error));
         });
     }

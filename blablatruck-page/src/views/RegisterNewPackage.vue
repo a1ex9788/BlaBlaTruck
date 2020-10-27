@@ -74,7 +74,7 @@
 
     <div id="showPriceCalculated" v-if="!show">
         <h2> Precio calculado </h2>
-        <h3> {{precioTotal }} euros </h3>
+        <h3> {{this.calcularPrecio() }} euros </h3>
         <b-button @click="crearEncargo" class="mt-2 mx-4" type="submit" variant="primary">Continuar</b-button>
         <b-button @click="goBack" class="mt-2" type="button">Volver</b-button>
     </div>
@@ -131,11 +131,15 @@ export default {
                     },
                     price: "9.45"
                 },
-            },
-            precio: {
-                value: "",
+                
+               
             },
 
+            precio: {
+                value: undefined,
+
+            },
+            
             optionsNature: [{
                     value: null,
                     text: "Selecciona una opción"
@@ -159,9 +163,11 @@ export default {
     },
 
     computed: {
+
         precioTotal: function () {
-            return ((this.form.weight.price) * (this.form.weight.value) +
-                (this.form.size.price) * ((this.form.size.price) * (this.form.size.price)))
+             return ((this.form.weight.price) * (this.form.weight.value) +
+                (this.form.size.price) * ((this.form.size.price) * (this.form.size.price)));
+           
         }
 
     },
@@ -212,10 +218,18 @@ export default {
                     },
                 },
             },
+            precio:{
+                value: "",
+            }
         },
     },
 
     methods: {
+
+        calcularPrecio(){
+            return ((this.form.weight.price) * (this.form.weight.value) +
+                (this.form.size.price) * ((this.form.size.price) * (this.form.size.price)));
+        },
 
         validateStateWithPrice(prop) {
             const {
@@ -274,10 +288,14 @@ export default {
         },
 
         crearEncargo() {
+
+            this.precio.value = this.calcularPrecio();
+
             axios.post('http://localhost:3300/api/encargo/cliente', {
 
                 params: {
                     
+                    Id: "5",
                     DNICliente: this.$cookies.get("loginToken").Dni,
                     NaturalezaEncargo: this.form.nature.value,
                     Peso: this.form.weight.value,
@@ -290,8 +308,8 @@ export default {
                     //AltitudDestino: this.destination.altitud.value,
                     //LongitudOrigen: this.origin.longitud.value,
                     //LongitudDestion: this.destination.longitud.value,
-                    Precio: this.precioTotal.value,
-                    Pagado: false,
+                    Precio: this.precio.value,
+                    Pagado: 1,
 
                 }
 
@@ -300,6 +318,7 @@ export default {
                     if (response.status == 200) {
                         
                         console.log("Se ha guardado correctamente");
+                        console.log(response);
                     }
                 },(error) => {
 
