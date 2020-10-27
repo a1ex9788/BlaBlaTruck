@@ -12,6 +12,8 @@
 </template>
 
 <script>
+    const axios = require("axios");
+
     export default {
         data () {
             return {
@@ -28,34 +30,41 @@
         }
     }
 
-    function getHistorical()
+    async function getHistorical()
     {
         try
         {
             var personDNI = this.$route.params.dni;
-            var isCarrier = this.$route.params.isCarrier;
         }
         catch
         {
-            alert("Es nesario pasar como parámetros el DNI del usuario y si es transportista o no.")
+            alert("Es nesario pasar como parámetro el DNI del usuario. Uno por defecto se utilizará a modo de prueba.")
+
+            personDNI = "11111111r"
         }
 
-        console.log(personDNI)
-        if (isCarrier) {
-            // preguntar al backend por el historico de transportista
+        // preguntar al backend por el historico
+        await axios
+          .get("http://localhost:3300/api/encargo", {
+            clienteDNI: personDNI
+          })
+          .then(
+            (response) => {
+                console.log(response)
+              return response.body
+            },
+            (error) => {
+              console.log(error);
+            }
+          );
 
-            return [1,2,3]
-        } else {
-            // preguntar al backend por el historico de cliente
-
-            return [
+        return [
                 {nombre: "Antonio Perez",
                 origen: "Valencia",
                 destino: "Madrid",
                 fReserva: "19/08/2020",
                 fEntrega: "23/08/2020"}
             ]
-        }
     }
 </script>
 

@@ -13,33 +13,34 @@ function ClientRepository(dbContext) {
                 return res.json(response(data, error));
             });
     }
+
     function getCliente(req,res) {
         return res.json(req.data);
     }
-    function findCliente(req, res, next) {
-        console.log(req.params.clienteDNI);
-        if(req.params.clienteDNI){
-        console.log("me he metido");
-        var parameters = [];
 
-        parameters.push({name: 'clienteDNI', type: TYPES.VarChar, val: req.params.clienteDNI});
-        var query = "select * from Cliente where DNI LIKE @clienteDNI";
-        dbContext.getQuery(query, parameters, false, function(err, data) {
-            if(data) {
-                req.data = data[0];
-                return next();
-            }
-            console.log("error 404");
-            return res.sendStatus(404);
-        });
-        
+    function findCliente(req, res, next) {
+        if(req.params.clienteDNI){
+            var parameters = [];
+
+            parameters.push({name: 'clienteDNI', type: TYPES.VarChar, val: req.params.clienteDNI});
+            var query = "select * from Cliente where DNI LIKE @clienteDNI";
+            dbContext.getQuery(query, parameters, false, function(err, data) {
+                if(data) {
+                    req.data = data[0];
+                    return next();
+                }
+                console.log("error 404");
+                return res.sendStatus(404);
+            });
+            
+        }
+        else
+        {
+            console.log(req.params);
+            console.log("esto no funciona idk why");
+        }
     }
-    else
-    {
-        console.log(req.params);
-        console.log("esto no funciona idk why");
-    }
-    }
+
      function putCliente(req, res) {
         var parameters = [];
 

@@ -26,18 +26,18 @@ function EncargoRepository(dbContext) {
             parameters.push({name: 'clienteDni', type: TYPES.VarChar, val: req.params.DNICliente});
 
             var query = "select * from Encargo where DNICliente LIKE @clienteDni AND Id LIKE @Id";
-        dbContext.getQuery(query, parameters, false, function(err, data) {
-            if(data) {
-                req.data = data[0];
-                return next();
-            }
-            console.log("error 404");
-            return res.sendStatus(404);
-        });
-    }else{
-        console.log(req.params);
-        console.log("esto no funciona");
-    }
+            dbContext.getQuery(query, parameters, false, function(err, data) {
+                if(data) {
+                    req.data = data[0];
+                    return next();
+                }
+                console.log("error 404");
+                return res.sendStatus(404);
+            });
+        }else{
+            console.log(req.params);
+            console.log("esto no funciona");
+        }
     }
 
     function putEncargo(req, res) {
