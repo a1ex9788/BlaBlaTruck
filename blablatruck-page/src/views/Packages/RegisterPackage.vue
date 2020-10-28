@@ -78,7 +78,7 @@ export default {
 
                 params: {
 
-                    Id: "10",
+                    //Id: "10",
                     DNICliente: this.$cookies.get("loginToken").Dni,
                     NaturalezaEncargo: this.naturalezaEncargo,
                     Peso: this.peso,

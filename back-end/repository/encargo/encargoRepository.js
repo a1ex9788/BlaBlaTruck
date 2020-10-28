@@ -6,7 +6,7 @@ function EncargoRepository(dbContext) {
         var parameters = [];
         
         
-        parameters.push({name: 'DNICliente', type: TYPES.Char, val: req.params.DNICliente});
+        parameters.push({name: 'DNICliente', type: TYPES.Char, val: req.query.DNICliente});
         var query = "select * from Encargo where DNICliente LIKE @DNICliente"
 
         dbContext.getQuery(query, parameters, true, function (error, data) {
@@ -19,7 +19,7 @@ function EncargoRepository(dbContext) {
 
         var parameters = [];
         
-        parameters.push({name: 'Id', type: TYPES.Char, val: req.params.Id});
+        parameters.push({name: 'Id', type: TYPES.BigInt, val: req.query.Id});
         var query = "select * from Encargo where Id LIKE @Id"
 
         dbContext.getQuery(query, parameters, true, function (error, data) {
@@ -34,13 +34,15 @@ function EncargoRepository(dbContext) {
     {
             var parameters=[];
 
-            parameters.push({name: 'DNICliente', type: TYPES.VarChar, val: req.params.DNICliente});
-
+            parameters.push({name: 'DNICliente', type: TYPES.Char, val: req.query.DNICliente});
+            
             var query = "select * from Encargo where DNICliente LIKE @DNICliente";
+            
             dbContext.getQuery(query, parameters, true, function(err, data) {
                 if(data) {
                     return res.json(data)
                 }
+                console.log(data);
                 console.log("error 404");
                 return res.sendStatus(404);
             });
@@ -51,7 +53,7 @@ function EncargoRepository(dbContext) {
         
         var parameters = [];
         
-        parameters.push({name: 'DNITransportista', type: TYPES.Char, val: req.params.DNITransportista});
+        parameters.push({name: 'DNITransportista', type: TYPES.Char, val: req.query.DNITransportista});
         var query = "select * from Encargo where DNITransportista LIKE @DNITransportista"
 
         dbContext.getQuery(query, parameters, true, function (error, data) {
@@ -65,8 +67,8 @@ function EncargoRepository(dbContext) {
         
         var parameters = [];
         
-        parameters.push({name: 'DNICliente', type: TYPES.VarChar, val: req.params.DNICliente});
-        parameters.push({name: 'NaturalezaEncargo', type: TYPES.VarChar, val: req.params.NaturalezaEncargo});
+        parameters.push({name: 'DNICliente', type: TYPES.Char, val: req.query.DNICliente});
+        parameters.push({name: 'NaturalezaEncargo', type: TYPES.VarChar, val: req.query.NaturalezaEncargo});
 
         var query = "select * from Encargo where NaturalezaEncargo LIKE @NaturalezaEncargo AND DNICliente LIKE @DNICliente"
 
@@ -81,8 +83,8 @@ function EncargoRepository(dbContext) {
        
         var parameters = [];
         
-        parameters.push({name: 'DNITransportista', type: TYPES.VarChar, val: req.params.DNITransportista});
-        parameters.push({name: 'NaturalezaEncargo', type: TYPES.VarChar, val: req.params.NaturalezaEncargo});
+        parameters.push({name: 'DNITransportista', type: TYPES.Char, val: req.query.DNITransportista});
+        parameters.push({name: 'NaturalezaEncargo', type: TYPES.VarChar, val: req.query.NaturalezaEncargo});
         var query = "select * from Encargo where NaturalezaEncargo LIKE @NaturalezaEncargo  AND DNITransportista LIKE @DNITransportista"
 
         dbContext.getQuery(query, parameters, true, function (error, data) {
@@ -148,7 +150,7 @@ function EncargoRepository(dbContext) {
 
         var parameters = [];
 
-        parameters.push({ name: 'Id', type: TYPES.Char, val: req.body.params.Id});
+        //parameters.push({ name: 'Id', type: TYPES.Char, val: req.body.params.Id});
         parameters.push({ name: 'NaturalezaEncargo', type: TYPES.VarChar, val: req.body.params.NaturalezaEncargo });
         parameters.push({ name: 'Peso', type: TYPES.Decimal, val: req.body.params.Peso });
         parameters.push({ name: 'Alto', type: TYPES.Decimal, val: req.body.params.Alto });
@@ -169,10 +171,9 @@ function EncargoRepository(dbContext) {
        /* var query= "INSERT INTO Encargo (id,NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,AltitudOrigen,AltitudDestino,LongitudOrigen,LongitudDestino,Precio,Pagado,DNICliente) "+
         "VALUES(@id,@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@AltitudOrigen,@AltitudDestino,@LongitudOrigen,@LongitudDestino,@Precio,@Pagado,@DNICliente)";
         */
-       var query= "INSERT INTO Encargo (Id,NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,Precio,Pagado,DNICliente) "+
-        "VALUES(@Id,@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@Precio,@Pagado,@DNICliente)";
+       var query= "INSERT INTO Encargo (NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,Precio,Pagado,DNICliente) "+
+        "VALUES(@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@Precio,@Pagado,@DNICliente)";
        
-        console.log(req.body.params.Id);
         dbContext.getQuery(query, parameters, true, function (error, data) {
         return res.json(response(data, error));
         });
@@ -185,8 +186,8 @@ function EncargoRepository(dbContext) {
         if (req.data.Id) {
             var parameters = [];
 
-            parameters.push({ name: 'Id', type: TYPES.Int, val: req.data.Id });
-            parameters.push({ name: 'DNICLiente', type: TYPES.Int, val: req.data.DNICliente });
+            parameters.push({ name: 'Id', type: TYPES.BigInt, val: req.data.Id });
+            parameters.push({ name: 'DNICLiente', type: TYPES.Char, val: req.data.DNICliente });
           
             var query = "delete from Encargo where persona DNICLiente LIKE @DNICLiente AND Id LIKE @Id"
            
@@ -206,8 +207,8 @@ function EncargoRepository(dbContext) {
         if (req.data.Id) {
             var parameters = [];
 
-            parameters.push({ name: 'Id', type: TYPES.Int, val: req.data.Id });
-            parameters.push({ name: 'DNITransportista', type: TYPES.Int, val: req.data.DNITransportista });
+            parameters.push({ name: 'Id', type: TYPES.BigInt, val: req.data.Id });
+            parameters.push({ name: 'DNITransportista', type: TYPES.Char, val: req.data.DNITransportista });
           
             var query = "delete from Encargo where persona DNITransportista LIKE @DNITransportista AND Id LIKE @Id"
            

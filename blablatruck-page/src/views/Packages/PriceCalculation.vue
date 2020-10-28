@@ -5,7 +5,7 @@
 
         <div id="priceCalculation">
 
-            <h2 class="mt-5">Calcula tu presupuesto</h2>
+            <h2 class="mt-5">Calcula el presupuesto de tu paquete</h2>
 
             <b-form @submit="onSubmit" @reset="onReset" v-if="show">
 
