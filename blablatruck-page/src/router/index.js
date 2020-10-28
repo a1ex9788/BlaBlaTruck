@@ -24,6 +24,20 @@ const routes = [
     component: () =>
       import("../views/UserRegistrations/RegisterClient1.vue")
   },
+
+  {
+    path: "/priceCalculation",
+    name: "PriceCalculation",
+    component: () =>
+      import("../views/Packages/PriceCalculation.vue")
+  },
+  {
+    path: "/registerPackage",
+    name: "RegisterPackage",
+    component: () =>
+      import("../views/Packages/RegisterPackage.vue")
+  },
+ 
   {
     path: "/registerClient2",
     name: "RegisterClient2",
@@ -46,7 +60,7 @@ const routes = [
     path: "/registerNewPackage",
     name: "RegisterNewPackage",
     component: () =>
-      import("../views/RegisterNewPackage.vue")
+      import("../views/Packages/RegisterNewPackage.vue")
   },
   {
     path: "/accessForbidden",

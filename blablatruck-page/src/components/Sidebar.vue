@@ -28,7 +28,7 @@ export default {
             pagesClient: [
                     {
                         name: 'Registrar paquete',
-                        path: '/registerNewPackage'
+                        path: '/priceCalculation'
                     },
                     {
                         name: 'Historial',
@@ -57,7 +57,6 @@ export default {
                     $clone.attr("href", page.path)
                     $clone[0].firstChild.innerText = page.name
                     $clone.attr("hidden", false)
-                    console.log($clone)
                     $("#sidebar-content").append($clone)
                 })
             }else {
@@ -66,7 +65,6 @@ export default {
                     $clone.attr("href", page.path)
                     $clone[0].firstChild.innerText = page.name
                     $clone.attr("hidden", false)
-                    console.log($clone)
                     $("#sidebar-content").append($clone)
                 })
             }
