@@ -66,11 +66,14 @@ export default {
                     console.log(error); // si hay un error con el logueo o conexion
                 });
             }
+            var type = this.$cookies.get("loginToken").Type
             //Comprueba si ha fallado el login y muestra un mensaje de error
-            if(this.$cookies.get("loginToken").Type === 'NotLogged') {
+            if(type === 'NotLogged') {
                 this.isLoginFailed = true
+            }else if(type === 'Cliente') {
+                this.$router.push({name: 'Navegator'})
             }else {
-                //Carga la interfaz del tipo de usuario si el login es satisfactorio 
+
             }
         }
     }
