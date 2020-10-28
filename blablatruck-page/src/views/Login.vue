@@ -71,7 +71,7 @@ export default {
             if(type === 'NotLogged') {
                 this.isLoginFailed = true
             }else if(type === 'Cliente') {
-                this.$router.push({name: 'Navegator'})
+                this.$router.push({name: 'RegisterNewPackage'})
             }else {
                 this.$router.push({name: 'Navegator'})
             }
