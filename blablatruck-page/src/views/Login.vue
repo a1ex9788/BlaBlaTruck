@@ -73,7 +73,7 @@ export default {
             }else if(type === 'Cliente') {
                 this.$router.push({name: 'Navegator'})
             }else {
-
+                this.$router.push({name: 'Navegator'})
             }
         }
     }
