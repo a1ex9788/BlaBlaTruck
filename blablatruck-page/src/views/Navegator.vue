@@ -32,7 +32,10 @@ return {
 
 <style>
   #groupForm {
-    max-width: 500px;
-    margin: 0 auto;
+       
+  }
+  body{
+    padding: 0;
+    margin: 0;
   }
 </style>
