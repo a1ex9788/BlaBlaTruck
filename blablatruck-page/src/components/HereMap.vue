@@ -60,11 +60,13 @@ export default {
 
 <style scoped>
 #map {
+ 
+
   background-color: #ccc;
 
 }
 #mapContainer {
-  width: 500px;
-  height: 500px;
+  width: 99.8vw; 
+  height: 93.5vh;
 }
 </style>
