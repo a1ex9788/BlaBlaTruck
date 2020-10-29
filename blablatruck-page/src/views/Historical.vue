@@ -14,8 +14,8 @@
                             </b-col>
                             <b-col md="auto">
                                 <div>
-                                    <b-img v-if="item.FechaEntrega" center alt="" id="phote" src="../assets/tickVerde.jpeg"></b-img>
-                                    <b-img v-if="!item.FechaEntrega" center alt="" id="phote" src="../assets/enCurso.png"></b-img>
+                                    <b-img v-if="item.FechaEntrega" center alt="" id="phote" src="../assets/EnProceso.png"></b-img>
+                                    <b-img v-if="!item.FechaEntrega" center alt="" id="phote" src="../assets/Finalizado.png"></b-img>
                                 </div>
                             </b-col>
                         </b-row>
