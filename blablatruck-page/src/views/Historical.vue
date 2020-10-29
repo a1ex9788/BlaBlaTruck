@@ -8,9 +8,9 @@
                     <b-list-group-item v-for="item in items" v-bind:key="item.id">
                         <b-row>
                             <b-col>
-                                <div id="name">{{ item.DNICliente }}</div>
+                                <div id="name">{{ item.Nombre }}</div>
                                 <div>{{ item.Origen }} -- {{ item.Destino }}</div>
-                                <div>{{ item.FechaRecogida }} -- {{ item.FechaEntrega }}</div>
+                                <div>{{ modifyFormat(item.FechaRecogida) }} -- {{ modifyFormat(item.FechaEntrega) }}</div>
                             </b-col>
                             <b-col md="auto">
                                 <div>
@@ -50,16 +50,19 @@ export default {
         if (!this.personDNI) this.personDNI = "11111111r";
         if (!this.isCarrier) this.isCarrier = false;
 
-        this.updateHistorical(this.items);
+        this.updateHistorical();
     },
     methods: {
 
-        async updateHistorical(items) {
+        modifyFormat(dateTime)
+        {
+            return dateTime.substring(0, 10)
+        },
+
+        async updateHistorical() {
             var historical = await this.getHistorical();
 
-            historical.forEach((element) => {
-                items.push(element);
-            });
+            this.items = historical
         },
 
         async getHistorical() {
@@ -75,7 +78,6 @@ export default {
                 .then(
                     (response) => {
                         res = response.data[0];
-                        console.log(res)
                     },
                     (error) => {
                         console.log(error);
@@ -91,15 +93,42 @@ export default {
                 .then(
                     (response) => {
                         res = response.data[0];
-                        console.log(res)
                     },
                     (error) => {
                         console.log(error);
                     }
                 );
-            }            
+            }
             
-            return res
+            var result = []
+
+            res.forEach(async (element) => {
+                var dniToGetName
+                if (this.isCarrier) { dniToGetName = element.DNICliente }
+                else { dniToGetName = element.DNITransportista }
+                
+                var person
+                await axios
+                    .get("http://localhost:3300/api/personas/" + dniToGetName)
+                    .then(
+                        (response) => {
+                            person = response.data;
+                        },
+                        (error) => {
+                            console.log(error);
+                        }
+                    );
+
+                result.push({
+                    Nombre: person.Nombre + " " + person.Apellidos,
+                    FechaRecogida: element.FechaRecogida,
+                    FechaEntrega: element.FechaEntrega,
+                    Origen: element.Origen,
+                    Destino: element.Destino
+                })
+            })
+            
+            return result
         }
 
     }
