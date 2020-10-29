@@ -8,7 +8,7 @@
                     <b-list-group-item v-for="item in items" v-bind:key="item.id">
                         <b-row>
                             <b-col>
-                                <div id="name">{{ item.nombre }}</div>
+                                <div id="name">{{ item.DNICliente }}</div>
                                 <div>{{ item.Origen }} -- {{ item.Destino }}</div>
                                 <div>{{ item.FechaRecogida }} -- {{ item.FechaEntrega }}</div>
                             </b-col>
@@ -43,10 +43,11 @@ export default {
         };
     },
     created() {
+        this.personDNI = this.$route.params.personDNI;
         this.isCarrier = this.$route.params.isCarrier;
 
         // Pruebas manuales. Cuando se llame a este view será necesario pasar sus parámetros
-        //if (!this.personDNI) this.personDNI = "11111111r";
+        if (!this.personDNI) this.personDNI = "11111111r";
         if (!this.isCarrier) this.isCarrier = false;
 
         this.updateHistorical(this.items);
@@ -57,37 +58,48 @@ export default {
             var historical = await this.getHistorical();
 
             historical.forEach((element) => {
-                console.log(element);
                 items.push(element);
             });
         },
 
         async getHistorical() {
             var res;
-            // preguntar al backend por el historico
-            await axios
-                .get("http://localhost:3300/api/encargo/cliente", {
-                    params: {
-                        DNICliente: this.$cookies.get("loginToken").Dni,
-                    },
 
+            if (this.isCarrier) {
+                await axios
+                .get("http://localhost:3300/api/encargo/transportista", {
+                    params: {
+                        DNITransportista: this.personDNI,
+                    },
                 })
                 .then(
                     (response) => {
-                        res = response.data;
+                        res = response.data[0];
+                        console.log(res)
                     },
                     (error) => {
                         console.log(error);
                     }
                 );
-            console.log("polla" + res);
-            return [{
-                nombre: "Manolo Gutierrez Sanmartín",
-                Origen: "Valencia",
-                Destino: "Madrid",
-                FechaRecogida: "19/08/2020",
-                FechaEntrega: "23/08/2020",
-            }, ];
+            } else {
+                await axios
+                .get("http://localhost:3300/api/encargo/cliente", {
+                    params: {
+                        DNICliente: this.personDNI,
+                    },
+                })
+                .then(
+                    (response) => {
+                        res = response.data[0];
+                        console.log(res)
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+            }            
+            
+            return res
         }
 
     }
