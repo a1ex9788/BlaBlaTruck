@@ -14,7 +14,8 @@
                             </b-col>
                             <b-col md="auto">
                                 <div>
-                                    <b-img center alt="" id="phote" src="../assets/tickVerde.jpeg"></b-img>
+                                    <b-img v-if="item.FechaEntrega" center alt="" id="phote" src="../assets/tickVerde.jpeg"></b-img>
+                                    <b-img v-if="!item.FechaEntrega" center alt="" id="phote" src="../assets/enCurso.png"></b-img>
                                 </div>
                             </b-col>
                         </b-row>
@@ -56,7 +57,8 @@ export default {
 
         modifyFormat(dateTime)
         {
-            return dateTime.substring(0, 10)
+            if (dateTime) { return dateTime.substring(0, 10) }
+            else { return "Pendiente" }
         },
 
         async updateHistorical() {
