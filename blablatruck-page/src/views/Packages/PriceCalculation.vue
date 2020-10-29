@@ -3,24 +3,24 @@
     <Sidebar />
     <div id="groupForm" class="container-fluid">
 
-        <div id="priceCalculation">
+        <div id="priceCalculation" v-if="show">
 
             <h2 class="mt-5">Calcula el presupuesto de tu paquete</h2>
 
-            <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+            <b-form @submit="onSubmit" @reset="onReset">
 
                 <b-form-group class="mt-4" id="input-group-1" label="Origen:" label-for="input-1">
-                    <b-form-input id="input-Origin" v-model="$v.form.origin.value.$model" :state="validateState('origin')" type="text" placeholder="Direccion: Calle | nrº | planta | puerta">
+                    <b-form-input id="input-Origen" v-model="$v.form.origen.value.$model" :state="validateState('origen')" type="text" placeholder="Direccion: Calle | nrº | planta | puerta">
                     </b-form-input>
                 </b-form-group>
 
                 <b-form-group id="input-group-2" label="Destino:" label-for="input-2">
-                    <b-form-input id="input-Destination" v-model="$v.form.destination.value.$model" :state="validateState('destination')" type="text" placeholder="Direccion: Calle | nrº | planta | puerta">
+                    <b-form-input id="input-Destino" v-model="$v.form.destino.value.$model" :state="validateState('destino')" type="text" placeholder="Direccion: Calle | nrº | planta | puerta">
                     </b-form-input>
                 </b-form-group>
 
-                <b-form-group id="input-group-Nature" label="Naturaleza:" label-for="input-Nature">
-                    <b-form-select id="input-Nature" v-model="$v.form.nature.value.$model" :options="optionsNature" :state="validateStateWithPrice('nature')"></b-form-select>
+                <b-form-group id="input-group-Naturaleza" label="Naturaleza:" label-for="input-Naturaleza">
+                    <b-form-select id="input-Naturaleza" v-model="$v.form.naturaleza.value.$model" :options="optionsNaturaleza" :state="validateStateWithPrice('naturaleza')"></b-form-select>
                 </b-form-group>
 
                 <b-form-group id="input-group-3" label="Peso mercancia:" label-for="input-3">
@@ -28,7 +28,7 @@
                         <template v-slot:append>
                             <b-input-group-text><strong class="text">kg</strong></b-input-group-text>
                         </template>
-                        <b-form-input id="input-Weight" v-model="$v.form.weight.value.$model" :state="validateStateWithPrice('weight')" max="32000" min="1" value="1" placeholder="1" type="number"></b-form-input>
+                        <b-form-input id="input-Peso" v-model="$v.form.peso.value.$model" :state="validateStateWithPrice('peso')" max="32000" min="1" value="1" placeholder="1" type="number"></b-form-input>
                     </b-input-group>
                 </b-form-group>
 
@@ -69,17 +69,21 @@
                 </div>
 
                 <br>
-                <b-button @click="showPrice" class="mt-2 mx-4" type="submit" variant="primary">Calcular</b-button>
+                <b-button @click="showPrice" class="mt-2 mx-4 mb-5" type="submit" variant="info">Calcular</b-button>
 
             </b-form>
         </div>
 
         <div id="showPriceCalculated" v-if="!show">
-            <h2> Precio calculado </h2>
-            <h3> {{this.calcularPrecio() }} euros </h3>
-            <b-button @click="next" class="mt-2 mx-4" type="submit" variant="primary">Siguiente</b-button>
-
-            <b-button @click="goBack" class="mt-2" type="button">Volver</b-button>
+            <h3 class="mt-5">El presupuesto calculado para su paquete es de:</h3>
+            <br>
+            <h4> {{this.calcularPrecio() }} euros </h4>
+            <br>
+            <h5> Si quiere realizar su encargo pulse a continuación:</h5>
+            <div class="mt-2"> 
+                <b-button @click="goBack" type="button">Volver</b-button>
+                <b-button @click="next" class="mx-4" type="submit" variant="info">Siguiente</b-button>
+            </div>
         </div>
 
     </div>
@@ -106,25 +110,25 @@ export default {
     data() {
         return {
             form: {
-                origin: {
+                origen: {
                     value: "",
                     altitud: "122",
                     longitud: "122",
                 },
 
-                destination: {
+                destino: {
                     value: "",
                     altitud: "122",
                     longitud: "122",
 
                 },
 
-                weight: {
+                peso: {
                     value: "",
-                    price: "3.54"
+                    price: "4.74" //1kg= 3,54 € + comision
                 },
 
-                nature: { 
+                naturaleza: {
                     value: null,
                 },
 
@@ -133,7 +137,7 @@ export default {
                         ancho: "",
                         largo: "",
                         alto: "",
-                    },       
+                    },
                 },
 
             },
@@ -142,7 +146,7 @@ export default {
                 value: undefined,
             },
 
-            optionsNature: [{
+            optionsNaturaleza: [{
                     value: null,
                     text: "Selecciona una opción"
                 },
@@ -166,27 +170,27 @@ export default {
 
     validations: {
         form: {
-            origin: {
+            origen: {
                 value: {
                     required,
                 },
 
             },
 
-            destination: {
+            destino: {
                 value: {
                     required,
                 }
 
             },
 
-            nature: {
+            naturaleza: {
                 value: {
                     required,
                 }
             },
 
-            weight: {
+            peso: {
                 value: {
                     required,
                     minValue: minValue(1),
@@ -219,7 +223,8 @@ export default {
     methods: {
 
         calcularPrecio() {
-            return ((this.form.weight.price) * (this.form.weight.value));
+            let valor = ((this.form.peso.price) * (this.form.peso.value)).toFixed(2);
+            return valor;
         },
 
         validateStateWithPrice(prop) {
@@ -264,9 +269,9 @@ export default {
         onReset(evt) { //este metodo no lo llegamos a usar de momento
             evt.preventDefault();
             // Reset our form values
-            this.form.origin = "";
-            this.form.destination = "";
-            this.form.nature = null;
+            this.form.origen = "";
+            this.form.destino = "";
+            this.form.naturaleza = null;
             // Trick to reset/clear native browser form validation state
             this.show = false;
             this.$nextTick(() => {
@@ -275,19 +280,19 @@ export default {
         },
 
         next() {
-  
+
             this.precio.value = this.calcularPrecio();
 
             this.$router.push({
                 name: "RegisterPackage",
                 params: {
-                    naturalezaEncargo: this.form.nature.value,
-                    peso: this.form.weight.value,
+                    naturalezaEncargo: this.form.naturaleza.value,
+                    peso: this.form.peso.value,
                     alto: this.form.size.value.alto,
                     ancho: this.form.size.value.ancho,
                     largo: this.form.size.value.largo,
-                    origen: this.form.origin.value,
-                    destino: this.form.destination.value,
+                    origen: this.form.origen.value,
+                    destino: this.form.destino.value,
                     precio: this.precio.value,
 
                 },
