@@ -80,7 +80,7 @@
             <h4> {{this.calcularPrecio() }} euros </h4>
             <br>
             <h5> Si quiere realizar su encargo pulse a continuación:</h5>
-            <div class="mt-2"> 
+            <div class="mt-2">
                 <b-button @click="goBack" type="button">Volver</b-button>
                 <b-button @click="next" class="mx-4" type="submit" variant="info">Siguiente</b-button>
             </div>
@@ -194,7 +194,7 @@ export default {
                 value: {
                     required,
                     minValue: minValue(1),
-                    maxValue: maxValue(3200)
+                    maxValue: maxValue(32000)
                 }
             },
 
@@ -202,15 +202,21 @@ export default {
                 value: {
                     ancho: {
                         required,
-                        integer
+                        integer,
+                        minValue: minValue(1),
+                        maxValue: maxValue(240),
                     },
                     largo: {
                         required,
-                        integer
+                        integer,
+                        minValue: minValue(1),
+                        maxValue: maxValue(300),
                     },
                     alto: {
                         required,
-                        integer
+                        integer,
+                        minValue: minValue(1),
+                        maxValue: maxValue(1400),
                     },
                 },
             },
