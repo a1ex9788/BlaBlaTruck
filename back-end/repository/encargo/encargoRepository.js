@@ -181,8 +181,6 @@ function EncargoRepository(dbContext) {
 
     function deleteEncargoCliente(req, res) {
 
-        var parameters = [];
-
         if (req.data.Id) {
             var parameters = [];
 
@@ -202,8 +200,6 @@ function EncargoRepository(dbContext) {
 
     function deleteEncargoTransportista(req, res) {
 
-        var parameters = [];
-
         if (req.data.Id) {
             var parameters = [];
 
@@ -222,6 +218,51 @@ function EncargoRepository(dbContext) {
         }
     }
 
+    function añadirDNITransportistaAEncargo(req, res)
+    {
+        if (req.query.IdEncargo && req.query.DNITransportista) {
+            var parameters = [];
+
+            parameters.push({ name: 'IdEncargo', type: TYPES.BigInt, val: req.query.IdEncargo });
+            parameters.push({ name: 'DNITransportista', type: TYPES.Char, val: req.query.DNITransportista });
+          
+            var query = "update Encargo set DNITransportista = @DNITransportista where Id = @IdEncargo"
+           
+            dbContext.getQuery(query, parameters, false, function (error, data) {
+                if (error) {
+                    console.log(error)
+                }
+            });
+     
+        } else {
+            console.log("The parameters are not correct")
+        }
+
+        return res.sendStatus(404);
+    }
+
+    function quitarDNITransportistaDeEncargo(req, res)
+    {
+        if (req.query.IdEncargo) {
+            var parameters = [];
+
+            parameters.push({ name: 'IdEncargo', type: TYPES.BigInt, val: req.query.IdEncargo });
+          
+            var query = "update Encargo set DNITransportista = NULL where Id = @IdEncargo"
+           
+            dbContext.getQuery(query, parameters, false, function (error, data) {
+                if (error) {
+                    console.log("asd" + error)
+                }
+            });
+     
+        } else {
+            console.log("The parameters are not correct")
+        }
+
+        return res.sendStatus(404);
+    }
+
     return {
         getAll: getEncargos,
         //put: putEncargo,
@@ -233,9 +274,10 @@ function EncargoRepository(dbContext) {
         getEncargosPorCliente: getEncargosPorDniCliente,
         getEncargosPorTransportista: getEncargosPorDniTransportista,
         getEncargosPorNaturalezaCliente: getEncargosPorNaturalezaCliente,
-        getEncargosPorNaturalezaTransportista: getEncargosPorNaturalezaTransportista
+        getEncargosPorNaturalezaTransportista: getEncargosPorNaturalezaTransportista,
 
-
+        reservarEncargo: añadirDNITransportistaAEncargo,
+        anularEncargo: quitarDNITransportistaDeEncargo
     }
 }
 module.exports = EncargoRepository;

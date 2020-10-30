@@ -15,4 +15,8 @@ module.exports = function (router) {
     .delete(encargoRepository.deleteEncargoCliente)
     .post(encargoRepository.postEncargo)
     //.find(encargoRepository.getEncargosPorId);
+    router.route('/encargo/reservar')
+    .put(encargoRepository.reservarEncargo)
+    router.route('/encargo/anular')
+    .put(encargoRepository.anularEncargo)
   }
