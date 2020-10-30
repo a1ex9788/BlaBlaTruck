@@ -150,7 +150,10 @@ export default {
                         headerClass: 'p-2 border-bottom-0',
                         footerClass: 'p-2 border-top-0',
                         centered: true
-                    });
+                    }).then(value => {
+                         if(value) {this.$router.push('historical')}
+                             })
+                             
                     console.log("Se ha guardado correctamente");
                     console.log(response);
                 }
