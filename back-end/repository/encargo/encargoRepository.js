@@ -36,7 +36,7 @@ function EncargoRepository(dbContext) {
 
             parameters.push({name: 'DNICliente', type: TYPES.Char, val: req.query.DNICliente});
             
-            var query = "select * from Encargo where DNICliente LIKE @DNICliente";
+            var query = "select * from Encargo where DNICliente LIKE @DNICliente order by FechaRecogida desc";
             
             dbContext.getQuery(query, parameters, true, function(err, data) {
                 if(data) {
@@ -54,7 +54,7 @@ function EncargoRepository(dbContext) {
         var parameters = [];
         
         parameters.push({name: 'DNITransportista', type: TYPES.Char, val: req.query.DNITransportista});
-        var query = "select * from Encargo where DNITransportista LIKE @DNITransportista"
+        var query = "select * from Encargo where DNITransportista LIKE @DNITransportista order by FechaRecogida desc"
 
         dbContext.getQuery(query, parameters, true, function (error, data) {
             console.log("esto va bien");
