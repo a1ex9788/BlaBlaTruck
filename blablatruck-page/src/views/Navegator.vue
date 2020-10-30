@@ -1,7 +1,9 @@
 <template>
   <div>
-    <Sidebar/>
-    <div id="groupForm">
+    <div id="sidebar">
+      <Sidebar/>
+    </div>
+    <div id="map">
       <HereMap :center="center" />
     </div>
   </div>
@@ -21,8 +23,8 @@ export default {
 return {
     // we are this as prop to the HereMap component 
   center:{ 
-    lat: 40.730610, 
-    lng: -73.935242
+    lat: 40.463667, 
+    lng: -3.74922
     }
 }
   
@@ -31,8 +33,13 @@ return {
 </script>
 
 <style>
-  #groupForm {
-       
+  #map {
+      width: 100%; 
+      height: 92vh;
+  }
+  #sidebar {
+      width: 100%; 
+      height: 8vh;
   }
   body{
     padding: 0;
