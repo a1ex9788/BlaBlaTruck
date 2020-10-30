@@ -44,12 +44,15 @@ export default {
         };
     },
     created() {
-        this.personDNI = this.$route.params.personDNI;
-        this.isCarrier = this.$route.params.isCarrier;
+        this.personDNI = this.$cookies.get("loginToken").Dni;
+        this.isCarrier = this.$cookies.get("loginToken").Type === "Transportista";
+
 
         // Pruebas manuales. Cuando se llame a este view será necesario pasar sus parámetros
         if (!this.personDNI) this.personDNI = "11111111r";
         if (!this.isCarrier) this.isCarrier = false;
+        // if (!this.personDNI) this.personDNI = "12312312W";
+        // if (!this.isCarrier) this.isCarrier = true;
 
         this.updateHistorical();
     },
@@ -109,20 +112,27 @@ export default {
                 if (this.isCarrier) { dniToGetName = element.DNICliente }
                 else { dniToGetName = element.DNITransportista }
                 
-                var person
-                await axios
-                    .get("http://localhost:3300/api/personas/" + dniToGetName)
-                    .then(
-                        (response) => {
-                            person = response.data;
-                        },
-                        (error) => {
-                            console.log(error);
-                        }
-                    );
+                var nombreCompleto = "(Sin transportista)"
+
+                if (dniToGetName)
+                {
+                    var person
+                    await axios
+                        .get("http://localhost:3300/api/personas/" + dniToGetName)
+                        .then(
+                            (response) => {
+                                person = response.data;
+                            },
+                            (error) => {
+                                console.log(error);
+                            }
+                        );
+
+                    if (person) { nombreCompleto = person.Nombre + " " + person.Apellidos }
+                }
 
                 result.push({
-                    Nombre: person.Nombre + " " + person.Apellidos,
+                    Nombre: nombreCompleto,
                     FechaRecogida: element.FechaRecogida,
                     FechaEntrega: element.FechaEntrega,
                     Origen: element.Origen,
