@@ -52,7 +52,7 @@ export default {
       new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
 
       // add UI
-      H.ui.UI.createDefault(map, maptypes);
+      this. ui = H.ui.UI.createDefault(map, maptypes);
       // End rendering the initial map
     },
   async makerObjectsEncargos(map) {
@@ -93,14 +93,13 @@ export default {
                   map.addObject(marker);
 
                   var bubble =  new H.ui.InfoBubble(item.position, {
-                  // read custom data
-                  content: 'hola'
+                  //read custom data
+                  content: element.Origen
                   });
-
-                  marker.addEventListener('tap', function() {
+                  marker.addEventListener('tap', ()=> {
                   // Log 'tap' and 'mouse' events:
-                  //console.log(item)
-                  map.addBubble(bubble);
+                  //console.log(bubble)
+                  this.ui.addBubble(bubble);
                 });
                 });
 
