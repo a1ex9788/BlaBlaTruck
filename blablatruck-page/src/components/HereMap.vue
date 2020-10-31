@@ -87,8 +87,23 @@ export default {
               }, (res) => {
                 // Add a marker for each location found
                 res.items.forEach((item) => {
-                  map.addObject(new H.map.Marker(item.position));
+                  var marker = new H.map.Marker(item.position)
+
+                  marker.setData(item)
+                  map.addObject(marker);
+
+                  var bubble =  new H.ui.InfoBubble(item.position, {
+                  // read custom data
+                  content: 'hola'
+                  });
+
+                  marker.addEventListener('tap', function() {
+                  // Log 'tap' and 'mouse' events:
+                  //console.log(item)
+                  map.addBubble(bubble);
                 });
+                });
+
               }, alert);
             })
           }
