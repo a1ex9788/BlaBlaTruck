@@ -8,6 +8,7 @@
 
 <script>
 const axios = require("axios"); 
+var map;
 export default {
   name: "HereMap",
   props: {
@@ -28,7 +29,7 @@ export default {
     });
     this.platform = platform;
     this.initializeHereMap();
-    this.makerObjectsEncargos(this.map);
+    this.makerObjectsEncargos(map);
   },
   methods: {
     initializeHereMap() { // rendering map
@@ -39,13 +40,11 @@ export default {
       var maptypes = this.platform.createDefaultLayers();
 
       // Instantiate (and display) a map object:
-      var map = new H.Map(mapContainer, maptypes.vector.normal.map, {
+      map = new H.Map(mapContainer, maptypes.vector.normal.map, {
         zoom: 10,
         center: this.center
         // center object { lat: 40.730610, lng: -73.935242 }
       });
-
-      
       window.addEventListener('resize', 
 	      () => map.getViewPort().resize());
 
@@ -56,7 +55,7 @@ export default {
       H.ui.UI.createDefault(map, maptypes);
       // End rendering the initial map
     },
-  async makerObjectsEncargos() {
+  async makerObjectsEncargos(map) {
 
     var res; 
     //const mapContainer = this.$refs.hereMap;
@@ -74,9 +73,11 @@ export default {
           console.log(error);
         }
       );
-            res.forEach(async () => {
-              //console.log(res.data);
-              var calle = res.data.Origen;
+      
+              //console.log(res[0].Origen);
+            res.forEach(async (element) => {
+              
+              var calle = element.Origen;
               var service = this.platform.getSearchService();
               // Call the geocode method with the geocoding parameters,
               // the callback and an error callback function (called if a
@@ -86,7 +87,7 @@ export default {
               }, (res) => {
                 // Add a marker for each location found
                 res.items.forEach((item) => {
-                  this.map.addObject(new H.map.Marker(item.position));
+                  map.addObject(new H.map.Marker(item.position));
                 });
               }, alert);
             })
