@@ -7,6 +7,7 @@
 </template>
 
 <script>
+const axios = require("axios"); 
 export default {
   name: "HereMap",
   props: {
@@ -27,6 +28,7 @@ export default {
     });
     this.platform = platform;
     this.initializeHereMap();
+    this.makerObjectsEncargos(this.map);
   },
   methods: {
     initializeHereMap() { // rendering map
@@ -53,9 +55,44 @@ export default {
       // add UI
       H.ui.UI.createDefault(map, maptypes);
       // End rendering the initial map
-    }
-  }
-};
+    },
+  async makerObjectsEncargos() {
+
+    var res; 
+    //const mapContainer = this.$refs.hereMap;
+    const H = window.H;
+    //var maptypes = this.platform.createDefaultLayers();
+      await axios
+        .get("http://localhost:3300/api/encargo/estado", {
+        })
+        .then(
+          (response) => {
+            res = response.data[0];
+            // console.log(res);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+            res.forEach(async () => {
+              //console.log(res.data);
+              var calle = res.data.Origen;
+              var service = this.platform.getSearchService();
+              // Call the geocode method with the geocoding parameters,
+              // the callback and an error callback function (called if a
+              // communication error occurs):
+              service.geocode({
+                q: calle
+              }, (res) => {
+                // Add a marker for each location found
+                res.items.forEach((item) => {
+                  this.map.addObject(new H.map.Marker(item.position));
+                });
+              }, alert);
+            })
+          }
+          }
+  };
 </script>
 
 <style scoped>

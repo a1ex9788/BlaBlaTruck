@@ -10,7 +10,6 @@ function EncargoRepository(dbContext) {
         var query = "select * from Encargo where DNICliente LIKE @DNICliente"
 
         dbContext.getQuery(query, parameters, true, function (error, data) {
-            console.log("esto va bien");
             return res.json(response(data, error));
         });
     }
@@ -23,7 +22,6 @@ function EncargoRepository(dbContext) {
         var query = "select * from Encargo where Id LIKE @Id"
 
         dbContext.getQuery(query, parameters, true, function (error, data) {
-            console.log("esto va bien");
             return res.json(response(data, error));
         });
     
@@ -57,7 +55,6 @@ function EncargoRepository(dbContext) {
         var query = "select * from Encargo where DNITransportista LIKE @DNITransportista order by FechaRecogida desc"
 
         dbContext.getQuery(query, parameters, true, function (error, data) {
-            console.log("esto va bien");
             return res.json(response(data, error));
         });
     
@@ -73,7 +70,6 @@ function EncargoRepository(dbContext) {
         var query = "select * from Encargo where NaturalezaEncargo LIKE @NaturalezaEncargo AND DNICliente LIKE @DNICliente"
 
         dbContext.getQuery(query, parameters, true, function (error, data) {
-            console.log("esto va bien");
             return res.json(response(data, error));
         });
   
@@ -88,7 +84,6 @@ function EncargoRepository(dbContext) {
         var query = "select * from Encargo where NaturalezaEncargo LIKE @NaturalezaEncargo  AND DNITransportista LIKE @DNITransportista"
 
         dbContext.getQuery(query, parameters, true, function (error, data) {
-            console.log("esto va bien");
             return res.json(response(data, error));
         });
    
@@ -175,7 +170,7 @@ function EncargoRepository(dbContext) {
         "VALUES(@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@Precio,@Pagado,@DNICliente)";
        
         dbContext.getQuery(query, parameters, true, function (error, data) {
-        return res.json(response(data, error));
+         return res.json(response(data, error));
         });
     }
 
@@ -252,7 +247,7 @@ function EncargoRepository(dbContext) {
            
             dbContext.getQuery(query, parameters, false, function (error, data) {
                 if (error) {
-                    console.log("asd" + error)
+                    console.log(error)
                 }
             });
      
@@ -261,6 +256,20 @@ function EncargoRepository(dbContext) {
         }
 
         return res.sendStatus(404);
+    }
+
+
+
+    function getEncargosPorEstado(req,res) {
+       
+        var parameters = [];
+        
+        var query = "select * from Encargo where DNITransportista IS NULL"
+
+        dbContext.getQuery(query, parameters, true, function (error, data) {
+            return res.json(response(data, error));
+        });
+   
     }
 
     return {
@@ -275,7 +284,7 @@ function EncargoRepository(dbContext) {
         getEncargosPorTransportista: getEncargosPorDniTransportista,
         getEncargosPorNaturalezaCliente: getEncargosPorNaturalezaCliente,
         getEncargosPorNaturalezaTransportista: getEncargosPorNaturalezaTransportista,
-
+        getEstados: getEncargosPorEstado,
         reservarEncargo: añadirDNITransportistaAEncargo,
         anularEncargo: quitarDNITransportistaDeEncargo
     }
