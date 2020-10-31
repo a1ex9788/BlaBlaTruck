@@ -97,10 +97,10 @@ export default {
                     console.log(element)
                   var bubble =  new H.ui.InfoBubble(item.position, {
                   //read custom data
-                  content: "Origen: " + element.Origen + 
-                           " Destino: " + element.Destino + 
-                           " Cliente: " + element.DNICliente + 
-                           " Dimensiones: " + element.Alto + " x " + element.Ancho + " x " + element.Largo
+                  content: "Origen: ".bold().fontsize(5) + element.Origen.fontsize(3).fontcolor('#0055FF')  +
+                           " Destino: ".bold().fontsize(5) + element.Destino.fontsize(3).fontcolor('#0055FF') + 
+                           " Cliente: ".bold().fontsize(5) + element.DNICliente.fontsize(3).fontcolor('#0055FF') + 
+                           " Dimensiones: ".bold().fontsize(4) + element.Alto.toString().fontsize(3).fontcolor('#0055FF') + " x " + element.Ancho.toString().fontsize(3).fontcolor('#0055FF') + " x " + element.Largo.toString().fontsize(3).fontcolor('#0055FF')
                   });
                   // Log 'tap' and 'mouse' events:
                   //console.log(bubble)
