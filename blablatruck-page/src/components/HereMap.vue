@@ -92,11 +92,12 @@ export default {
                   marker.setData(item)
                   map.addObject(marker);
 
+                  
+                  marker.addEventListener('tap', ()=> {
                   var bubble =  new H.ui.InfoBubble(item.position, {
                   //read custom data
                   content: element.Origen
                   });
-                  marker.addEventListener('tap', ()=> {
                   // Log 'tap' and 'mouse' events:
                   //console.log(bubble)
                   this.ui.addBubble(bubble);
