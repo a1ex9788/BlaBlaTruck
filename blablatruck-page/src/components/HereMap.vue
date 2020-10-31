@@ -94,9 +94,13 @@ export default {
 
                   
                   marker.addEventListener('tap', ()=> {
+                    console.log(element)
                   var bubble =  new H.ui.InfoBubble(item.position, {
                   //read custom data
-                  content: element.Origen
+                  content: "Origen: " + element.Origen + 
+                           " Destino: " + element.Destino + 
+                           " Cliente: " + element.DNICliente + 
+                           " Dimensiones: " + element.Alto + " x " + element.Ancho + " x " + element.Largo
                   });
                   // Log 'tap' and 'mouse' events:
                   //console.log(bubble)
