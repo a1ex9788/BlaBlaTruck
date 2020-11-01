@@ -67,16 +67,12 @@ export default {
         .then(
           (response) => {
             res = response.data[0];
-            // console.log(res);
         },
         (error) => {
           console.log(error);
         }
       );
-      
-              //console.log(res[0].Origen);
-            res.forEach(async (element) => {
-              
+            res.forEach((element) => {
               var calle = element.Origen;
               var service = this.platform.getSearchService();
               // Call the geocode method with the geocoding parameters,
@@ -86,28 +82,29 @@ export default {
                 q: calle
               }, (res) => {
                 // Add a marker for each location found
-                res.items.forEach((item) => {
-                  var marker = new H.map.Marker(item.position)
 
-                  marker.setData(item)
-                  map.addObject(marker);
+                if(res.items[0] != null){
+                            var item = res.items[0];
+                            var marker = new H.map.Marker(item.position)
+                            marker.setData(item)
+                            map.addObject(marker);
+                            
+                            marker.addEventListener('tap', ()=> {
+                            var bubble =  new H.ui.InfoBubble(item.position, {
+                            //read custom data
+                            content:"Cliente: ".bold().fontsize(5) + element.DNICliente.fontsize(3).fontcolor('#0055FF') + 
+                                    " Origen: ".bold().fontsize(5) + element.Origen.fontsize(3).fontcolor('#0055FF')  +
+                                    " Destino: ".bold().fontsize(5) + element.Destino.fontsize(3).fontcolor('#0055FF') + 
+                                    " Naturaleza: ".bold().fontsize(4) + element.NaturalezaEncargo.fontsize(3).fontcolor('#0055FF') +
+                                    " Dimensiones: ".bold().fontsize(4) + element.Alto.toString().fontsize(3).fontcolor('#0055FF') + 
+                                                      " x " + element.Ancho.toString().fontsize(3).fontcolor('#0055FF') + 
+                                                      " x " + element.Largo.toString().fontsize(3).fontcolor('#0055FF')
+                                                  
+                            });
+                            this.ui.addBubble(bubble);
+                    });
 
-                  
-                  marker.addEventListener('tap', ()=> {
-                    console.log(element)
-                  var bubble =  new H.ui.InfoBubble(item.position, {
-                  //read custom data
-                  content: "Origen: ".bold().fontsize(5) + element.Origen.fontsize(3).fontcolor('#0055FF')  +
-                           " Destino: ".bold().fontsize(5) + element.Destino.fontsize(3).fontcolor('#0055FF') + 
-                           " Cliente: ".bold().fontsize(5) + element.DNICliente.fontsize(3).fontcolor('#0055FF') + 
-                           " Dimensiones: ".bold().fontsize(4) + element.Alto.toString().fontsize(3).fontcolor('#0055FF') + " x " + element.Ancho.toString().fontsize(3).fontcolor('#0055FF') + " x " + element.Largo.toString().fontsize(3).fontcolor('#0055FF')
-                  });
-                  // Log 'tap' and 'mouse' events:
-                  //console.log(bubble)
-                  this.ui.addBubble(bubble);
-                });
-                });
-
+                }
               }, alert);
             })
           }
