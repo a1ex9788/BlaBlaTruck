@@ -193,7 +193,7 @@ export default {
             peso: {
                 value: {
                     required,
-                    minValue: minValue(1),
+                    minValue: minValue(0.000001),
                     maxValue: maxValue(32000)
                 }
             },
