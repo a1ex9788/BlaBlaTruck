@@ -215,25 +215,19 @@ function EncargoRepository(dbContext) {
 
     function añadirDNITransportistaAEncargo(req, res)
     {
-        if (req.query.IdEncargo && req.query.DNITransportista) {
+        if (req.body.IdEncargo && req.body.DNITransportista) {
             var parameters = [];
-
-            parameters.push({ name: 'IdEncargo', type: TYPES.BigInt, val: req.query.IdEncargo });
-            parameters.push({ name: 'DNITransportista', type: TYPES.Char, val: req.query.DNITransportista });
-          
+            
+            parameters.push({ name: 'IdEncargo', type: TYPES.BigInt, val: req.body.IdEncargo });
+            parameters.push({ name: 'DNITransportista', type: TYPES.Char, val: req.body.DNITransportista });
+            
             var query = "update Encargo set DNITransportista = @DNITransportista where Id = @IdEncargo"
            
             dbContext.getQuery(query, parameters, false, function (error, data) {
-                if (error) {
-                    console.log(error)
-                }
+                return res.json(response(data, error));
             });
-     
-        } else {
-            console.log("The parameters are not correct")
         }
 
-        return res.sendStatus(404);
     }
 
     function quitarDNITransportistaDeEncargo(req, res)

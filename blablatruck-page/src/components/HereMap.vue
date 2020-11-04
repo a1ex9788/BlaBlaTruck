@@ -1,12 +1,14 @@
 
 <template>
   <div id="map">
+    <b-modal id="modalDialog" @ok="this.hide = true; window.location.reload();">Su paquete ha sido reservado con éxito!</b-modal>
   <!--In the following div the HERE Map will render-->
     <div id="mapContainer" ref="hereMap"></div>
   </div>
 </template>
 
 <script>
+import $ from 'jquery'
 const axios = require("axios"); 
 var map;
 export default {
@@ -32,6 +34,7 @@ export default {
     this.makerObjectsEncargos(map);
   },
   methods: {
+    hi() { console.log("hola")},
     initializeHereMap() { // rendering map
 
       const mapContainer = this.$refs.hereMap;
@@ -85,10 +88,10 @@ export default {
 
                 if(res.items[0] != null){
                             var item = res.items[0];
-                            var marker = new H.map.Marker(item.position)
+                            let marker = new H.map.Marker(item.position)
                             marker.setData(item)
                             map.addObject(marker);
-                            
+                            //let
                             marker.addEventListener('tap', ()=> {
                             var bubble =  new H.ui.InfoBubble(item.position, {
                             //read custom data
@@ -98,10 +101,43 @@ export default {
                                     " Naturaleza: ".bold().fontsize(4) + element.NaturalezaEncargo.fontsize(3).fontcolor('#0055FF') +
                                     " Dimensiones: ".bold().fontsize(4) + element.Alto.toString().fontsize(3).fontcolor('#0055FF') + 
                                                       " x " + element.Ancho.toString().fontsize(3).fontcolor('#0055FF') + 
-                                                      " x " + element.Largo.toString().fontsize(3).fontcolor('#0055FF')
+                                                      " x " + element.Largo.toString().fontsize(3).fontcolor('#0055FF') +
+                                                      "<button type='button' id='"+ element.Id.toString() + "' class='btn btn-primary'>Reservar</button>"
                                                   
                             });
+                            
                             this.ui.addBubble(bubble);
+                            let dni = this.$cookies.get("loginToken").Dni;
+                            let modal = () => {
+                              this.$bvModal.msgBoxOk('Su paquete ha sido reservado con éxito',{
+                                title: 'Confirmación',
+                                size: 'sm',
+                                buttonSize: 'sm',
+                                okVariant: 'info',
+                                headerClass: 'p-2 border-bottom-0',
+                                footerClass: 'p-2 border-top-0',
+                                centered: true
+                              }).then(value => {
+                              if(value) {map.removeObject(marker); this.ui.removeBubble(bubble);}
+                                  })
+                              };
+                            $('#'+ element.Id)[0].onclick = async function () {
+                              await axios.put('http://localhost:3300/api/encargo/reservar',{
+                                IdEncargo: element.Id, DNITransportista: dni
+                              })
+                              .then((msg) => {
+                                console.log(msg);
+                                //Añadir aqui la ventana de confirmación de paquete reservado y esperar a que el cliente acepte
+                                //para recargar la pagina.
+                                //
+                                modal();
+                                }), 
+                              (error) => {
+                                console.log(error); // si hay un error con el logueo o conexion
+                                
+                              }
+                            };
+                            
                     });
 
                 }

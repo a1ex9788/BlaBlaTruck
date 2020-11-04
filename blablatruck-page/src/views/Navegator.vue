@@ -23,8 +23,8 @@ export default {
 return {
     // we are this as prop to the HereMap component 
   center:{ 
-    lat: 40.463667, 
-    lng: -3.74922
+    lat: 39.46975, 
+    lng: -0.37739
     }
 }
   
