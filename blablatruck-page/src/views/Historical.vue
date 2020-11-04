@@ -11,6 +11,7 @@
                                 <div id="name">{{ item.Nombre }}</div>
                                 <div>{{ item.Origen }} -- {{ item.Destino }}</div>
                                 <div>{{ modifyFormat(item.FechaRecogida) }} -- {{ modifyFormat(item.FechaEntrega) }}</div>
+                                <b-button v-bind:id="item.Id" @click="onCancelButton" v-if="!item.FechaEntrega" class="btn-danger">Cancelar</b-button>
                             </b-col>
                             <b-col md="auto">
                                 <div>
@@ -136,14 +137,37 @@ export default {
                     FechaRecogida: element.FechaRecogida,
                     FechaEntrega: element.FechaEntrega,
                     Origen: element.Origen,
-                    Destino: element.Destino
+                    Destino: element.Destino,
+                    Id: element.Id
                 })
             })
             
             return result
+        },
+        async onCancelButton(event) {
+            await axios.put("http://localhost:3300/api/encargo/anular",{
+                params: {
+                    IdEncargo: event.target.id
+                }
+            }).then((res) => {
+                console.log(res);
+                this.$bvModal.msgBoxOk('Su reserva ha sido anulado con éxito',{
+                                title: 'Confirmación',
+                                size: 'sm',
+                                buttonSize: 'sm',
+                                okVariant: 'info',
+                                headerClass: 'p-2 border-bottom-0',
+                                footerClass: 'p-2 border-top-0',
+                                centered: true
+                              }).then(value => {
+                                if(value) window.location.reload()
+                              })
+            }), (error) => {
+                console.log(error);
+            }
         }
-
     }
+    
 };
 </script>
 

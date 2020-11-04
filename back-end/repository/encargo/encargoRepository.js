@@ -232,24 +232,20 @@ function EncargoRepository(dbContext) {
 
     function quitarDNITransportistaDeEncargo(req, res)
     {
-        if (req.query.IdEncargo) {
+        if (req.body.params.IdEncargo) {
             var parameters = [];
 
-            parameters.push({ name: 'IdEncargo', type: TYPES.BigInt, val: req.query.IdEncargo });
+            parameters.push({ name: 'IdEncargo', type: TYPES.BigInt, val: req.body.params.IdEncargo });
           
             var query = "update Encargo set DNITransportista = NULL where Id = @IdEncargo"
-           
             dbContext.getQuery(query, parameters, false, function (error, data) {
-                if (error) {
-                    console.log(error)
-                }
+                return res.json(response(data, error));
             });
      
         } else {
             console.log("The parameters are not correct")
+            return res.send("The parameters are not correct");
         }
-
-        return res.sendStatus(404);
     }
 
 
