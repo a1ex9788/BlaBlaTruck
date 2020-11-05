@@ -8,7 +8,7 @@
                     <b-list-group-item v-for="item in items" v-bind:key="item.id">
                         <b-row>
                             <b-col>
-                                <div id="name">{{ item.Nombre }}</div>
+                                <div id="name">{{ item.NombreCompleto }}</div>
                                 <div>{{ item.Origen }} -- {{ item.Destino }}</div>
                                 <div>{{ modifyFormat(item.FechaRecogida) }} -- {{ modifyFormat(item.FechaEntrega) }}</div>
                                 <b-button v-bind:id="item.Id" @click="onCancelButton" v-if="!item.FechaEntrega" class="btn-danger">Cancelar</b-button>
@@ -106,43 +106,7 @@ export default {
                 );
             }
             
-            var result = []
-
-            res.forEach(async (element) => {
-                var dniToGetName
-                if (this.isCarrier) { dniToGetName = element.DNICliente }
-                else { dniToGetName = element.DNITransportista }
-                
-                var nombreCompleto = "(Sin transportista)"
-
-                if (dniToGetName)
-                {
-                    var person
-                    await axios
-                        .get("http://localhost:3300/api/personas/" + dniToGetName)
-                        .then(
-                            (response) => {
-                                person = response.data;
-                            },
-                            (error) => {
-                                console.log(error);
-                            }
-                        );
-
-                    if (person) { nombreCompleto = person.Nombre + " " + person.Apellidos }
-                }
-
-                result.push({
-                    Nombre: nombreCompleto,
-                    FechaRecogida: element.FechaRecogida,
-                    FechaEntrega: element.FechaEntrega,
-                    Origen: element.Origen,
-                    Destino: element.Destino,
-                    Id: element.Id
-                })
-            })
-            
-            return result
+            return res
         },
         async onCancelButton(event) {
             await axios.put("http://localhost:3300/api/encargo/anular",{

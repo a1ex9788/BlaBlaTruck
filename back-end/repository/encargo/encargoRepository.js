@@ -34,7 +34,7 @@ function EncargoRepository(dbContext) {
 
             parameters.push({name: 'DNICliente', type: TYPES.Char, val: req.query.DNICliente});
             
-            var query = "select * from Encargo where DNICliente LIKE @DNICliente order by FechaRecogida desc";
+            var query = "select e.Origen, e.Destino, e.FechaEntrega, e.FechaRecogida, p.Nombre + ' ' + p.Apellidos as NombreCompleto from Encargo e, Persona p where p.DNI = e.DNICliente and DNICliente LIKE @DNICliente";
             
             dbContext.getQuery(query, parameters, true, function(err, data) {
                 if(data) {
@@ -52,7 +52,7 @@ function EncargoRepository(dbContext) {
         var parameters = [];
         
         parameters.push({name: 'DNITransportista', type: TYPES.Char, val: req.query.DNITransportista});
-        var query = "select * from Encargo where DNITransportista LIKE @DNITransportista order by FechaRecogida desc"
+        var query = "select e.Origen, e.Destino, e.FechaEntrega, e.FechaRecogida, p.Nombre + ' ' + p.Apellidos as NombreCompleto from Encargo e, Persona p where p.DNI = e.DNITransportista and DNITransportista LIKE @DNITransportista"
 
         dbContext.getQuery(query, parameters, true, function (error, data) {
             return res.json(response(data, error));
