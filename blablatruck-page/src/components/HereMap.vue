@@ -7,6 +7,7 @@
         <p class="mt-1 mr-2">Origen:</p>
         <b-input id="originForm" type="text" style="width: 350px"/>
       </b-row>
+      <div id="mapOrigin" class="filterMap ml-3"></div>
       <b-row class="m-2">
         <p class="mt-1 mr-1">Destino:</p>
         <b-input id="destinationForm" type="text" style="width: 350px"/>
@@ -187,8 +188,43 @@ export default {
               }, alert);
             })
     },
-    openOriginDestinationModalWindow() {
-      this.$bvModal.show('modalOriginDestinationFilterDialog')
+    async openOriginDestinationModalWindow() {
+      await this.$bvModal.show('modalOriginDestinationFilterDialog')
+
+      const originText = document.getElementById("originForm");
+      const mapContainer = document.getElementById("mapOrigin");
+      const H = window.H;
+      // Obtain the default map types from the platform object
+      var maptypes = this.platform.createDefaultLayers();
+
+      // Instantiate (and display) a map object:
+      var mapOrigin = new H.Map(mapContainer, maptypes.vector.normal.map, {
+        zoom: 7,
+        center: { lat: 40.730610, lng: -73.935242 }
+      });
+      window.addEventListener('resize', () => mapOrigin.getViewPort().resize());
+
+      originText.addEventListener('change', () => {
+        mapOrigin.getViewPort().resize()
+        mapOrigin.removeObjects(mapOrigin.getObjects())
+        var service = this.platform.getSearchService();
+        service.geocode({
+          q: originText.value
+        }, (res) => {
+          let marker = new H.map.Marker(res.items[0].position)
+          var circle = new H.map.Circle(res.items[0].position, 10000);
+          marker.setData(res[0])
+
+          mapOrigin.addObject(circle);
+          //mapOrigin.addObject(marker);
+          mapOrigin.setCenter(res.items[0].position);
+          console.log(circle.getRadius() / 10 )
+          mapOrigin.setZoom(10);
+        },
+        (error) => {
+          console.log(error); // si hay un error con el logueo o conexion
+        })
+      });
     }      
   },
 }
@@ -197,6 +233,11 @@ export default {
 <style>
 .filterButton {
   margin-top: 10px;
+}
+.filterMap {
+  margin: 10px;
+  width: 400px;
+  height: 250px;
 }
 #map {
   background-color: #ccc;
