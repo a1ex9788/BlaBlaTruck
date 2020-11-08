@@ -4,6 +4,7 @@
     <b-modal id="modalDialog" @ok="this.hide = true; window.location.reload();">Su paquete ha sido reservado con éxito!</b-modal>
   <!--In the following div the HERE Map will render-->
     <div id="mapContainer" ref="hereMap"></div>
+    
   </div>
 </template>
 
@@ -57,8 +58,39 @@ export default {
       // add UI
       this. ui = H.ui.UI.createDefault(map, maptypes);
       // End rendering the initial map
+
+      // Add filter button
+      let controlFilter = new H.ui.Control();
+
+      var buttonFilter = new H.ui.base.Button({
+        label: '<img src="http://localhost:8080/filter.png" fuild width="20 px" heigth="20 px" class="filterButton"/>',
+        onStateChange: function() {
+          if(buttonFilter.getState() == "down") {
+            overlayFilterPanel.pointToControl(controlFilter);
+            overlayFilterPanel.setState(overlayFilterPanel.getState() === "open" ? "close" : "open");
+          }
+        }
+      });
+
+      let overlayFilterPanel = new H.ui.base.OverlayPanel();
+      overlayFilterPanel.renderInternal = function(el) {
+        /* Añadir aquí todos los botones que redirigirán a las pestañas de los filtros*/
+        el.innerHTML = "<p class='mt-2 h4'>Filtrar por:</p>"+
+        '<button class="btn" id="filterButton">Tamaño</button>';
+        el.style.color = "black"
+      };
+
+      // Añadiendo el boton embudo y el overlay de las opciones de filtros a ui del map
+      controlFilter.addChild(buttonFilter);
+      controlFilter.addChild(overlayFilterPanel);
+      controlFilter.setAlignment('top-right');
+      this.ui.addControl('Filtro',controlFilter);
+
+      // Añadir aqui las funciones para abrir las ventanas modales para los filtros
+      $('#filterButton')[0].onclick = this.openFilterModalWindow;
+
     },
-  async makerObjectsEncargos(map) {
+    async makerObjectsEncargos(map) {
 
     var res; 
     //const mapContainer = this.$refs.hereMap;
@@ -143,17 +175,20 @@ export default {
                 }
               }, alert);
             })
-          }
-          }
-  };
+    },
+    openFilterModalWindow() {
+      console.log("A FILTRAR!");
+    }      
+  },
+}
 </script>
 
-<style scoped>
+<style>
+.filterButton {
+  margin-top: 10px;
+}
 #map {
-
-
   background-color: #ccc;
-
 }
 #mapContainer {
   width: 100%; 
