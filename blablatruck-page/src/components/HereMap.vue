@@ -1,6 +1,17 @@
 
 <template>
   <div id="map">
+    <b-modal id="modalOriginDestinationFilterDialog" hide="false" title="Filtrar por origen y destino">
+      <p>Inserte los criterios de filtrado:</p>
+      <b-row class="m-2">
+        <p class="mt-1 mr-2">Origen:</p>
+        <b-input id="originForm" type="text" style="width: 350px"/>
+      </b-row>
+      <b-row class="m-2">
+        <p class="mt-1 mr-1">Destino:</p>
+        <b-input id="destinationForm" type="text" style="width: 350px"/>
+      </b-row>
+    </b-modal>
     <b-modal id="modalDialog" @ok="this.hide = true; window.location.reload();">Su paquete ha sido reservado con éxito!</b-modal>
   <!--In the following div the HERE Map will render-->
     <div id="mapContainer" ref="hereMap"></div>
@@ -76,7 +87,7 @@ export default {
       overlayFilterPanel.renderInternal = function(el) {
         /* Añadir aquí todos los botones que redirigirán a las pestañas de los filtros*/
         el.innerHTML = "<p class='mt-2 h4'>Filtrar por:</p>"+
-        '<button class="btn" id="filterButton">Tamaño</button>';
+        '<button class="btn" id="originDestinationButton">Origen-Destino</button>';
         el.style.color = "black"
       };
 
@@ -87,7 +98,7 @@ export default {
       this.ui.addControl('Filtro',controlFilter);
 
       // Añadir aqui las funciones para abrir las ventanas modales para los filtros
-      $('#filterButton')[0].onclick = this.openFilterModalWindow;
+      $('#originDestinationButton')[0].onclick = this.openOriginDestinationModalWindow;
 
     },
     async makerObjectsEncargos(map) {
@@ -176,8 +187,8 @@ export default {
               }, alert);
             })
     },
-    openFilterModalWindow() {
-      console.log("A FILTRAR!");
+    openOriginDestinationModalWindow() {
+      this.$bvModal.show('modalOriginDestinationFilterDialog')
     }      
   },
 }
