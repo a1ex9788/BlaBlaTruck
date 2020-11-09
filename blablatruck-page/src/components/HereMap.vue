@@ -7,11 +7,28 @@
         <p class="mt-1 mr-2">Origen:</p>
         <b-input id="originForm" type="text" style="width: 350px"/>
       </b-row>
-      <div id="mapOrigin" class="filterMap ml-3"></div>
+      <div class="ml-3" id="mapOriginContainer" hidden="true">
+        <label>Radio del area:</label>
+        <b-row>
+          <label class="m-1">10 km</label>
+          <input type="range" style="width: 350px;" max="50000" min="1250" class="form-control-range" id="formControlRangeOrigin">
+          <label class="m-1">1000 km</label>
+        </b-row>
+        <div id="mapOrigin" class="filterMap"></div>
+      </div>
       <b-row class="m-2">
         <p class="mt-1 mr-1">Destino:</p>
         <b-input id="destinationForm" type="text" style="width: 350px"/>
       </b-row>
+      <div class="ml-3" id="mapDestinationContainer" hidden="true">
+        <label>Radio del area:</label>
+        <b-row>
+          <label class="m-1">10 km</label>
+          <input type="range" style="width: 350px;" max="50000" min="1250" class="form-control-range" id="formControlRangeDestination">
+          <label class="m-1">1000 km</label>
+        </b-row>
+        <div id="mapDestination" class="filterMap"></div>
+      </div>
     </b-modal>
     <b-modal id="modalDialog" @ok="this.hide = true; window.location.reload();">Su paquete ha sido reservado con éxito!</b-modal>
   <!--In the following div the HERE Map will render-->
@@ -192,40 +209,72 @@ export default {
       await this.$bvModal.show('modalOriginDestinationFilterDialog')
 
       const originText = document.getElementById("originForm");
-      const mapContainer = document.getElementById("mapOrigin");
+      const destinationText = document.getElementById("destinationForm");
+      const mapContainerOrigin = document.getElementById("mapOrigin");
+      const mapContainerDestination = document.getElementById("mapDestination");
       const H = window.H;
       // Obtain the default map types from the platform object
       var maptypes = this.platform.createDefaultLayers();
 
       // Instantiate (and display) a map object:
-      var mapOrigin = new H.Map(mapContainer, maptypes.vector.normal.map, {
+      var mapOrigin = new H.Map(mapContainerOrigin, maptypes.vector.normal.map, {
         zoom: 7,
         center: { lat: 40.730610, lng: -73.935242 }
       });
-      window.addEventListener('resize', () => mapOrigin.getViewPort().resize());
-
-      originText.addEventListener('change', () => {
-        mapOrigin.getViewPort().resize()
-        mapOrigin.removeObjects(mapOrigin.getObjects())
-        var service = this.platform.getSearchService();
-        service.geocode({
-          q: originText.value
-        }, (res) => {
-          let marker = new H.map.Marker(res.items[0].position)
-          var circle = new H.map.Circle(res.items[0].position, 10000);
-          marker.setData(res[0])
-
-          mapOrigin.addObject(circle);
-          //mapOrigin.addObject(marker);
-          mapOrigin.setCenter(res.items[0].position);
-          console.log(circle.getRadius() / 10 )
-          mapOrigin.setZoom(10);
-        },
-        (error) => {
-          console.log(error); // si hay un error con el logueo o conexion
-        })
+      var mapDestination = new H.Map(mapContainerDestination, maptypes.vector.normal.map, {
+        zoom: 7,
+        center: { lat: 40.730610, lng: -73.935242 }
       });
-    }      
+
+      window.addEventListener('resize', () => {mapOrigin.getViewPort().resize(); mapDestination.getViewPort().resize();});
+
+      $("#formControlRangeOrigin")[0].addEventListener('change', async () => {
+        await this.updateMapCircle(mapOrigin, originText.value, $("#formControlRangeOrigin")[0].value, H)});
+      originText.addEventListener('change',  async () => {
+        await this.updateMapCircle(mapOrigin, originText.value, $("#formControlRangeOrigin")[0].value, H)});
+      originText.addEventListener('click', () => {$("#mapOriginContainer")[0].hidden = false;
+      $("#mapDestinationContainer")[0].hidden = true});
+
+      $("#formControlRangeDestination")[0].addEventListener('change', async () => {
+        await this.updateMapCircle(mapDestination, destinationText.value, $("#formControlRangeDestination")[0].value, H)});
+      destinationText.addEventListener('change',  async () => {
+        await this.updateMapCircle(mapDestination, destinationText.value, $("#formControlRangeDestination")[0].value, H)});
+      destinationText.addEventListener('click', () => {$("#mapDestinationContainer")[0].hidden = false;
+      $("#mapOriginContainer")[0].hidden = true});
+    },
+    zoomNeeded(radio) {
+      let percent = radio / 10000;
+      if(percent <= 5 && percent > 3) return 7;
+      else if (percent <= 3 && percent > 2) return 8;
+      else if (percent <= 2 && percent > 1) return 9;
+      else if (percent <= 1 && percent > 0.5) return 10;
+      else if (percent <= 0.5 && percent > 0.25) return 11;
+      else if (percent <= 0.25 && percent > 0.175) return 12;
+      else return 13;
+    },
+    async updateMapCircle(map, direction, radio,H) {
+      if(direction == undefined || direction.trim() === "") return
+      map.getViewPort().resize()
+      map.removeObjects(map.getObjects())
+      
+      var service = this.platform.getSearchService();
+      service.geocode({
+        q: direction
+      }, (res) => {
+        let marker = new H.map.Marker(res.items[0].position)
+        var circle = new H.map.Circle(res.items[0].position, radio);
+        marker.setData(res[0])
+
+        map.addObject(circle);
+        //mapOrigin.addObject(marker);
+        var zoom = this.zoomNeeded(circle.getRadius())
+        map.setCenter(res.items[0].position);
+        map.setZoom(zoom);
+      },
+      (error) => {
+        console.log(error); 
+      })
+    }
   },
 }
 </script>
