@@ -41,6 +41,7 @@
 import $ from 'jquery'
 const axios = require("axios"); 
 var map;
+
 export default {
   name: "HereMap",
   props: {
@@ -53,9 +54,19 @@ export default {
       apikey: "h_XTwwPMEk8Iz2QvPW6rtB5D99xqPDwbW9aVqNRe1HI",
       // You can get the API KEY from developer.here.com
        routingService: {},
+        items: [],
+        personDNI: undefined,
     };
   },
+
+  async created() {
+        this.personDNI = this.$cookies.get("loginToken").Dni;
+        this.addEncargosToList();
+   },
+
+
   async mounted() {
+    console.log(this.getEncargos());
     // Initialize the platform object:
     const platform = new window.H.service.Platform({
       apikey: this.apikey
@@ -69,6 +80,7 @@ export default {
              { lat: "39.511", lng: "-0.38" },
              map
          );
+         
   },
   methods: {
     hi() { console.log("hola")},
@@ -322,7 +334,40 @@ export default {
                 );
 
                
-            }
+            },
+
+      async getEncargos(){
+        /*
+         var res;
+                await axios
+                .get("http://localhost:3300/api/encargo/transportista", {
+                    params: {
+                        DNITransportista: this.personDNI,
+                    },
+                })
+                .then(
+                    (response) => {
+                        res = response.data[0],
+                         service.geocode({
+                          res.Origen
+                   }, (res) => {}
+
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+
+                //TRANSFORMACION A C0ORDENADAS
+             
+                return res;   
+                */
+      },
+
+       async addEncargosToList() {
+            var encargos = await this.getEncargos();
+            this.items = encargos;
+        },
   },
 }
 </script>
