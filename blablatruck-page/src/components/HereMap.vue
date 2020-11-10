@@ -2,6 +2,8 @@
 <template>
   <div id="map">
     <b-modal id="modalOriginDestinationFilterDialog" @ok="filterByOriginDestination" hide="false" title="Filtrar por origen y destino">
+  <div  ref="map" id="map">
+    <b-modal id="modalOriginDestinationFilterDialog" hide="false" title="Filtrar por origen y destino">
       <p>Inserte los criterios de filtrado:</p>
       <b-row class="m-2">
         <p class="mt-1 mr-2">Origen:</p>
@@ -41,6 +43,7 @@
 import $ from 'jquery'
 const axios = require("axios"); 
 var map;
+
 export default {
   name: "HereMap",
   props: {
@@ -61,18 +64,36 @@ export default {
           position: {},
           radius: 0
         }
-      }
+      },
       // You can get the API KEY from developer.here.com
+        routingService: {},
+        items: [],
+        personDNI: undefined,
     };
   },
+
+  async created() {
+        this.personDNI = this.$cookies.get("loginToken").Dni;
+        this.addEncargosToList();
+   },
+
+
   async mounted() {
+    console.log(this.getEncargos());
     // Initialize the platform object:
     const platform = new window.H.service.Platform({
       apikey: this.apikey
     });
     this.platform = platform;
+     this.routingService = this.platform.getRoutingService();
     this.initializeHereMap();
     this.makerObjectsEncargos(map);
+     this.drawRoute(
+             { lat: "39.50", lng: "-0.37" },
+             { lat: "39.511", lng: "-0.38" },
+             map
+         );
+         
   },
   methods: {
     initializeHereMap() { // rendering map
@@ -319,7 +340,81 @@ export default {
           })
         })
       }
-    }
+    },
+     drawRoute(start,finish,map){
+                this.routingService.calculateRoute(
+                    {
+                        "mode": "fastest;car;traffic:enabled",
+                        "waypoint0": `${start.lat},${start.lng}`,
+                        "waypoint1": `${finish.lat},${finish.lng}`,
+                        "representation": "display"
+
+                    },
+
+                    data =>{
+                        //console.log("Mostrando datos de CalculateRoute:");
+                        //console.log(data);
+                        if(data.response.route.length > 0){
+                            let lineString = new window.H.geo.LineString();
+                            data.response.route[0].shape.forEach(point => {
+                                let [lat,lng] = point.split(",");
+                                lineString.pushPoint({lat : lat, lng: lng});
+                            });
+                            let polyline = new window.H.map.Polyline(
+                                lineString,
+                                {
+                                    style:{lineWidth: 5}
+                                }
+
+                            );
+                            map.addObject(polyline);
+                            map.getViewModel().setLookAtData({bounds: polyline.getBoundingBox()});
+
+                        }
+                        
+                    },
+
+                   error => {
+                       console.error(error);
+                    }
+
+                );
+
+               
+            },
+
+      async getEncargos(){
+        /*
+         var res;
+                await axios
+                .get("http://localhost:3300/api/encargo/transportista", {
+                    params: {
+                        DNITransportista: this.personDNI,
+                    },
+                })
+                .then(
+                    (response) => {
+                        res = response.data[0],
+                         service.geocode({
+                          res.Origen
+                   }, (res) => {}
+
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+
+                //TRANSFORMACION A C0ORDENADAS
+             
+                return res;   
+                */
+      },
+
+      async addEncargosToList() {
+            var encargos = await this.getEncargos();
+            this.items = encargos;
+      }
   }
 }
 </script>
