@@ -3,8 +3,11 @@
     <div id="sidebar">
       <Sidebar/>
     </div>
-    <div id="map">
-      <HereMap :center="center" />
+    <div id="map"> 
+       <HereMap
+             ref="map"
+             :center="center">
+        </HereMap>
     </div>
   </div>
 </template>
@@ -27,8 +30,8 @@ return {
     lng: -0.37739
     }
 }
-  
-  }
+  },
+
 }
 </script>
 

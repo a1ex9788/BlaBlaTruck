@@ -1,6 +1,6 @@
 
 <template>
-  <div id="map">
+  <div  ref="map" id="map">
     <b-modal id="modalOriginDestinationFilterDialog" hide="false" title="Filtrar por origen y destino">
       <p>Inserte los criterios de filtrado:</p>
       <b-row class="m-2">
@@ -50,8 +50,9 @@ export default {
   data() {
     return {
       platform: null,
-      apikey: "h_XTwwPMEk8Iz2QvPW6rtB5D99xqPDwbW9aVqNRe1HI"
+      apikey: "h_XTwwPMEk8Iz2QvPW6rtB5D99xqPDwbW9aVqNRe1HI",
       // You can get the API KEY from developer.here.com
+       routingService: {},
     };
   },
   async mounted() {
@@ -60,8 +61,14 @@ export default {
       apikey: this.apikey
     });
     this.platform = platform;
+     this.routingService = this.platform.getRoutingService();
     this.initializeHereMap();
     this.makerObjectsEncargos(map);
+     this.drawRoute(
+             { lat: "39.50", lng: "-0.37" },
+             { lat: "39.511", lng: "-0.38" },
+             map
+         );
   },
   methods: {
     hi() { console.log("hola")},
@@ -274,7 +281,48 @@ export default {
       (error) => {
         console.log(error); 
       })
-    }
+    },
+     drawRoute(start,finish,map){
+                this.routingService.calculateRoute(
+                    {
+                        "mode": "fastest;car;traffic:enabled",
+                        "waypoint0": `${start.lat},${start.lng}`,
+                        "waypoint1": `${finish.lat},${finish.lng}`,
+                        "representation": "display"
+
+                    },
+
+                    data =>{
+                        //console.log("Mostrando datos de CalculateRoute:");
+                        //console.log(data);
+                        if(data.response.route.length > 0){
+                            let lineString = new window.H.geo.LineString();
+                            data.response.route[0].shape.forEach(point => {
+                                let [lat,lng] = point.split(",");
+                                lineString.pushPoint({lat : lat, lng: lng});
+                            });
+                            let polyline = new window.H.map.Polyline(
+                                lineString,
+                                {
+                                    style:{lineWidth: 5}
+                                }
+
+                            );
+                            map.addObject(polyline);
+                            map.getViewModel().setLookAtData({bounds: polyline.getBoundingBox()});
+
+                        }
+                        
+                    },
+
+                   error => {
+                       console.error(error);
+                    }
+
+                );
+
+               
+            }
   },
 }
 </script>
