@@ -1,8 +1,8 @@
 
 <template>
   <div id="map">
-    <b-modal id="modalOriginDestinationFilterDialog" @ok="filterByOriginDestination" hide="false" title="Filtrar por origen y destino">
-  <div  ref="map" id="map">
+    <!--<b-modal id="modalOriginDestinationFilterDialog" @ok="filterByOriginDestination" hide="false" title="Filtrar por origen y destino">
+    <div  ref="map" id="map">-->
     <b-modal id="modalOriginDestinationFilterDialog" hide="false" title="Filtrar por origen y destino">
       <p>Inserte los criterios de filtrado:</p>
       <b-row class="m-2">
