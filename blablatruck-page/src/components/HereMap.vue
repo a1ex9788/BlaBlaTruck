@@ -1,7 +1,7 @@
 
 <template>
   <div id="map">
-    <b-modal id="modalOriginDestinationFilterDialog" hide="false" title="Filtrar por origen y destino">
+    <b-modal id="modalOriginDestinationFilterDialog" @ok="filterByOriginDestination" hide="false" title="Filtrar por origen y destino">
       <p>Inserte los criterios de filtrado:</p>
       <b-row class="m-2">
         <p class="mt-1 mr-2">Origen:</p>
@@ -50,7 +50,18 @@ export default {
   data() {
     return {
       platform: null,
-      apikey: "h_XTwwPMEk8Iz2QvPW6rtB5D99xqPDwbW9aVqNRe1HI"
+      apikey: "h_XTwwPMEk8Iz2QvPW6rtB5D99xqPDwbW9aVqNRe1HI",
+      packages: undefined, /* Lista de paquetes del mapa */
+      originDestinationFilter: {
+        origin: {
+          position: {},
+          radius: 0
+        },
+        destination: {
+          position: {},
+          radius: 0
+        }
+      }
       // You can get the API KEY from developer.here.com
     };
   },
@@ -64,7 +75,6 @@ export default {
     this.makerObjectsEncargos(map);
   },
   methods: {
-    hi() { console.log("hola")},
     initializeHereMap() { // rendering map
 
       const mapContainer = this.$refs.hereMap;
@@ -120,23 +130,27 @@ export default {
 
     },
     async makerObjectsEncargos(map) {
-
-    var res; 
-    //const mapContainer = this.$refs.hereMap;
-    const H = window.H;
-    //var maptypes = this.platform.createDefaultLayers();
+      await this.getPackages();
+      await this.updateMap(this.packages, map);
+    },
+    async getPackages() {
       await axios
         .get("http://localhost:3300/api/encargo/estado", {
         })
         .then(
           (response) => {
-            res = response.data[0];
+            this.packages = response.data[0];
         },
         (error) => {
           console.log(error);
         }
       );
-            res.forEach((element) => {
+    },
+    async updateMap(res, map) {
+      //const mapContainer = this.$refs.hereMap;
+      const H = window.H;
+      //var maptypes = this.platform.createDefaultLayers();
+      res.forEach((element) => {
               var calle = element.Origen;
               var service = this.platform.getSearchService();
               // Call the geocode method with the geocoding parameters,
@@ -229,18 +243,27 @@ export default {
       window.addEventListener('resize', () => {mapOrigin.getViewPort().resize(); mapDestination.getViewPort().resize();});
 
       $("#formControlRangeOrigin")[0].addEventListener('change', async () => {
-        await this.updateMapCircle(mapOrigin, originText.value, $("#formControlRangeOrigin")[0].value, H)});
+        await this.updateMapCircle(mapOrigin, originText.value,
+          $("#formControlRangeOrigin")[0].value, this.originDestinationFilter.origin.position, H)
+        this.originDestinationFilter.origin.radius = $("#formControlRangeOrigin")[0].value});
       originText.addEventListener('change',  async () => {
-        await this.updateMapCircle(mapOrigin, originText.value, $("#formControlRangeOrigin")[0].value, H)});
+        await this.updateMapCircle(mapOrigin, originText.value,
+          $("#formControlRangeOrigin")[0].value, this.originDestinationFilter.origin.position, H)
+        this.originDestinationFilter.origin.radius = $("#formControlRangeOrigin")[0].value});
       originText.addEventListener('click', () => {$("#mapOriginContainer")[0].hidden = false;
       $("#mapDestinationContainer")[0].hidden = true});
 
       $("#formControlRangeDestination")[0].addEventListener('change', async () => {
-        await this.updateMapCircle(mapDestination, destinationText.value, $("#formControlRangeDestination")[0].value, H)});
+        await this.updateMapCircle(mapDestination, destinationText.value,
+          $("#formControlRangeDestination")[0].value, this.originDestinationFilter.destination.position, H)
+        this.originDestinationFilter.destination.radius = $("#formControlRangeDestination")[0].value});
       destinationText.addEventListener('change',  async () => {
-        await this.updateMapCircle(mapDestination, destinationText.value, $("#formControlRangeDestination")[0].value, H)});
+        await this.updateMapCircle(mapDestination, destinationText.value,
+          $("#formControlRangeDestination")[0].value, this.originDestinationFilter.destination.position, H)
+        this.originDestinationFilter.destination.radius = $("#formControlRangeDestination")[0].value});
       destinationText.addEventListener('click', () => {$("#mapDestinationContainer")[0].hidden = false;
       $("#mapOriginContainer")[0].hidden = true});
+
     },
     zoomNeeded(radio) {
       let percent = radio / 10000;
@@ -252,16 +275,16 @@ export default {
       else if (percent <= 0.25 && percent > 0.175) return 12;
       else return 13;
     },
-    async updateMapCircle(map, direction, radio,H) {
+    /* Returns the position of the circle, if it isnt a direction return undefined*/
+    async updateMapCircle(map, direction, radio, dataPosition, H) {
       if(direction == undefined || direction.trim() === "") return
       map.getViewPort().resize()
       map.removeObjects(map.getObjects())
-      
       var service = this.platform.getSearchService();
       service.geocode({
         q: direction
       }, (res) => {
-        let marker = new H.map.Marker(res.items[0].position)
+        let marker = new H.map.Marker(res.items[0].position);
         var circle = new H.map.Circle(res.items[0].position, radio);
         marker.setData(res[0])
 
@@ -270,12 +293,34 @@ export default {
         var zoom = this.zoomNeeded(circle.getRadius())
         map.setCenter(res.items[0].position);
         map.setZoom(zoom);
+        dataPosition.lat = res.items[0].position.lat;
+        dataPosition.lng = res.items[0].position.lng;
       },
       (error) => {
         console.log(error); 
       })
+    },
+    /*Elimina aquellos paquetes que no cumplen el filtro de la lista this.packages*/
+    filterByOriginDestination() {
+      if(this.filterByOriginDestination.origin.position != undefined) {
+        let service = this.platform.getSearchService();
+        this.packages.forEach((packageItem) => {
+          console.log(packageItem.Origen)
+          service.geocode({
+            q: packageItem.Origen
+          }, (res) => {
+            if(res.items[0] != null){
+              var coordsPackage = res.items[0].position;
+              var coordsCircle = this.originDestinationFilter.origin.position;
+              var distance = Math.sqrt(Math.pow((coordsPackage.lat - coordsCircle.lat),2) + 
+                Math.pow((coordsPackage.long - coordsCircle.long), 2));
+              console.log(packageItem.Origen + " -> " + distance);
+            }
+          })
+        })
+      }
     }
-  },
+  }
 }
 </script>
 
