@@ -65,10 +65,19 @@ export default {
           radius: 0
         }
       },
-      // You can get the API KEY from developer.here.com
         routingService: {},
         items: [],
-        coordenadas: [],
+        coordenadasEncargosPendientes: [{
+          origen: {
+            lat: undefined,
+            lng: undefined
+          },
+          destino: {
+            lat: undefined,
+            lng: undefined
+          }
+        }]
+        , 
         personDNI: undefined,
     };
   },
@@ -89,13 +98,31 @@ export default {
      this.routingService = this.platform.getRoutingService();
     this.initializeHereMap();
     this.makerObjectsEncargos(map);
+   
+
      this.drawRoute(
              { lat: "39.50", lng: "-0.37" },
              { lat: "39.511", lng: "-0.38" },
              map
          );
+
+/*
+     console.log("RESULTADO: " + this.coordenadasEncargosPendientes[0].origen.lat);
+     this.drawRoute(
+             { lat: this.coordenadasEncargosPendientes[0].origen.lat, lng: this.coordenadasEncargosPendientes[0].origen.lng  },
+             { lat: this.coordenadasEncargosPendientes[0].destino.lat, lng: this.coordenadasEncargosPendientes[0].destino.lng },
+             map
+         );
+
+      */
+
+    
+
+
+      
          
   },
+
   methods: {
     initializeHereMap() { // rendering map
 
@@ -391,7 +418,6 @@ export default {
                         "waypoint0": `${start.lat},${start.lng}`,
                         "waypoint1": `${finish.lat},${finish.lng}`,
                         "representation": "display"
-
                     },
 
                     data =>{
@@ -428,7 +454,7 @@ export default {
 
     async getEncargos(){
         
-       /*  var res;
+         var res = [];
          var service;
          var coord;
          
@@ -447,14 +473,18 @@ export default {
                          q: res[0].Origen
                         }, (res) => {
                             coord = res.items[0].position;
-                             console.log("coord1: lat " + coord.lat + " coord2: lng: " + coord.lng + "  Origen:" + res.items[0].Origen);    
+                            this.coordenadasEncargosPendientes[0].origen.lat = coord.lat;
+                            this.coordenadasEncargosPendientes[0].origen.lng = coord.lng;
+                             //console.log("coord1: lat " + coord.lat + " coord2: lng: " + coord.lng + "  Origen:" + res.items[0].Origen);    
                         })
 
                         service.geocode({
                          q: res[0].Destino
                         }, (res) => {
-                            coord = res.items[0].position;
-                             console.log("coord1: lat " + coord.lat + " coord2: lng: " + coord.lng + "  Destino: " + res.items[0].Destino);
+                          coord = res.items[0].position;
+                          this.coordenadasEncargosPendientes[0].destino.lat = coord.lat;
+                          this.coordenadasEncargosPendientes[0].destino.lng = coord.lng;
+                          //console.log("coord1: lat " + coord.lat + " coord2: lng: " + coord.lng + "  Destino: " + res.items[0].Destino);
                         })
 
                     },
@@ -463,22 +493,24 @@ export default {
                     }
                 );
 
-                console.log("coord2: " + coord);
+               //console.log("coord2: " + coord);
                // var coordsOrigen = res[0].position.lat;
                // var coordsDestino = res[0].position.lng;
               //  console.log("Coordenadas: Origen: " + coordsOrigen + "  Destino:  " + coordsDestino);
-                console.log("var 'res'  Origen: " + res[0].Origen +  "  Destino: " + res[0].Destino );
+               // console.log("var 'res'  Origen: " + res[0].Origen +  "  Destino: " + res[0].Destino );
                 //TRANSFORMACION A C0ORDENADAS
                  // let service = this.platform.getSearchService();
 
-                return res;   */
+                return this.coordenadasEncargosPendientes;
                 
       },
 
-    async addEncargosToList() {
+
+      async addEncargosToList() {
             var encargos = await this.getEncargos();
             this.items = encargos;
       }
+
   }
 }
 </script>
