@@ -172,6 +172,10 @@ export default {
       //const mapContainer = this.$refs.hereMap;
       const H = window.H;
       //var maptypes = this.platform.createDefaultLayers();
+
+      //Limpiar de marcadores el mapa
+      map.removeObjects(map.getObjects())
+
       res.forEach((element) => {
               var calle = element.Origen;
               var service = this.platform.getSearchService();
@@ -323,25 +327,64 @@ export default {
       })
     },
     /*Elimina aquellos paquetes que no cumplen el filtro de la lista this.packages*/
-    filterByOriginDestination() {
+    async filterByOriginDestination() {
       if(this.originDestinationFilter.origin.position != undefined) {
+        const H = window.H;
+        const coordsCircleOrigin = new H.geo.Point(this.originDestinationFilter.origin.position.lat,
+          this.originDestinationFilter.origin.position.lng);
+
+        
         let service = this.platform.getSearchService();
-        this.packages.forEach((packageItem) => {
-          service.geocode({
-            q: packageItem.Origen
-          }, (res) => {
-            if(res.items[0] != null){
-              var coordsPackage = res.items[0].position;
-              var coordsCircle = this.originDestinationFilter.origin.position;
-              var distance = Math.sqrt(Math.pow(Math.abs(coordsPackage.lat - coordsCircle.lat), 2) + 
-                Math.pow(Math.abs(coordsPackage.lng - coordsCircle.lng), 2));
-              console.log(packageItem.Origen + " -> " + distance);
-            }
+
+        var promiseOrigin = new Promise((resolve) => {
+          let coordsPackage;
+          let filteredPackagesOrigin = [];
+          this.packages.forEach((packageItem, index, array) => {
+            service.geocode({
+              q: packageItem.Origen
+            }, (res) => {
+              if(res.items[0] != null){
+                coordsPackage = new H.geo.Point(res.items[0].position.lat, res.items[0].position.lng);
+                var distance = coordsPackage.distance(coordsCircleOrigin)
+                if(distance <= this.originDestinationFilter.origin.radius) {
+                  filteredPackagesOrigin.push(packageItem);
+                }
+                if (index === array.length -1) resolve(filteredPackagesOrigin);
+              }
+            })
           })
         })
+        promiseOrigin.then((filteredPackagesOrigin) => {
+          this.packages = filteredPackagesOrigin;
+          if(this.originDestinationFilter.destination.position != undefined) {
+            const coordsCircleDestination = new H.geo.Point(this.originDestinationFilter.destination.position.lat,
+              this.originDestinationFilter.destination.position.lng);
+
+            let coordsPackage;
+            let filteredPackagesOriginDestination = [];
+
+            this.packages.forEach((packageItem, index, array) => {
+              service.geocode({
+                q: packageItem.Destino
+              }, (res) => {
+                if(res.items[0] != null){
+                  coordsPackage = new H.geo.Point(res.items[0].position.lat, res.items[0].position.lng);
+                  var distance = coordsPackage.distance(coordsCircleDestination)
+                  if(distance <= this.originDestinationFilter.destination.radius) {
+                    filteredPackagesOriginDestination.push(packageItem);
+                  }
+                  if (index === array.length -1) {
+                    this.packages = filteredPackagesOriginDestination;
+                    this.updateMap(filteredPackagesOriginDestination, map)
+                  }
+                }
+              })
+            })
+          } else {this.updateMap(filteredPackagesOrigin, map)}
+        });
       }
     },
-     drawRoute(start,finish,map){
+    drawRoute(start,finish,map){
                 this.routingService.calculateRoute(
                     {
                         "mode": "fastest;car;traffic:enabled",
@@ -383,7 +426,7 @@ export default {
                
             },
 
-      async getEncargos(){
+    async getEncargos(){
         
        /*  var res;
          var service;
@@ -432,7 +475,7 @@ export default {
                 
       },
 
-      async addEncargosToList() {
+    async addEncargosToList() {
             var encargos = await this.getEncargos();
             this.items = encargos;
       }
