@@ -3,7 +3,7 @@
   <div id="map">
     <!--<b-modal id="modalOriginDestinationFilterDialog" @ok="filterByOriginDestination" hide="false" title="Filtrar por origen y destino">
     <div  ref="map" id="map">-->
-    <b-modal id="modalOriginDestinationFilterDialog" hide="false" title="Filtrar por origen y destino">
+    <b-modal id="modalOriginDestinationFilterDialog" @ok="filterByOriginDestination" hide="false" title="Filtrar por origen y destino">
       <p>Inserte los criterios de filtrado:</p>
       <b-row class="m-2">
         <p class="mt-1 mr-2">Origen:</p>
@@ -351,18 +351,17 @@ export default {
     },
     /*Elimina aquellos paquetes que no cumplen el filtro de la lista this.packages*/
     filterByOriginDestination() {
-      if(this.filterByOriginDestination.origin.position != undefined) {
+      if(this.originDestinationFilter.origin.position != undefined) {
         let service = this.platform.getSearchService();
         this.packages.forEach((packageItem) => {
-          console.log(packageItem.Origen)
           service.geocode({
             q: packageItem.Origen
           }, (res) => {
             if(res.items[0] != null){
               var coordsPackage = res.items[0].position;
               var coordsCircle = this.originDestinationFilter.origin.position;
-              var distance = Math.sqrt(Math.pow((coordsPackage.lat - coordsCircle.lat),2) + 
-                Math.pow((coordsPackage.long - coordsCircle.long), 2));
+              var distance = Math.sqrt(Math.pow(Math.abs(coordsPackage.lat - coordsCircle.lat), 2) + 
+                Math.pow(Math.abs(coordsPackage.lng - coordsCircle.lng), 2));
               console.log(packageItem.Origen + " -> " + distance);
             }
           })
