@@ -68,6 +68,7 @@ export default {
       // You can get the API KEY from developer.here.com
         routingService: {},
         items: [],
+        coordenadas: [],
         personDNI: undefined,
     };
   },
@@ -383,8 +384,11 @@ export default {
             },
 
       async getEncargos(){
-        /*
-         var res;
+        
+       /*  var res;
+         var service;
+         var coord;
+         
                 await axios
                 .get("http://localhost:3300/api/encargo/transportista", {
                     params: {
@@ -394,9 +398,21 @@ export default {
                 .then(
                     (response) => {
                         res = response.data[0],
+                        service = this.platform.getSearchService();
+                        
                          service.geocode({
-                          res.Origen
-                   }, (res) => {}
+                         q: res[0].Origen
+                        }, (res) => {
+                            coord = res.items[0].position;
+                             console.log("coord1: lat " + coord.lat + " coord2: lng: " + coord.lng + "  Origen:" + res.items[0].Origen);    
+                        })
+
+                        service.geocode({
+                         q: res[0].Destino
+                        }, (res) => {
+                            coord = res.items[0].position;
+                             console.log("coord1: lat " + coord.lat + " coord2: lng: " + coord.lng + "  Destino: " + res.items[0].Destino);
+                        })
 
                     },
                     (error) => {
@@ -404,10 +420,16 @@ export default {
                     }
                 );
 
+                console.log("coord2: " + coord);
+               // var coordsOrigen = res[0].position.lat;
+               // var coordsDestino = res[0].position.lng;
+              //  console.log("Coordenadas: Origen: " + coordsOrigen + "  Destino:  " + coordsDestino);
+                console.log("var 'res'  Origen: " + res[0].Origen +  "  Destino: " + res[0].Destino );
                 //TRANSFORMACION A C0ORDENADAS
-             
-                return res;   
-                */
+                 // let service = this.platform.getSearchService();
+
+                return res;   */
+                
       },
 
       async addEncargosToList() {
