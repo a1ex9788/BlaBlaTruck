@@ -56,6 +56,7 @@ export default {
       apikey: "h_XTwwPMEk8Iz2QvPW6rtB5D99xqPDwbW9aVqNRe1HI",
       packages: undefined, /* Lista de paquetes del mapa */
       originDestinationFilter: {
+        isActive: false,
         origin: {
           position: {},
           radius: 0
@@ -273,50 +274,56 @@ export default {
             })
     },
     async openOriginDestinationModalWindow() {
-      await this.$bvModal.show('modalOriginDestinationFilterDialog')
+      if(!this.originDestinationFilter.isActive) {
+        await this.$bvModal.show('modalOriginDestinationFilterDialog')
 
-      const originText = document.getElementById("originForm");
-      const destinationText = document.getElementById("destinationForm");
-      const mapContainerOrigin = document.getElementById("mapOrigin");
-      const mapContainerDestination = document.getElementById("mapDestination");
-      const H = window.H;
-      // Obtain the default map types from the platform object
-      var maptypes = this.platform.createDefaultLayers();
+        const originText = document.getElementById("originForm");
+        const destinationText = document.getElementById("destinationForm");
+        const mapContainerOrigin = document.getElementById("mapOrigin");
+        const mapContainerDestination = document.getElementById("mapDestination");
+        const H = window.H;
+        // Obtain the default map types from the platform object
+        var maptypes = this.platform.createDefaultLayers();
 
-      // Instantiate (and display) a map object:
-      var mapOrigin = new H.Map(mapContainerOrigin, maptypes.vector.normal.map, {
-        zoom: 7,
-        center: { lat: 40.730610, lng: -73.935242 }
-      });
-      var mapDestination = new H.Map(mapContainerDestination, maptypes.vector.normal.map, {
-        zoom: 7,
-        center: { lat: 40.730610, lng: -73.935242 }
-      });
+        // Instantiate (and display) a map object:
+        var mapOrigin = new H.Map(mapContainerOrigin, maptypes.vector.normal.map, {
+          zoom: 7,
+          center: { lat: 40.730610, lng: -73.935242 }
+        });
+        var mapDestination = new H.Map(mapContainerDestination, maptypes.vector.normal.map, {
+          zoom: 7,
+          center: { lat: 40.730610, lng: -73.935242 }
+        });
 
-      window.addEventListener('resize', () => {mapOrigin.getViewPort().resize(); mapDestination.getViewPort().resize();});
+        window.addEventListener('resize', () => {mapOrigin.getViewPort().resize(); mapDestination.getViewPort().resize();});
 
-      $("#formControlRangeOrigin")[0].addEventListener('change', async () => {
-        await this.updateMapCircle(mapOrigin, originText.value,
-          $("#formControlRangeOrigin")[0].value, this.originDestinationFilter.origin.position, H)
-        this.originDestinationFilter.origin.radius = $("#formControlRangeOrigin")[0].value});
-      originText.addEventListener('change',  async () => {
-        await this.updateMapCircle(mapOrigin, originText.value,
-          $("#formControlRangeOrigin")[0].value, this.originDestinationFilter.origin.position, H)
-        this.originDestinationFilter.origin.radius = $("#formControlRangeOrigin")[0].value});
-      originText.addEventListener('click', () => {$("#mapOriginContainer")[0].hidden = false;
-      $("#mapDestinationContainer")[0].hidden = true});
+        $("#formControlRangeOrigin")[0].addEventListener('change', async () => {
+          await this.updateMapCircle(mapOrigin, originText.value,
+            $("#formControlRangeOrigin")[0].value, this.originDestinationFilter.origin.position, H)
+          this.originDestinationFilter.origin.radius = $("#formControlRangeOrigin")[0].value});
+        originText.addEventListener('change',  async () => {
+          await this.updateMapCircle(mapOrigin, originText.value,
+            $("#formControlRangeOrigin")[0].value, this.originDestinationFilter.origin.position, H)
+          this.originDestinationFilter.origin.radius = $("#formControlRangeOrigin")[0].value});
+        originText.addEventListener('click', () => {$("#mapOriginContainer")[0].hidden = false;
+        $("#mapDestinationContainer")[0].hidden = true});
 
-      $("#formControlRangeDestination")[0].addEventListener('change', async () => {
-        await this.updateMapCircle(mapDestination, destinationText.value,
-          $("#formControlRangeDestination")[0].value, this.originDestinationFilter.destination.position, H)
-        this.originDestinationFilter.destination.radius = $("#formControlRangeDestination")[0].value});
-      destinationText.addEventListener('change',  async () => {
-        await this.updateMapCircle(mapDestination, destinationText.value,
-          $("#formControlRangeDestination")[0].value, this.originDestinationFilter.destination.position, H)
-        this.originDestinationFilter.destination.radius = $("#formControlRangeDestination")[0].value});
-      destinationText.addEventListener('click', () => {$("#mapDestinationContainer")[0].hidden = false;
-      $("#mapOriginContainer")[0].hidden = true});
-
+        $("#formControlRangeDestination")[0].addEventListener('change', async () => {
+          await this.updateMapCircle(mapDestination, destinationText.value,
+            $("#formControlRangeDestination")[0].value, this.originDestinationFilter.destination.position, H)
+          this.originDestinationFilter.destination.radius = $("#formControlRangeDestination")[0].value});
+        destinationText.addEventListener('change',  async () => {
+          await this.updateMapCircle(mapDestination, destinationText.value,
+            $("#formControlRangeDestination")[0].value, this.originDestinationFilter.destination.position, H)
+          this.originDestinationFilter.destination.radius = $("#formControlRangeDestination")[0].value});
+        destinationText.addEventListener('click', () => {$("#mapDestinationContainer")[0].hidden = false;
+        $("#mapOriginContainer")[0].hidden = true});
+        
+      } else {
+        await this.makerObjectsEncargos(map);
+        this.originDestinationFilter.isActive = false;
+        this.changeButtonFilterOriginDestination();
+      }
     },
     zoomNeeded(radio) {
       let percent = radio / 10000;
@@ -403,12 +410,27 @@ export default {
                   if (index === array.length -1) {
                     this.packages = filteredPackagesOriginDestination;
                     this.updateMap(filteredPackagesOriginDestination, map)
+                    this.originDestinationFilter.isActive = true;
+                    this.changeButtonFilterOriginDestination();
                   }
                 }
               })
             })
-          } else {this.updateMap(filteredPackagesOrigin, map)}
+          } else {
+            this.updateMap(filteredPackagesOrigin, map)
+            this.originDestinationFilter.isActive = true;
+            this.changeButtonFilterOriginDestination();
+          }
         });
+      }
+    },
+    changeButtonFilterOriginDestination() {
+      if(this.originDestinationFilter.isActive) {
+        $('#originDestinationButton').addClass("btn-danger");
+        $('#originDestinationButton').html('x Origen-Destino');
+      } else {
+        $('#originDestinationButton').removeClass("btn-danger");
+        $('#originDestinationButton').html('Origen-Destino');
       }
     },
     drawRoute(start,finish,map){
@@ -454,7 +476,7 @@ export default {
 
     async getEncargos(){
         
-         var res = [];
+        /* var res = [];
          var service;
          var coord;
          
@@ -501,7 +523,7 @@ export default {
                 //TRANSFORMACION A C0ORDENADAS
                  // let service = this.platform.getSearchService();
 
-                return this.coordenadasEncargosPendientes;
+                return this.coordenadasEncargosPendientes;*/
                 
       },
 
