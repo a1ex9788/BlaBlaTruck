@@ -31,8 +31,8 @@ export default {
                         path: '/priceCalculation'
                     },
                     {
-                        name: 'Historial',
-                        path: '/historical'
+                        name: 'Mis envíos',
+                        path: '/myShipments'
                     }
             ],
             pagesTransportist: [
@@ -41,8 +41,8 @@ export default {
                         path: '/navegator'
                     },
                     {
-                        name: 'Historial',
-                        path: '/historical'
+                        name: 'Mis envíos',
+                        path: '/myShipments'
                     }
             ]
         }

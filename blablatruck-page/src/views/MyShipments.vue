@@ -33,7 +33,7 @@ const axios = require("axios");
 import Sidebar from "../components/Sidebar";
 
 export default {
-    name: "Historical",
+    name: "MyShipments",
     components: {
         Sidebar,
     },
@@ -55,7 +55,7 @@ export default {
         // if (!this.personDNI) this.personDNI = "12312312W";
         // if (!this.isCarrier) this.isCarrier = true;
 
-        this.updateHistorical();
+        this.updateMyShipments();
     },
     methods: {
 
@@ -65,13 +65,13 @@ export default {
             else { return "Pendiente" }
         },
 
-        async updateHistorical() {
-            var historical = await this.getHistorical();
+        async updateMyShipments() {
+            var historical = await this.getMyShipments();
 
             this.items = historical
         },
 
-        async getHistorical() {
+        async getMyShipments() {
             var res;
 
             if (this.isCarrier) {

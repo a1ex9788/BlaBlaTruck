@@ -151,7 +151,7 @@ export default {
                         footerClass: 'p-2 border-top-0',
                         centered: true
                     }).then(value => {
-                         if(value) {this.$router.push('historical')}
+                         if(value) {this.$router.push('myShipments')}
                              })
                              
                     console.log("Se ha guardado correctamente");

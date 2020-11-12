@@ -75,10 +75,10 @@ const routes = [
       import("../views/Navegator.vue")
   },
   {
-    path: "/historical",
-    name: "Historical",
+    path: "/myShipments",
+    name: "MyShipments",
     component: () =>
-      import("../views/Historical.vue")
+      import("../views/MyShipments.vue")
   }
 ];
 
@@ -107,7 +107,7 @@ function checkPagesWithoutPermissions(name) {
     'RegisterClient2',
     'AccessForbidden',
     'Navegator',
-    'Historical'
+    'MyShipments'
   ]
   var res = false;
   pageNames.forEach(pageName => {
