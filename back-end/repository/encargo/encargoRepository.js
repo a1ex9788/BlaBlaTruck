@@ -34,13 +34,21 @@ function EncargoRepository(dbContext) {
 
             parameters.push({name: 'DNICliente', type: TYPES.Char, val: req.query.DNICliente});
             
-            var query = "select e.Origen, e.Destino, e.FechaEntrega, e.FechaRecogida, p.Nombre + ' ' + p.Apellidos as NombreCompleto from Encargo e, Persona p where p.DNI = e.DNICliente and DNICliente LIKE @DNICliente";
+            var query = "(select e.Origen, e.Destino, e.FechaEntrega, e.FechaRecogida, p.Nombre + ' ' + p.Apellidos as NombreCompleto, e.Id"
+            + " from Encargo e, Persona p"
+            + " where p.DNI = e.DNITransportista and DNICliente LIKE @DNICliente)"
+            + " union all"
+            + " (select distinct e.Origen, e.Destino, e.FechaEntrega, e.FechaRecogida, 'Por reservar' as NombreCompleto, e.Id"
+            + " from Encargo e"
+            + " where e.DNITransportista is null and DNICliente LIKE @DNICliente)";
+
+                console.log(query);
             
             dbContext.getQuery(query, parameters, true, function(err, data) {
                 if(data) {
                     return res.json(data)
                 }
-                console.log(data);
+                console.log(err);
                 console.log("error 404");
                 return res.sendStatus(404);
             });
@@ -52,7 +60,7 @@ function EncargoRepository(dbContext) {
         var parameters = [];
         
         parameters.push({name: 'DNITransportista', type: TYPES.Char, val: req.query.DNITransportista});
-        var query = "select e.Origen, e.Destino, e.FechaEntrega, e.FechaRecogida, p.Nombre + ' ' + p.Apellidos as NombreCompleto from Encargo e, Persona p where p.DNI = e.DNITransportista and DNITransportista LIKE @DNITransportista"
+        var query = "select e.Origen, e.Destino, e.FechaEntrega, e.FechaRecogida, p.Nombre + ' ' + p.Apellidos as NombreCompleto from Encargo e, Persona p where p.DNI = e.DNICliente and DNITransportista LIKE @DNITransportista"
 
         dbContext.getQuery(query, parameters, true, function (error, data) {
             return res.json(response(data, error));

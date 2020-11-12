@@ -2,21 +2,38 @@
 <div>
     <Sidebar />
     <div id="groupForm">
-        <div id="groupTitle" class="container-fluid">
+        <div class="container-fluid">
             <div class="row mt-2">
-                <b-list-group>
-                    <b-list-group-item v-for="item in items" v-bind:key="item.id">
+                <b-list-group id="groupTitle" >
+                    <b-list-group-item v-for="item in ongoingPackages" v-bind:key="item.id">
                         <b-row>
                             <b-col>
-                                <div id="name">{{ item.NombreCompleto }}</div>
-                                <div>{{ item.Origen }} -- {{ item.Destino }}</div>
-                                <div>{{ modifyFormat(item.FechaRecogida) }} -- {{ modifyFormat(item.FechaEntrega) }}</div>
-                                <b-button v-bind:id="item.Id" @click="onCancelButton" v-if="!item.FechaEntrega" class="btn-danger">Cancelar</b-button>
+                                <div id="name">{{ getClientType() }}: {{ item.NombreCompleto }}</div>
+                                <div class="mt-1">Origen: {{ item.Origen }}</div>
+                                <div>Destino: {{ item.Destino }}</div>
+                                <div class="mt-1">Recogida: {{ modifyFormat(item.FechaRecogida) }} -- Entrega: {{ modifyFormat(item.FechaEntrega) }}</div>
+                                <b-button v-bind:id="item.Id" @click="onCancelButton" v-if="!item.FechaRecogida && item.NombreCompleto != 'Por reservar'" class="btn-danger mt-2">Cancelar</b-button>
                             </b-col>
                             <b-col md="auto">
                                 <div>
-                                    <b-img v-if="item.FechaEntrega" center alt="" id="phote" src="../assets/Finalizado.png"></b-img>
-                                    <b-img v-if="!item.FechaEntrega" center alt="" id="phote" src="../assets/EnProceso.png"></b-img>
+                                    <b-img center alt="" id="phote" src="../assets/EnProceso.png"></b-img>
+                                </div>
+                            </b-col>
+                        </b-row>
+                    </b-list-group-item>
+                </b-list-group>
+                <b-list-group class="mt-3" id="groupTitle" >
+                    <b-list-group-item v-for="item in endedPackages" v-bind:key="item.id">
+                        <b-row>
+                            <b-col>
+                                <div id="name">{{ getClientType() }}: {{ item.NombreCompleto }}</div>
+                                <div class="mt-1">Origen: {{ item.Origen }}</div>
+                                <div>Destino: {{ item.Destino }}</div>
+                                <div class="mt-1">Recogida: {{ modifyFormat(item.FechaRecogida) }} -- Entrega: {{ modifyFormat(item.FechaEntrega) }}</div>
+                            </b-col>
+                            <b-col md="auto">
+                                <div>
+                                    <b-img center alt="" id="phote" src="../assets/Finalizado.png"></b-img>
                                 </div>
                             </b-col>
                         </b-row>
@@ -39,7 +56,8 @@ export default {
     },
     data() {
         return {
-            items: [],
+            ongoingPackages: [],
+            endedPackages: [],
             personDNI: undefined,
             isCarrier: undefined,
         };
@@ -59,6 +77,12 @@ export default {
     },
     methods: {
 
+        getClientType()
+        {
+            if (this.isCarrier) return "Cliente";
+            else return "Transportista";
+        },
+
         modifyFormat(dateTime)
         {
             if (dateTime) { return dateTime.substring(0, 10) }
@@ -68,7 +92,10 @@ export default {
         async updateMyShipments() {
             var historical = await this.getMyShipments();
 
-            this.items = historical
+            historical.forEach(element => {
+                if (element.FechaEntrega) this.endedPackages.push(element)
+                else this.ongoingPackages.push(element)
+            });
         },
 
         async getMyShipments() {
@@ -109,6 +136,8 @@ export default {
             return res
         },
         async onCancelButton(event) {
+            console.log(this.idEncargo)
+            console.log(event)
             await axios.put("http://localhost:3300/api/encargo/anular",{
                 params: {
                     IdEncargo: event.target.id
@@ -143,12 +172,18 @@ export default {
 }
 
 #groupTitle {
-    max-width: 500px;
+    max-width: 600px;
+    min-width: 600px;
     text-align: center;
 }
 
 #name {
     font-weight: bold;
     font-size: 120%;
+}
+
+#phote {
+    width: 80px;
+    height: 80px;
 }
 </style>
