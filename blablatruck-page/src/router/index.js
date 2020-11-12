@@ -57,12 +57,6 @@ const routes = [
       import("../views/UserRegistrations/RegisterCarrier2.vue")
   },
   {
-    path: "/registerNewPackage",
-    name: "RegisterNewPackage",
-    component: () =>
-      import("../views/Packages/RegisterNewPackage.vue")
-  },
-  {
     path: "/accessForbidden",
     name: "AccessForbidden",
     component: () => 
