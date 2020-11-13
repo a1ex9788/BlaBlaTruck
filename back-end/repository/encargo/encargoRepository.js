@@ -60,7 +60,9 @@ function EncargoRepository(dbContext) {
         var parameters = [];
         
         parameters.push({name: 'DNITransportista', type: TYPES.Char, val: req.query.DNITransportista});
-        var query = "select e.Origen, e.Destino, e.FechaEntrega, e.FechaRecogida, p.Nombre + ' ' + p.Apellidos as NombreCompleto from Encargo e, Persona p where p.DNI = e.DNICliente and DNITransportista LIKE @DNITransportista"
+        var query = "select e.Origen, e.Destino, e.FechaEntrega, e.FechaRecogida, p.Nombre + ' ' + p.Apellidos as NombreCompleto, e.Id" 
+        + " from Encargo e, Persona p" 
+        + " where p.DNI = e.DNICliente and DNITransportista LIKE @DNITransportista"
 
         dbContext.getQuery(query, parameters, true, function (error, data) {
             return res.json(response(data, error));

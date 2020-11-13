@@ -5,14 +5,33 @@
         <div class="container-fluid">
             <div class="row mt-2">
                 <b-list-group id="groupTitle" >
+                    <b-list-group-item v-for="item in nonReservedPackages" v-bind:key="item.id">
+                        <b-row>
+                            <b-col>
+                                <div id="name"><strong>{{ getClientType() }}: </strong>{{ item.NombreCompleto }}</div>
+                                <div class="mt-1"><strong>Origen: </strong>{{ item.Origen }}</div>
+                                <div><strong>Destino: </strong>{{ item.Destino }}</div>
+                                <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida) }}</div>
+                                <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega) }}</div>
+                            </b-col>
+                            <b-col md="auto">
+                                <div>
+                                    <b-img center alt="" id="phote" src="../assets/nonReservedLogo.png"></b-img>
+                                </div>
+                            </b-col>
+                        </b-row>
+                    </b-list-group-item>
+                </b-list-group>
+                <b-list-group class="mt-3" id="groupTitle" >
                     <b-list-group-item v-for="item in ongoingPackages" v-bind:key="item.id">
                         <b-row>
                             <b-col>
-                                <div id="name">{{ getClientType() }}: {{ item.NombreCompleto }}</div>
-                                <div class="mt-1">Origen: {{ item.Origen }}</div>
-                                <div>Destino: {{ item.Destino }}</div>
-                                <div class="mt-1">Recogida: {{ modifyFormat(item.FechaRecogida) }} -- Entrega: {{ modifyFormat(item.FechaEntrega) }}</div>
-                                <b-button v-bind:id="item.Id" @click="onCancelButton" v-if="!item.FechaRecogida && item.NombreCompleto != 'Por reservar'" class="btn-danger mt-2">Cancelar</b-button>
+                                <div id="name"><strong>{{ getClientType() }}: </strong>{{ item.NombreCompleto }}</div>
+                                <div class="mt-1"><strong>Origen: </strong>{{ item.Origen }}</div>
+                                <div><strong>Destino: </strong>{{ item.Destino }}</div>
+                                <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida) }}</div>
+                                <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega) }}</div>
+                                <b-button v-bind:id="item.Id" @click="onCancelButton" v-if="!item.FechaRecogida" class="btn-danger mt-2">Cancelar</b-button>
                             </b-col>
                             <b-col md="auto">
                                 <div>
@@ -26,10 +45,11 @@
                     <b-list-group-item v-for="item in endedPackages" v-bind:key="item.id">
                         <b-row>
                             <b-col>
-                                <div id="name">{{ getClientType() }}: {{ item.NombreCompleto }}</div>
-                                <div class="mt-1">Origen: {{ item.Origen }}</div>
-                                <div>Destino: {{ item.Destino }}</div>
-                                <div class="mt-1">Recogida: {{ modifyFormat(item.FechaRecogida) }} -- Entrega: {{ modifyFormat(item.FechaEntrega) }}</div>
+                                <div id="name"><strong>{{ getClientType() }}: </strong>{{ item.NombreCompleto }}</div>
+                                <div class="mt-1"><strong>Origen: </strong>{{ item.Origen }}</div>
+                                <div><strong>Destino: </strong>{{ item.Destino }}</div>
+                                <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida) }}</div>
+                                <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega) }}</div>
                             </b-col>
                             <b-col md="auto">
                                 <div>
@@ -56,6 +76,7 @@ export default {
     },
     data() {
         return {
+            nonReservedPackages: [],
             ongoingPackages: [],
             endedPackages: [],
             personDNI: undefined,
@@ -91,10 +112,11 @@ export default {
 
         async updateMyShipments() {
             var historical = await this.getMyShipments();
-
             historical.forEach(element => {
                 if (element.FechaEntrega) this.endedPackages.push(element)
+                else if (element.NombreCompleto == "Por reservar") this.nonReservedPackages.push(element)
                 else this.ongoingPackages.push(element)
+                
             });
         },
 
@@ -136,8 +158,6 @@ export default {
             return res
         },
         async onCancelButton(event) {
-            console.log(this.idEncargo)
-            console.log(event)
             await axios.put("http://localhost:3300/api/encargo/anular",{
                 params: {
                     IdEncargo: event.target.id
@@ -167,7 +187,6 @@ export default {
 <style>
 #groupForm {
     max-width: 800px;
-    text-align: center;
     margin: 0 auto;
 }
 
@@ -177,13 +196,12 @@ export default {
     text-align: center;
 }
 
-#name {
-    font-weight: bold;
-    font-size: 120%;
-}
-
 #phote {
     width: 80px;
-    height: 80px;
+
+}
+
+#name{
+    font-size: 120%;
 }
 </style>
