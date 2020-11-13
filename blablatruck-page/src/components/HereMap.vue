@@ -31,6 +31,10 @@
             <div id="mapDestination" class="filterMap"></div>
         </div>
     </b-modal>
+
+    <b-modal id="modalTamanyoFilterDialog"  title="Filtrar por el tamaño del paquete">
+        <p>Inserte los criterios de filtrado:</p>
+    </b-modal>
     <b-modal id="modalDialog" @ok="this.hide = true; window.location.reload();">Su paquete ha sido reservado con éxito!</b-modal>
     <!--In the following div the HERE Map will render-->
     <div id="mapContainer" ref="hereMap"></div>
@@ -141,7 +145,7 @@ export default {
                 /* Añadir aquí todos los botones que redirigirán a las pestañas de los filtros*/
                 el.innerHTML = "<p class='mt-2 h4'>Filtrar por:</p>" +
                     '<button class="btn" id="originDestinationButton">Origen-Destino</button>'+
-                    '<button class="btn" id="TamanyoButton">Tamaño</button>';
+                    '<button class="btn" id="tamanyoButton">Tamaño</button>';
                 el.style.color = "black"
             };
 
@@ -153,6 +157,7 @@ export default {
 
             // Añadir aqui las funciones para abrir las ventanas modales para los filtros
             $('#originDestinationButton')[0].onclick = this.openOriginDestinationModalWindow;
+            $('#tamanyoButton')[0].onclick = this.openTamanyoModalWindow;
 
         },
         async makerObjectsEncargos(map) {
@@ -252,6 +257,10 @@ export default {
                 }, alert);
             })
         },
+        async openTamanyoModalWindow(){
+           await this.$bvModal.show('modalTamanyoFilterDialog');
+        },
+
         async openOriginDestinationModalWindow() {
             if (!this.originDestinationFilter.isActive) {
                 await this.$bvModal.show('modalOriginDestinationFilterDialog')
