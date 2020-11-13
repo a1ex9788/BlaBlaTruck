@@ -79,8 +79,13 @@ function TransportistaRepository(dbContext) {
         // Object.entries(employee).forEach((property)=>{
         //     parameters.push({name:'@'+property[0]})
         // });
-        console.log("postTransportista");
+        var query = "INSERT INTO Transportista (DNI,NaturalezaCamion,Capacidad) VALUES (@DNI,@NaturalezaCamion,@Capacidad)";
+        //console.log("postTransportista");
+        /*
         dbContext.post("InsertOrUpdateTransportista", parameters, function (error, data) {
+            return res.json(response(data, error));
+        });*/
+        dbContext.getQuery(query, parameters,true, function (error, data) {
             return res.json(response(data, error));
         });
     }
