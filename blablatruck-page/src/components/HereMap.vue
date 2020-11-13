@@ -84,13 +84,10 @@ export default {
 
     async created() {
         this.personDNI = this.$cookies.get("loginToken").Dni;
-        // this.addEncargosToList();
     },
 
     async mounted() {
-        // await this.getEncargos();
-        //await console.log(this.getEncargos());
-        //this.addEncargosToList();
+ 
         // Initialize the platform object:
         const platform = new window.H.service.Platform({
             apikey: this.apikey
@@ -98,30 +95,8 @@ export default {
         this.platform = platform;
         this.routingService = this.platform.getRoutingService();
         this.initializeHereMap();
-        this.makerObjectsEncargos(map);
-        this.addEncargosToList();
-
-        this.drawRoute({
-                lat: 39.50,
-                lng: -0.37
-            }, {
-                lat: 39.511,
-                lng: -0.38
-            },
-            map
-        );
-
-        console.log("RESULTADO: " + this.coordenadasEncargosPendientes[0].origen.lat);
-        this.drawRoute({
-                lat: this.coordenadasEncargosPendientes[0].origen.lat,
-                lng: this.coordenadasEncargosPendientes[0].origen.lng
-            }, {
-                lat: this.coordenadasEncargosPendientes[0].destino.lat,
-                lng: this.coordenadasEncargosPendientes[0].destino.lng
-            },
-            map
-        );
-
+        await this.makerObjectsEncargos(map);
+        await this.addEncargosToList();
     },
 
     methods: {
@@ -498,17 +473,16 @@ export default {
 
         },
         async addEncargosToList() {
-            this.getEncargos();
-            //var encargos = await this.getEncargos();
-            // this.items = encargos;
+           await this.getEncargos();
         },
 
         async getEncargos() {
 
-            var res = [];
-            var service;
+            var respuesta = [];
+            var service = this.platform.getSearchService();
             var coordOrigen;
-            var coordDestino
+            var coordDestino;
+            console.log(this.personDNI);
 
             await axios
                 .get("http://localhost:3300/api/encargo/transportista", {
@@ -518,77 +492,38 @@ export default {
                 })
                 .then(
                     (response) => {
-                        res = response.data[0],
-                            service = this.platform.getSearchService();
+                        respuesta = response.data[0]
+                        console.log(respuesta)   
 
+                        if (respuesta != null){
                         service.geocode({
-                            q: res[0].Origen
+                            q: respuesta[0].Origen
                         }, (res) => {
                             coordOrigen = res.items[0].position;
                             this.coordenadasEncargosPendientes[0].origen.lat = coordOrigen.lat;
-                            this.coordenadasEncargosPendientes[0].origen.lng = coordOrigen.lng;
-                            //console.log("coord1: lat " + coord.lat + " coord2: lng: " + coord.lng + "  Origen:" + res.items[0].Origen);    
-                        })
+                            this.coordenadasEncargosPendientes[0].origen.lng = coordOrigen.lng;                            
 
-                        service.geocode({
-                            q: res[0].Destino
-                        }, (res) => {
-                            coordDestino = res.items[0].position;
-                            this.coordenadasEncargosPendientes[0].destino.lat = coordDestino.lat;
-                            this.coordenadasEncargosPendientes[0].destino.lng = coordDestino.lng;
-
-                            //console.log("coord1: lat " + coord.lat + " coord2: lng: " + coord.lng + "  Destino: " + res.items[0].Destino);
-                            console.log("hola:  " + coordOrigen.lat);
-                            console.log("hola2:  " + coordDestino.lat);
-                            /*this.drawRoute(
-                              { lat: 39.50, lng: -0.37 },
-                              { lat: 39.511, lng: -0.38 },
-                              map
-                            ); */
-                            this.drawRoute({
-                                    lat: coordOrigen.lat,
-                                    lng: coordOrigen.lng
-                                }, {
-                                    lat: coordDestino.lat,
-                                    lng: coordDestino.lng
-                                },
-                                map
-                            );
-                        })
-
-                        /*this.drawRoute(
-                          { lat: "39.50", lng: "-0.37" },
-                          { lat: "39.511", lng: "-0.38" },
-                          map
-                         ); */
-                        /* console.log("hola:  " +  coordOrigen.lat);
-                         this.drawRoute(
-                        { lat: coordOrigen.lat, lng: coordOrigen.lng },
-                        { lat: coordDestino.lat, lng: coordDestino.lng },
+                            service.geocode({
+                            q: respuesta[0].Destino
+                            }, (res) => {
+                              coordDestino = res.items[0].position;
+                             this.coordenadasEncargosPendientes[0].destino.lat = coordDestino.lat;
+                             this.coordenadasEncargosPendientes[0].destino.lng = coordDestino.lng;
+                        
+                              this.drawRoute(
+                        { lat: this.coordenadasEncargosPendientes[0].origen.lat, lng: this.coordenadasEncargosPendientes[0].origen.lng},
+                        { lat: this.coordenadasEncargosPendientes[0].destino.lat, lng: this.coordenadasEncargosPendientes[0].destino.lng},
                         map
                        );
-                        this.drawRoute(
-                        { lat: this.coordenadasEncargosPendientes[0].origen.lat, lng: this.coordenadasEncargosPendientes[0].origen.lng  },
-                        { lat: this.coordenadasEncargosPendientes[0].destino.lat, lng: this.coordenadasEncargosPendientes[0].destino.lng },
-                        map
-                       ); */
+                        })   
+                        })
+                        }
 
                     },
                     (error) => {
                         console.log(error);
                     }
                 );
-
-            //console.log("coord2: " + coord);
-            // var coordsOrigen = res[0].position.lat;
-            // var coordsDestino = res[0].position.lng;
-            //  console.log("Coordenadas: Origen: " + coordsOrigen + "  Destino:  " + coordsDestino);
-            // console.log("var 'res'  Origen: " + res[0].Origen +  "  Destino: " + res[0].Destino );
-            //TRANSFORMACION A C0ORDENADAS
-            // let service = this.platform.getSearchService();
-
-            return this.coordenadasEncargosPendientes;
-
         },
 
     }
