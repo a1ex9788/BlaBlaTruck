@@ -479,10 +479,10 @@ export default {
         async getEncargos() {
 
             var respuesta = [];
+           // var todas_respuestas = [];
             var service = this.platform.getSearchService();
             var coordOrigen;
             var coordDestino;
-            console.log(this.personDNI);
 
             await axios
                 .get("http://localhost:3300/api/encargo/transportista", {
@@ -492,10 +492,21 @@ export default {
                 })
                 .then(
                     (response) => {
-                        respuesta = response.data[0]
-                        console.log(respuesta)   
+                        respuesta = response.data[0];
+                        /*console.log(todas_respuestas);
+
+                         todas_respuestas.forEach(element => {
+                          if (element.FechaEntrega == null){
+                            //respuesta.push(element)
+                            this.items.push(element);
+                          }
+                        });  */                       
+                      
+                        console.log(respuesta);
+
 
                         if (respuesta != null){
+                          console.log("estoy aqui");
                         service.geocode({
                             q: respuesta[0].Origen
                         }, (res) => {
@@ -504,19 +515,19 @@ export default {
                             this.coordenadasEncargosPendientes[0].origen.lng = coordOrigen.lng;                            
 
                             service.geocode({
-                            q: respuesta[0].Destino
+                              q: respuesta[0].Destino
                             }, (res) => {
                               coordDestino = res.items[0].position;
-                             this.coordenadasEncargosPendientes[0].destino.lat = coordDestino.lat;
-                             this.coordenadasEncargosPendientes[0].destino.lng = coordDestino.lng;
+                              this.coordenadasEncargosPendientes[0].destino.lat = coordDestino.lat;
+                              this.coordenadasEncargosPendientes[0].destino.lng = coordDestino.lng;
                         
-                              this.drawRoute(
-                        { lat: this.coordenadasEncargosPendientes[0].origen.lat, lng: this.coordenadasEncargosPendientes[0].origen.lng},
-                        { lat: this.coordenadasEncargosPendientes[0].destino.lat, lng: this.coordenadasEncargosPendientes[0].destino.lng},
-                        map
-                       );
-                        })   
-                        })
+                            this.drawRoute(
+                              { lat: this.coordenadasEncargosPendientes[0].origen.lat, lng: this.coordenadasEncargosPendientes[0].origen.lng},
+                              { lat: this.coordenadasEncargosPendientes[0].destino.lat, lng: this.coordenadasEncargosPendientes[0].destino.lng},
+                              map
+                              );
+                            })   
+                          })
                         }
 
                     },
