@@ -85,7 +85,11 @@ function ClientRepository(dbContext) {
         // Object.entries(employee).forEach((property)=>{
         //     parameters.push({name:'@'+property[0]})
         // });
-        dbContext.post("InsertOrUpdateClient", parameters, function (error, data) {
+        var query = "INSERT INTO Transportista (DNI,Empresa) VALUES (@DNI,@Empresa)";
+        /*dbContext.post("InsertOrUpdateClient", parameters, function (error, data) {
+            return res.json(response(data, error));
+        });*/
+        dbContext.getQuery(query, parameters,true, function (error, data) {
             return res.json(response(data, error));
         });
     }
