@@ -385,7 +385,8 @@ export default {
                 })
                 promiseOrigin.then((filteredPackagesOrigin) => {
                     this.packages = filteredPackagesOrigin;
-                    if (this.originDestinationFilter.destination.position != undefined) {
+                    if (this.packages.length > 0  && this.originDestinationFilter.destination.position.lat != undefined) {
+                      
                         const coordsCircleDestination = new H.geo.Point(this.originDestinationFilter.destination.position.lat,
                             this.originDestinationFilter.destination.position.lng);
 
@@ -396,6 +397,7 @@ export default {
                             service.geocode({
                                 q: packageItem.Destino
                             }, (res) => {
+                                
                                 if (res.items[0] != null) {
                                     coordsPackage = new H.geo.Point(res.items[0].position.lat, res.items[0].position.lng);
                                     var distance = coordsPackage.distance(coordsCircleDestination)
