@@ -4,8 +4,8 @@
     <div  ref="map" id="map">-->
     <b-modal id="noPackagesInMap" title="Lo sentimos pero hay un error" hide-footer>
         <div class="d-block text-center">
-        <h4>No se han encontrado paquetes</h4>
-        <br>
+            <h4>No se han encontrado paquetes</h4>
+            <br>
         </div>
         <b-button class="mt-2" block @click="$bvModal.hide('noPackagesInMap')">Cerrar</b-button>
     </b-modal>
@@ -18,10 +18,9 @@
                 <template #button-content>
                     &#x1f50d;<span class="sr-only">Search</span>
                 </template>
-                    <b-dropdown-item v-bind:address="place.address.label" v-for="place in originDestinationFilter.placesAutocompleList"
-                    v-bind:key="place.id" @click="clickItemDropPlaces(place.address.label, true)">
-                        {{ place.address.label }}
-                    </b-dropdown-item>
+                <b-dropdown-item v-bind:address="place.address.label" v-for="place in originDestinationFilter.placesAutocompleList" v-bind:key="place.id" @click="clickItemDropPlaces(place.address.label, true)">
+                    {{ place.address.label }}
+                </b-dropdown-item>
             </b-dropdown>
         </b-row>
         <div class="ml-3" id="mapOriginContainer" hidden="true">
@@ -40,10 +39,9 @@
                 <template #button-content>
                     &#x1f50d;<span class="sr-only">Search</span>
                 </template>
-                    <b-dropdown-item v-bind:address="place.address.label" v-for="place in originDestinationFilter.placesAutocompleList"
-                    v-bind:key="place.id" @click="clickItemDropPlaces(place.address.label, false)">
-                        {{ place.address.label }}
-                    </b-dropdown-item>
+                <b-dropdown-item v-bind:address="place.address.label" v-for="place in originDestinationFilter.placesAutocompleList" v-bind:key="place.id" @click="clickItemDropPlaces(place.address.label, false)">
+                    {{ place.address.label }}
+                </b-dropdown-item>
             </b-dropdown>
         </b-row>
         <div class="ml-3" id="mapDestinationContainer" hidden="true">
@@ -57,8 +55,16 @@
         </div>
     </b-modal>
 
-    <b-modal id="modalTamanyoFilterDialog"  title="Filtrar por el tamaño del paquete">
-        <p>Inserte los criterios de filtrado:</p>
+    <b-modal id="modalTamanyoFilterDialog" title="Filtrar por el tamaño del paquete">
+        <b-alert show variant="danger" :hidden="messageError">{{messageError2}}</b-alert>
+        <b-form inline class="ml-10" style="width-: 25">
+            <b-form-input id="altura" class="mr-2" placeholder="alto" max="300" min="1" type="number" :state="altoError" @input="comprobarNumerosNegativosAltura"></b-form-input>
+            <label class="mr-2">x</label>
+            <b-form-input id="anchura" class="mr-2 " placeholder="ancho" max="240" min="1" type="number" :state="anchoError" @input="comprobarNumerosNegativosAnchura"></b-form-input>
+            <label class="mr-2">x</label>
+            <b-form-input id="largo" class="ml-2" placeholder="largo" max="1400" min="1" type="number" :state="largoError" @input="comprobarNumerosNegativosLargo" @></b-form-input>
+            <label class="ml-2">(cm)</label>
+        </b-form>
     </b-modal>
     <b-modal id="modalDialog" @ok="this.hide = true; window.location.reload();">Su paquete ha sido reservado con éxito!</b-modal>
     <!--In the following div the HERE Map will render-->
@@ -98,6 +104,19 @@ export default {
                     radius: 0
                 }
             },
+           
+            altoError: undefined,
+            anchoError: undefined,
+            largoError: undefined,
+            messageError: true,
+            messageError2: undefined,
+            tamanyo:{
+                isActive: false,
+                altura: undefined,
+                anchura: undefined,
+                largo: undefined,
+            },
+
             routingService: {},
             items: [],
             coordenadasEncargosPendientes: [{
@@ -119,7 +138,7 @@ export default {
     },
 
     async mounted() {
- 
+
         // Initialize the platform object:
         const platform = new window.H.service.Platform({
             apikey: this.apikey
@@ -172,7 +191,7 @@ export default {
             overlayFilterPanel.renderInternal = function (el) {
                 /* Añadir aquí todos los botones que redirigirán a las pestañas de los filtros*/
                 el.innerHTML = "<p class='mt-2 h4'>Filtrar por:</p>" +
-                    '<button class="btn" id="originDestinationButton">Origen-Destino</button>'+
+                    '<button class="btn" id="originDestinationButton">Origen-Destino</button>' +
                     '<button class="btn" id="tamanyoButton">Tamaño</button>';
                 el.style.color = "black"
             };
@@ -211,7 +230,7 @@ export default {
 
             //Limpiar de marcadores el mapa
             map.removeObjects(map.getObjects())
-            if(res.length > 0)
+            if (res.length > 0)
                 res.forEach((element) => {
                     var calle = element.Origen;
                     var service = this.platform.getSearchService();
@@ -287,8 +306,56 @@ export default {
             else
                 this.$bvModal.show("noPackagesInMap")
         },
-        async openTamanyoModalWindow(){
-           await this.$bvModal.show('modalTamanyoFilterDialog');
+        comprobarNumerosNegativosAltura() {
+            var altura = document.getElementById("altura");
+            if (altura.value < 0) {
+                this.altoError = false;
+                this.messageError = false;
+                this.messageError2 = "El tamaño del paquete no puede ser un número negativo";
+                return;
+            } else if (altura.value === "") {
+                this.altoError = false;
+                this.messageError = false;
+                this.messageError2 = "Tienes que completar todos los campos";
+                return;
+            }
+            this.altoError = true;
+            this.messageError = true;
+        },
+        comprobarNumerosNegativosAnchura() {
+            var anchura = document.getElementById("anchura");
+            if (anchura.value < 0) {
+                this.anchoError = false;
+                this.messageError = false;
+                this.messageError2 = "El tamaño del paquete no puede ser un número negativo";
+                return;
+            } else if (anchura.value === "") {
+                this.anchoError = false;
+                this.messageError = false;
+                this.messageError2 = "Tienes que completar todos los campos";
+                return;
+            }
+            this.anchoError = true;
+            this.messageError = true;
+        },
+        comprobarNumerosNegativosLargo() {
+            var largo = document.getElementById("largo");
+            if (largo.value < 0) {
+                this.largoError = false;
+                this.messageError = false;
+                this.messageError2 = "El tamaño del paquete no puede ser un número negativo";
+                return;
+            } else if (largo.value === "") {
+                this.largoError = false;
+                this.messageError = false;
+                this.messageError2 = "Tienes que completar todos los campos";
+                return;
+            }
+            this.largoError = true;
+            this.messageError = true;
+        },
+        async openTamanyoModalWindow() {
+            await this.$bvModal.show('modalTamanyoFilterDialog');
         },
 
         async openOriginDestinationModalWindow() {
@@ -365,10 +432,10 @@ export default {
             }
         },
         clickItemDropPlaces(address, isOrigin) {
-            if(isOrigin) {
+            if (isOrigin) {
                 $("#originForm")[0].value = address
                 $("#originForm").trigger("input")
-            }else {
+            } else {
                 $("#destinationForm")[0].value = address
                 $("#destinationForm").trigger("input")
             }
@@ -393,8 +460,8 @@ export default {
             service.geocode({
                     q: direction
                 }, (res) => {
-                    if(res.items.length > 0) {
-                        
+                    if (res.items.length > 0) {
+
                         let marker = new H.map.Marker(res.items[0].position);
                         var circle = new H.map.Circle(res.items[0].position, radio);
                         marker.setData(res[0])
@@ -443,8 +510,8 @@ export default {
                 })
                 promiseOrigin.then((filteredPackagesOrigin) => {
                     this.packages = filteredPackagesOrigin;
-                    if (this.packages.length > 0  && this.originDestinationFilter.destination.position.lat != undefined) {
-                      
+                    if (this.packages.length > 0 && this.originDestinationFilter.destination.position.lat != undefined) {
+
                         const coordsCircleDestination = new H.geo.Point(this.originDestinationFilter.destination.position.lat,
                             this.originDestinationFilter.destination.position.lng);
 
@@ -455,7 +522,7 @@ export default {
                             service.geocode({
                                 q: packageItem.Destino
                             }, (res) => {
-                                
+
                                 if (res.items[0] != null) {
                                     coordsPackage = new H.geo.Point(res.items[0].position.lat, res.items[0].position.lng);
                                     var distance = coordsPackage.distance(coordsCircleDestination)
@@ -477,11 +544,11 @@ export default {
                         this.changeButtonFilterOriginDestination();
                     }
                 });
-            }else {
+            } else {
                 await bvModalEvt.preventDefault();
-                if($("#originForm")[0].value == undefined || $("#originForm")[0].value.trim().length <= 3)
+                if ($("#originForm")[0].value == undefined || $("#originForm")[0].value.trim().length <= 3)
                     this.originDestinationFilter.errorOrigin = false;
-                if($("#destinationForm")[0].value == undefined || $("#destinationForm")[0].value.trim().length <= 3)
+                if ($("#destinationForm")[0].value == undefined || $("#destinationForm")[0].value.trim().length <= 3)
                     this.originDestinationFilter.errorDestination = false;
             }
         },
@@ -539,13 +606,13 @@ export default {
 
         },
         async addEncargosToList() {
-           await this.getEncargos();
+            await this.getEncargos();
         },
 
         async getEncargos() {
 
             var respuesta = [];
-           // var todas_respuestas = [];
+            // var todas_respuestas = [];
             var service = this.platform.getSearchService();
             var coordOrigen;
             var coordDestino;
@@ -566,34 +633,37 @@ export default {
                             //respuesta.push(element)
                             this.items.push(element);
                           }
-                        });  */                       
-                      
+                        });  */
+
                         console.log(respuesta);
 
-
-                        if (respuesta != null){
-                          console.log("estoy aqui");
-                        service.geocode({
-                            q: respuesta[0].Origen
-                        }, (res) => {
-                            coordOrigen = res.items[0].position;
-                            this.coordenadasEncargosPendientes[0].origen.lat = coordOrigen.lat;
-                            this.coordenadasEncargosPendientes[0].origen.lng = coordOrigen.lng;                            
-
+                        if (respuesta != null) {
+                            console.log("estoy aqui");
                             service.geocode({
-                              q: respuesta[0].Destino
+                                q: respuesta[0].Origen
                             }, (res) => {
-                              coordDestino = res.items[0].position;
-                              this.coordenadasEncargosPendientes[0].destino.lat = coordDestino.lat;
-                              this.coordenadasEncargosPendientes[0].destino.lng = coordDestino.lng;
-                        
-                            this.drawRoute(
-                              { lat: this.coordenadasEncargosPendientes[0].origen.lat, lng: this.coordenadasEncargosPendientes[0].origen.lng},
-                              { lat: this.coordenadasEncargosPendientes[0].destino.lat, lng: this.coordenadasEncargosPendientes[0].destino.lng},
-                              map
-                              );
-                            })   
-                          })
+                                coordOrigen = res.items[0].position;
+                                this.coordenadasEncargosPendientes[0].origen.lat = coordOrigen.lat;
+                                this.coordenadasEncargosPendientes[0].origen.lng = coordOrigen.lng;
+
+                                service.geocode({
+                                    q: respuesta[0].Destino
+                                }, (res) => {
+                                    coordDestino = res.items[0].position;
+                                    this.coordenadasEncargosPendientes[0].destino.lat = coordDestino.lat;
+                                    this.coordenadasEncargosPendientes[0].destino.lng = coordDestino.lng;
+
+                                    this.drawRoute({
+                                            lat: this.coordenadasEncargosPendientes[0].origen.lat,
+                                            lng: this.coordenadasEncargosPendientes[0].origen.lng
+                                        }, {
+                                            lat: this.coordenadasEncargosPendientes[0].destino.lat,
+                                            lng: this.coordenadasEncargosPendientes[0].destino.lng
+                                        },
+                                        map
+                                    );
+                                })
+                            })
                         }
 
                     },
