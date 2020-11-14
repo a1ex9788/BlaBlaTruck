@@ -2,6 +2,13 @@
 <div id="map">
     <!--<b-modal id="modalOriginDestinationFilterDialog" @ok="filterByOriginDestination" hide="false" title="Filtrar por origen y destino">
     <div  ref="map" id="map">-->
+    <b-modal id="noPackagesInMap" title="Lo sentimos pero hay un error" hide-footer>
+        <div class="d-block text-center">
+        <h4>No se han encontrado paquetes</h4>
+        <br>
+        </div>
+        <b-button class="mt-2" block @click="$bvModal.hide('noPackagesInMap')">Cerrar</b-button>
+    </b-modal>
     <b-modal id="modalOriginDestinationFilterDialog" @ok="filterByOriginDestination" hide="false" title="Filtrar por origen y destino">
         <p>Inserte los criterios de filtrado:</p>
         <b-row class="mt-2 ml-2">
@@ -204,79 +211,81 @@ export default {
 
             //Limpiar de marcadores el mapa
             map.removeObjects(map.getObjects())
+            if(res.length > 0)
+                res.forEach((element) => {
+                    var calle = element.Origen;
+                    var service = this.platform.getSearchService();
+                    // Call the geocode method with the geocoding parameters,
+                    // the callback and an error callback function (called if a
+                    // communication error occurs):
+                    service.geocode({
+                        q: calle
+                    }, (res) => {
+                        // Add a marker for each location found
 
-            res.forEach((element) => {
-                var calle = element.Origen;
-                var service = this.platform.getSearchService();
-                // Call the geocode method with the geocoding parameters,
-                // the callback and an error callback function (called if a
-                // communication error occurs):
-                service.geocode({
-                    q: calle
-                }, (res) => {
-                    // Add a marker for each location found
+                        if (res.items[0] != null) {
+                            var item = res.items[0];
+                            let marker = new H.map.Marker(item.position)
+                            marker.setData(item)
+                            map.addObject(marker);
+                            //let
+                            marker.addEventListener('tap', () => {
+                                var bubble = new H.ui.InfoBubble(item.position, {
+                                    //read custom data
+                                    content: "Cliente: ".bold().fontsize(5) + element.DNICliente.fontsize(3).fontcolor('#0055FF') +
+                                        " Origen: ".bold().fontsize(5) + element.Origen.fontsize(3).fontcolor('#0055FF') +
+                                        " Destino: ".bold().fontsize(5) + element.Destino.fontsize(3).fontcolor('#0055FF') +
+                                        " Naturaleza: ".bold().fontsize(4) + element.NaturalezaEncargo.fontsize(3).fontcolor('#0055FF') +
+                                        " Dimensiones: ".bold().fontsize(4) + element.Alto.toString().fontsize(3).fontcolor('#0055FF') +
+                                        " x " + element.Ancho.toString().fontsize(3).fontcolor('#0055FF') +
+                                        " x " + element.Largo.toString().fontsize(3).fontcolor('#0055FF') +
+                                        "<button type='button' id='" + element.Id.toString() + "' class='btn btn-primary'>Reservar</button>"
 
-                    if (res.items[0] != null) {
-                        var item = res.items[0];
-                        let marker = new H.map.Marker(item.position)
-                        marker.setData(item)
-                        map.addObject(marker);
-                        //let
-                        marker.addEventListener('tap', () => {
-                            var bubble = new H.ui.InfoBubble(item.position, {
-                                //read custom data
-                                content: "Cliente: ".bold().fontsize(5) + element.DNICliente.fontsize(3).fontcolor('#0055FF') +
-                                    " Origen: ".bold().fontsize(5) + element.Origen.fontsize(3).fontcolor('#0055FF') +
-                                    " Destino: ".bold().fontsize(5) + element.Destino.fontsize(3).fontcolor('#0055FF') +
-                                    " Naturaleza: ".bold().fontsize(4) + element.NaturalezaEncargo.fontsize(3).fontcolor('#0055FF') +
-                                    " Dimensiones: ".bold().fontsize(4) + element.Alto.toString().fontsize(3).fontcolor('#0055FF') +
-                                    " x " + element.Ancho.toString().fontsize(3).fontcolor('#0055FF') +
-                                    " x " + element.Largo.toString().fontsize(3).fontcolor('#0055FF') +
-                                    "<button type='button' id='" + element.Id.toString() + "' class='btn btn-primary'>Reservar</button>"
+                                });
+
+                                this.ui.addBubble(bubble);
+                                let dni = this.$cookies.get("loginToken").Dni;
+                                let modal = () => {
+                                    this.$bvModal.msgBoxOk('Su paquete ha sido reservado con éxito', {
+                                        title: 'Confirmación',
+                                        size: 'sm',
+                                        buttonSize: 'sm',
+                                        okVariant: 'info',
+                                        headerClass: 'p-2 border-bottom-0',
+                                        footerClass: 'p-2 border-top-0',
+                                        centered: true
+                                    }).then(value => {
+                                        if (value) {
+                                            map.removeObject(marker);
+                                            this.ui.removeBubble(bubble);
+                                        }
+                                    })
+                                };
+                                $('#' + element.Id)[0].onclick = async function () {
+                                    await axios.put('http://localhost:3300/api/encargo/reservar', {
+                                            IdEncargo: element.Id,
+                                            DNITransportista: dni
+                                        })
+                                        .then((msg) => {
+                                            console.log(msg);
+                                            //Añadir aqui la ventana de confirmación de paquete reservado y esperar a que el cliente acepte
+                                            //para recargar la pagina.
+                                            //
+                                            modal();
+                                        }),
+                                        (error) => {
+                                            console.log(error); // si hay un error con el logueo o conexion
+
+                                        }
+                                };
 
                             });
 
-                            this.ui.addBubble(bubble);
-                            let dni = this.$cookies.get("loginToken").Dni;
-                            let modal = () => {
-                                this.$bvModal.msgBoxOk('Su paquete ha sido reservado con éxito', {
-                                    title: 'Confirmación',
-                                    size: 'sm',
-                                    buttonSize: 'sm',
-                                    okVariant: 'info',
-                                    headerClass: 'p-2 border-bottom-0',
-                                    footerClass: 'p-2 border-top-0',
-                                    centered: true
-                                }).then(value => {
-                                    if (value) {
-                                        map.removeObject(marker);
-                                        this.ui.removeBubble(bubble);
-                                    }
-                                })
-                            };
-                            $('#' + element.Id)[0].onclick = async function () {
-                                await axios.put('http://localhost:3300/api/encargo/reservar', {
-                                        IdEncargo: element.Id,
-                                        DNITransportista: dni
-                                    })
-                                    .then((msg) => {
-                                        console.log(msg);
-                                        //Añadir aqui la ventana de confirmación de paquete reservado y esperar a que el cliente acepte
-                                        //para recargar la pagina.
-                                        //
-                                        modal();
-                                    }),
-                                    (error) => {
-                                        console.log(error); // si hay un error con el logueo o conexion
-
-                                    }
-                            };
-
-                        });
-
-                    }
-                }, alert);
-            })
+                        }
+                    }, alert);
+                })
+            else
+                this.$bvModal.show("noPackagesInMap")
         },
         async openTamanyoModalWindow(){
            await this.$bvModal.show('modalTamanyoFilterDialog');
