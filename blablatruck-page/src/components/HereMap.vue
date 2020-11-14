@@ -4,10 +4,18 @@
     <div  ref="map" id="map">-->
     <b-modal id="modalOriginDestinationFilterDialog" @ok="filterByOriginDestination" hide="false" title="Filtrar por origen y destino">
         <p>Inserte los criterios de filtrado:</p>
-        <b-row class="m-2">
+        <b-row class="mt-2 ml-2">
             <p class="mt-1 mr-2">Origen:</p>
             <b-input autocomplete="off" list="originAutocompleteList" :state="originDestinationFilter.errorOrigin" id="originForm" type="text" style="width: 350px" />
-            <datalist id="originAutocompleteList"/>
+            <b-dropdown style="margin-bottom: 10px" dropright no-caret variant="link" toggle-class="text-decoration-none" id="originAutocompleteList">
+                <template #button-content>
+                    &#x1f50d;<span class="sr-only">Search</span>
+                </template>
+                    <b-dropdown-item v-bind:address="place.address.label" v-for="place in originDestinationFilter.placesAutocompleList"
+                    v-bind:key="place.id" @click="clickItemDropPlaces(place.address.label, true)">
+                        {{ place.address.label }}
+                    </b-dropdown-item>
+            </b-dropdown>
         </b-row>
         <div class="ml-3" id="mapOriginContainer" hidden="true">
             <label>Radio del area:</label>
@@ -18,9 +26,18 @@
             </b-row>
             <div id="mapOrigin" class="filterMap"></div>
         </div>
-        <b-row class="m-2">
+        <b-row class="mt-2 ml-2">
             <p class="mt-1 mr-1">Destino:</p>
             <b-input id="destinationForm" :state="originDestinationFilter.errorDestination" type="text" style="width: 350px" />
+            <b-dropdown style="margin-bottom: 10px" dropright no-caret variant="link" toggle-class="text-decoration-none" id="destinationAutocompleteList">
+                <template #button-content>
+                    &#x1f50d;<span class="sr-only">Search</span>
+                </template>
+                    <b-dropdown-item v-bind:address="place.address.label" v-for="place in originDestinationFilter.placesAutocompleList"
+                    v-bind:key="place.id" @click="clickItemDropPlaces(place.address.label, false)">
+                        {{ place.address.label }}
+                    </b-dropdown-item>
+            </b-dropdown>
         </b-row>
         <div class="ml-3" id="mapDestinationContainer" hidden="true">
             <label>Radio del area:</label>
@@ -64,6 +81,7 @@ export default {
                 isActive: false,
                 errorOrigin: null,
                 errorDestination: null,
+                placesAutocompleList: [],
                 origin: {
                     position: {},
                     radius: 0
@@ -302,7 +320,7 @@ export default {
                         $("#formControlRangeOrigin")[0].value, this.originDestinationFilter.origin.position, H)
                     this.originDestinationFilter.origin.radius = $("#formControlRangeOrigin")[0].value
                 });
-                originText.addEventListener('input', async () => {
+                $("#originForm").on('input', async () => {
                     await this.updateMapCircle(mapOrigin, originText.value,
                         $("#formControlRangeOrigin")[0].value, this.originDestinationFilter.origin.position, H)
                     this.originDestinationFilter.origin.radius = $("#formControlRangeOrigin")[0].value
@@ -318,7 +336,7 @@ export default {
                         $("#formControlRangeDestination")[0].value, this.originDestinationFilter.destination.position, H)
                     this.originDestinationFilter.destination.radius = $("#formControlRangeDestination")[0].value
                 });
-                destinationText.addEventListener('input', async () => {
+                $("#destinationForm").on('input', async () => {
                     await this.updateMapCircle(mapDestination, destinationText.value,
                         $("#formControlRangeDestination")[0].value, this.originDestinationFilter.destination.position, H)
                     this.originDestinationFilter.destination.radius = $("#formControlRangeDestination")[0].value
@@ -337,6 +355,15 @@ export default {
                 this.changeButtonFilterOriginDestination();
             }
         },
+        clickItemDropPlaces(address, isOrigin) {
+            if(isOrigin) {
+                $("#originForm")[0].value = address
+                $("#originForm").trigger("input")
+            }else {
+                $("#destinationForm")[0].value = address
+                $("#destinationForm").trigger("input")
+            }
+        },
         zoomNeeded(radio) {
             let percent = radio / 10000;
             if (percent <= 5 && percent > 3) return 7;
@@ -349,24 +376,29 @@ export default {
         },
         /* Returns the position of the circle, if it isnt a direction return undefined*/
         async updateMapCircle(map, direction, radio, dataPosition, H) {
-            if (direction == undefined || direction.trim() === "") return
+            this.filterByOriginDestination.placesAutocompleList = []
+            if (direction == undefined || direction.trim().length <= 3) return
             map.getViewPort().resize()
             map.removeObjects(map.getObjects())
             var service = this.platform.getSearchService();
             service.geocode({
                     q: direction
                 }, (res) => {
-                    let marker = new H.map.Marker(res.items[0].position);
-                    var circle = new H.map.Circle(res.items[0].position, radio);
-                    marker.setData(res[0])
+                    if(res.items.length > 0) {
+                        
+                        let marker = new H.map.Marker(res.items[0].position);
+                        var circle = new H.map.Circle(res.items[0].position, radio);
+                        marker.setData(res[0])
 
-                    map.addObject(circle);
-                    //mapOrigin.addObject(marker);
-                    var zoom = this.zoomNeeded(circle.getRadius())
-                    map.setCenter(res.items[0].position);
-                    map.setZoom(zoom);
-                    dataPosition.lat = res.items[0].position.lat;
-                    dataPosition.lng = res.items[0].position.lng;
+                        map.addObject(circle);
+                        //mapOrigin.addObject(marker);
+                        var zoom = this.zoomNeeded(circle.getRadius())
+                        map.setCenter(res.items[0].position);
+                        map.setZoom(zoom);
+                        dataPosition.lat = res.items[0].position.lat;
+                        dataPosition.lng = res.items[0].position.lng;
+                        this.originDestinationFilter.placesAutocompleList = res.items;
+                    }
                 },
                 (error) => {
                     console.log(error);
@@ -374,8 +406,8 @@ export default {
         },
         /*Elimina aquellos paquetes que no cumplen el filtro de la lista this.packages*/
         async filterByOriginDestination(bvModalEvt) {
-            if ($("#originForm")[0].value != undefined && $("#originForm")[0].value.trim() != "" &&
-                $("#destinationForm")[0].value != undefined && $("#destinationForm")[0].value.trim() != "") {
+            if ($("#originForm")[0].value !== undefined && $("#originForm")[0].value.trim().length > 3 &&
+                $("#destinationForm")[0].value !== undefined && $("#destinationForm")[0].value.trim().length > 3) {
                 const H = window.H;
                 const coordsCircleOrigin = new H.geo.Point(this.originDestinationFilter.origin.position.lat,
                     this.originDestinationFilter.origin.position.lng);
@@ -438,9 +470,9 @@ export default {
                 });
             }else {
                 await bvModalEvt.preventDefault();
-                if($("#originForm")[0].value == undefined || $("#originForm")[0].value.trim() == "")
+                if($("#originForm")[0].value == undefined || $("#originForm")[0].value.trim().length <= 3)
                     this.originDestinationFilter.errorOrigin = false;
-                if($("#destinationForm")[0].value == undefined || $("#destinationForm")[0].value.trim() == "")
+                if($("#destinationForm")[0].value == undefined || $("#destinationForm")[0].value.trim().length <= 3)
                     this.originDestinationFilter.errorDestination = false;
             }
         },
