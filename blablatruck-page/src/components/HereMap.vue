@@ -6,7 +6,8 @@
         <p>Inserte los criterios de filtrado:</p>
         <b-row class="m-2">
             <p class="mt-1 mr-2">Origen:</p>
-            <b-input id="originForm" type="text" style="width: 350px" />
+            <b-input autocomplete="off" list="originAutocompleteList" :state="originDestinationFilter.errorOrigin" id="originForm" type="text" style="width: 350px" />
+            <datalist id="originAutocompleteList"/>
         </b-row>
         <div class="ml-3" id="mapOriginContainer" hidden="true">
             <label>Radio del area:</label>
@@ -19,7 +20,7 @@
         </div>
         <b-row class="m-2">
             <p class="mt-1 mr-1">Destino:</p>
-            <b-input id="destinationForm" type="text" style="width: 350px" />
+            <b-input id="destinationForm" :state="originDestinationFilter.errorDestination" type="text" style="width: 350px" />
         </b-row>
         <div class="ml-3" id="mapDestinationContainer" hidden="true">
             <label>Radio del area:</label>
@@ -61,6 +62,8 @@ export default {
             /* Lista de paquetes del mapa */
             originDestinationFilter: {
                 isActive: false,
+                errorOrigin: null,
+                errorDestination: null,
                 origin: {
                     position: {},
                     radius: 0
@@ -299,10 +302,11 @@ export default {
                         $("#formControlRangeOrigin")[0].value, this.originDestinationFilter.origin.position, H)
                     this.originDestinationFilter.origin.radius = $("#formControlRangeOrigin")[0].value
                 });
-                originText.addEventListener('change', async () => {
+                originText.addEventListener('input', async () => {
                     await this.updateMapCircle(mapOrigin, originText.value,
                         $("#formControlRangeOrigin")[0].value, this.originDestinationFilter.origin.position, H)
                     this.originDestinationFilter.origin.radius = $("#formControlRangeOrigin")[0].value
+                    this.originDestinationFilter.errorOrigin = null
                 });
                 originText.addEventListener('click', () => {
                     $("#mapOriginContainer")[0].hidden = false;
@@ -314,10 +318,11 @@ export default {
                         $("#formControlRangeDestination")[0].value, this.originDestinationFilter.destination.position, H)
                     this.originDestinationFilter.destination.radius = $("#formControlRangeDestination")[0].value
                 });
-                destinationText.addEventListener('change', async () => {
+                destinationText.addEventListener('input', async () => {
                     await this.updateMapCircle(mapDestination, destinationText.value,
                         $("#formControlRangeDestination")[0].value, this.originDestinationFilter.destination.position, H)
                     this.originDestinationFilter.destination.radius = $("#formControlRangeDestination")[0].value
+                    this.originDestinationFilter.errorDestination = null
                 });
                 destinationText.addEventListener('click', () => {
                     $("#mapDestinationContainer")[0].hidden = false;
@@ -327,6 +332,8 @@ export default {
             } else {
                 await this.makerObjectsEncargos(map);
                 this.originDestinationFilter.isActive = false;
+                this.originDestinationFilter.origin.position = undefined;
+                this.originDestinationFilter.destination.position = undefined;
                 this.changeButtonFilterOriginDestination();
             }
         },
@@ -366,8 +373,9 @@ export default {
                 })
         },
         /*Elimina aquellos paquetes que no cumplen el filtro de la lista this.packages*/
-        async filterByOriginDestination() {
-            if (this.originDestinationFilter.origin.position != undefined) {
+        async filterByOriginDestination(bvModalEvt) {
+            if ($("#originForm")[0].value != undefined && $("#originForm")[0].value.trim() != "" &&
+                $("#destinationForm")[0].value != undefined && $("#destinationForm")[0].value.trim() != "") {
                 const H = window.H;
                 const coordsCircleOrigin = new H.geo.Point(this.originDestinationFilter.origin.position.lat,
                     this.originDestinationFilter.origin.position.lng);
@@ -428,6 +436,12 @@ export default {
                         this.changeButtonFilterOriginDestination();
                     }
                 });
+            }else {
+                await bvModalEvt.preventDefault();
+                if($("#originForm")[0].value == undefined || $("#originForm")[0].value.trim() == "")
+                    this.originDestinationFilter.errorOrigin = false;
+                if($("#destinationForm")[0].value == undefined || $("#destinationForm")[0].value.trim() == "")
+                    this.originDestinationFilter.errorDestination = false;
             }
         },
         changeButtonFilterOriginDestination() {
