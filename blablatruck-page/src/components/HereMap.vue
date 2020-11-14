@@ -361,6 +361,7 @@ export default {
         async openOriginDestinationModalWindow() {
             if (!this.originDestinationFilter.isActive) {
                 await this.$bvModal.show('modalOriginDestinationFilterDialog')
+                this.filterByOriginDestination.placesAutocompleList = []
 
                 const originText = document.getElementById("originForm");
                 const destinationText = document.getElementById("destinationForm");
@@ -426,8 +427,10 @@ export default {
             } else {
                 await this.makerObjectsEncargos(map);
                 this.originDestinationFilter.isActive = false;
-                this.originDestinationFilter.origin.position = undefined;
-                this.originDestinationFilter.destination.position = undefined;
+                this.originDestinationFilter.origin.position.lat = undefined;
+                this.originDestinationFilter.origin.position.lng = undefined;
+                this.originDestinationFilter.destination.position.lat = undefined;
+                this.originDestinationFilter.destination.position.lng = undefined;
                 this.changeButtonFilterOriginDestination();
             }
         },
@@ -471,6 +474,7 @@ export default {
                         var zoom = this.zoomNeeded(circle.getRadius())
                         map.setCenter(res.items[0].position);
                         map.setZoom(zoom);
+                        
                         dataPosition.lat = res.items[0].position.lat;
                         dataPosition.lng = res.items[0].position.lng;
                         this.originDestinationFilter.placesAutocompleList = res.items;
