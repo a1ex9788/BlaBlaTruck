@@ -158,13 +158,26 @@ export default {
             return res
         },
         async onCancelButton(event) {
-            await axios.put("http://localhost:3300/api/encargo/anular",{
-                params: {
-                    IdEncargo: event.target.id
-                }
-            }).then((res) => {
-                console.log(res);
-                this.$bvModal.msgBoxOk('Su reserva ha sido anulado con éxito',{
+          this.$bvModal.msgBoxConfirm('Please confirm that you want to delete everything.', {
+          title: 'Please Confirm',
+          size: 'sm',
+          buttonSize: 'sm',
+          okVariant: 'danger',
+          okTitle: 'YES',
+          cancelTitle: 'NO',
+          footerClass: 'p-2',
+          hideHeaderClose: false,
+          centered: true
+        })
+            .then((value) =>{
+                if(value == true){
+                    axios.put("http://localhost:3300/api/encargo/anular",{
+                        params: {
+                            IdEncargo: event.target.id
+                        }
+                    })
+                    .then(() => {
+                        this.$bvModal.msgBoxOk('Su reserva ha sido anulada con éxito',{
                                 title: 'Confirmación',
                                 size: 'sm',
                                 buttonSize: 'sm',
@@ -175,9 +188,21 @@ export default {
                               }).then(value => {
                                 if(value) window.location.reload()
                               })
-            }), (error) => {
-                console.log(error);
-            }
+                    });
+                }
+            })
+            .catch(err => {
+                console.log("error al cancelar"+ err);
+            });
+
+
+            // if(confirm("Esta seguro de cancelar la reserva?")){
+            //     axios.put("http://localhost:3300/api/encargo/anular",{
+            //         params: {
+            //             IdEncargo: event.target.id
+            //         }
+            //     });
+            // }
         }
     }
     
