@@ -55,7 +55,7 @@
         </div>
     </b-modal>
 
-    <b-modal id="modalTamanyoFilterDialog" title="Filtrar por el tamaño del paquete">
+    <b-modal id="modalTamanyoFilterDialog" @ok="filterByTamanyo" title="Filtrar por el tamaño del paquete">
         <b-alert show variant="danger" :hidden="messageError">{{messageError2}}</b-alert>
         <b-form inline class="ml-10" style="width-: 25">
             <b-form-input id="altura" class="mr-2" placeholder="alto" max="300" min="1" type="number" :state="altoError" @input="comprobarNumerosNegativosAltura"></b-form-input>
@@ -104,13 +104,13 @@ export default {
                     radius: 0
                 }
             },
-           
+
             altoError: undefined,
             anchoError: undefined,
             largoError: undefined,
             messageError: true,
             messageError2: undefined,
-            tamanyo:{
+            tamanyoFilter: {
                 isActive: false,
                 altura: undefined,
                 anchura: undefined,
@@ -355,7 +355,56 @@ export default {
             this.messageError = true;
         },
         async openTamanyoModalWindow() {
-            await this.$bvModal.show('modalTamanyoFilterDialog');
+            if(!this.tamanyoFilter.isActive){
+                 await this.$bvModal.show('modalTamanyoFilterDialog');
+            }else{
+                this.tamanyoFilter.isActive = false;
+                this.changeButtonFilterTamanyo();
+            }
+           
+        },
+        changeButtonFilterTamanyo() {
+            if (this.tamanyoFilter.isActive) {
+                $('#tamanyoButton').addClass("btn-danger");
+                $('#tamanyoButton').html('x Tamaño');
+            } else {
+                $('#tamanyoButton').removeClass("btn-danger");
+                $('#tamanyoButton').html('Tamaño');
+            }
+        },
+        async filterByTamanyo() {
+            //let packagesFilterdByTamanyo = []
+
+            axios.get('http://localhost:3300/api/encargo/tamanyo', {
+
+                params: {
+                    Alto: 2,
+                    Ancho: 2,
+                    Largo: 2,
+
+                },
+
+            }).then((response) => {
+
+                if (response.status == 200) {
+                    // console.log(packagesFilterdByTamanyo.push(response.data[0]));
+                    //packagesFilterdByTamanyo.push(response.data[0]);
+                    //this.updateMap(packagesFilterdByTamanyo,map)
+                    this.tamanyoFilter.isActive = true;
+                    this.changeButtonFilterTamanyo();
+                    console.log(response.data);
+
+                };
+
+            }, (error) => {
+                
+                this.tamanyoFilter.isActive = true;
+                this.changeButtonFilterTamanyo();
+                console.log("No se ha podido conectar");
+                console.log(error);
+
+            });
+
         },
 
         async openOriginDestinationModalWindow() {
@@ -474,7 +523,7 @@ export default {
                         var zoom = this.zoomNeeded(circle.getRadius())
                         map.setCenter(res.items[0].position);
                         map.setZoom(zoom);
-                        
+
                         dataPosition.lat = res.items[0].position.lat;
                         dataPosition.lng = res.items[0].position.lng;
                         this.originDestinationFilter.placesAutocompleList = res.items;
