@@ -254,6 +254,7 @@ export default {
                                     content: "Cliente: ".bold().fontsize(5) + element.DNICliente.fontsize(3).fontcolor('#0055FF') +
                                         " Origen: ".bold().fontsize(5) + element.Origen.fontsize(3).fontcolor('#0055FF') +
                                         " Destino: ".bold().fontsize(5) + element.Destino.fontsize(3).fontcolor('#0055FF') +
+                                        " Fecha máx.: ".bold().fontsize(4) + this.modifyFormat(element.FechaMaximaEntrega).fontsize(3).fontcolor('#0055FF') +
                                         " Naturaleza: ".bold().fontsize(4) + element.NaturalezaEncargo.fontsize(3).fontcolor('#0055FF') +
                                         " Dimensiones: ".bold().fontsize(4) + element.Alto.toString().fontsize(3).fontcolor('#0055FF') +
                                         " x " + element.Ancho.toString().fontsize(3).fontcolor('#0055FF') +
@@ -725,6 +726,11 @@ export default {
                     }
                 );
         },
+        modifyFormat(dateTime)
+        {
+            if (dateTime) { return dateTime.substring(0, 10) }
+            else return "No hay"
+        }
 
     }
 }

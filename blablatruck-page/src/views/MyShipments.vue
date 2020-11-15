@@ -11,8 +11,9 @@
                                 <div id="name"><strong>{{ getClientType() }}: </strong>{{ item.NombreCompleto }}</div>
                                 <div class="mt-1"><strong>Origen: </strong>{{ item.Origen }}</div>
                                 <div><strong>Destino: </strong>{{ item.Destino }}</div>
-                                <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida) }}</div>
-                                <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega) }}</div>
+                                <div><strong>Fecha máxima de entrega: </strong>{{ modifyFormat(item.FechaMaximaEntrega, true) }}</div>
+                                <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida, false) }}</div>
+                                <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega, false) }}</div>
                             </b-col>
                             <b-col md="auto">
                                 <div>
@@ -29,8 +30,9 @@
                                 <div id="name"><strong>{{ getClientType() }}: </strong>{{ item.NombreCompleto }}</div>
                                 <div class="mt-1"><strong>Origen: </strong>{{ item.Origen }}</div>
                                 <div><strong>Destino: </strong>{{ item.Destino }}</div>
-                                <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida) }}</div>
-                                <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega) }}</div>
+                                <div><strong>Fecha máxima de entrega: </strong>{{ modifyFormat(item.FechaMaximaEntrega, true) }}</div>
+                                <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida, false) }}</div>
+                                <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega, false) }}</div>
                                 <b-button v-bind:id="item.Id" @click="onCancelButton" v-if="!item.FechaRecogida" class="btn-danger mt-2">Cancelar</b-button>
                             </b-col>
                             <b-col md="auto">
@@ -48,8 +50,9 @@
                                 <div id="name"><strong>{{ getClientType() }}: </strong>{{ item.NombreCompleto }}</div>
                                 <div class="mt-1"><strong>Origen: </strong>{{ item.Origen }}</div>
                                 <div><strong>Destino: </strong>{{ item.Destino }}</div>
-                                <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida) }}</div>
-                                <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega) }}</div>
+                                <div><strong>Fecha máxima de entrega: </strong>{{ modifyFormat(item.FechaMaximaEntrega, true) }}</div>
+                                <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida, false) }}</div>
+                                <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega, false) }}</div>
                             </b-col>
                             <b-col md="auto">
                                 <div>
@@ -104,10 +107,11 @@ export default {
             else return "Transportista";
         },
 
-        modifyFormat(dateTime)
+        modifyFormat(dateTime, isFechaMax)
         {
             if (dateTime) { return dateTime.substring(0, 10) }
-            else { return "Pendiente" }
+            else if (!isFechaMax)  return "Pendiente" 
+            else return "No tiene fecha máxima"
         },
 
         async updateMyShipments() {
