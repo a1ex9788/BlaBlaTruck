@@ -16,6 +16,7 @@
                     <b-list-group-item>Peso: {{this.peso}} kg</b-list-group-item>
                     <b-list-group-item>Naturaleza: {{this.naturalezaEncargo}}</b-list-group-item>
                     <b-list-group-item>Tamaño: {{this.alto}} x {{this.ancho}} x {{this.largo}} cm</b-list-group-item>
+                    <b-list-group-item>Fecha máxima de entrega: {{this.fechaMax}}</b-list-group-item>
                 </b-list-group>
 
             </b-card>
@@ -53,6 +54,7 @@ export default {
             largo: undefined,
             alto: undefined,
             precio: undefined,
+            fechaMax: undefined,
             precioRecibo: undefined,
                        
         };
@@ -68,6 +70,7 @@ export default {
         this.origen = this.$route.params.origen;
         this.destino = this.$route.params.destino;
         this.precio = this.$route.params.precio;
+        this.fechaMax = this.$route.params.fechaMax;
         this.precioRecibo = "Precio: " + this.precio + " €";
         
         
@@ -134,6 +137,7 @@ export default {
                     //LongitudOrigen: this.longitudOrigen,
                     //LongitudDestion: this.longitudDestino,
                     Precio: this.precio,
+                    FechaMax: this.fechaMax,
                     Pagado: 1,
 
                 }

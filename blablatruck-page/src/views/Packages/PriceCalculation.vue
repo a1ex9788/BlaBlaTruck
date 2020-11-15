@@ -69,7 +69,7 @@
                 </div>
 
                 <br>
-                <b-button @click="showPrice" class="mt-2 mx-4 mb-5" type="submit" variant="info">Calcular</b-button>
+                <b-button @click="showPrice" class="mt-2 mx-4 mb-5" type="submit" variant="info">Siguiente</b-button>
 
             </b-form>
         </div>
@@ -79,8 +79,13 @@
             <br>
             <h4> {{this.calcularPrecio() }} euros </h4>
             <br>
-            <h5> Si quiere realizar su encargo pulse a continuación:</h5>
-            <div class="mt-2">
+            <h3 class="mt-5">Seleccione una fecha máxima para la entrega del paquete:</h3>
+            <br>
+            <div>
+                <b-form-datepicker id="datepicker" :min="min" placeholder="Seleccione una fecha" class="mb-2"
+                v-model="fechaMax.value" ></b-form-datepicker>
+            </div>
+            <div class="mt-5">
                 <b-button @click="goBack" type="button">Volver</b-button>
                 <b-button @click="next" class="mx-4" type="submit" variant="info">Siguiente</b-button>
             </div>
@@ -109,6 +114,7 @@ export default {
     },
     data() {
         return {
+            min: new Date(),
             form: {
                 origen: {
                     value: "",
@@ -138,11 +144,15 @@ export default {
                         largo: "",
                         alto: "",
                     },
-                },
+                }
 
             },
 
             precio: {
+                value: undefined,
+            },
+
+            fechaMax: {
                 value: undefined,
             },
 
@@ -222,6 +232,9 @@ export default {
             },
             precio: {
                 value: "",
+            },
+            fechaMax: {
+                value: "",
             }
         },
     },
@@ -292,6 +305,7 @@ export default {
             this.$router.push({
                 name: "RegisterPackage",
                 params: {
+                    fechaMax: this.fechaMax.value,
                     naturalezaEncargo: this.form.naturaleza.value,
                     peso: this.form.peso.value,
                     alto: this.form.size.value.alto,
@@ -301,12 +315,11 @@ export default {
                     destino: this.form.destino.value,
                     precio: this.precio.value,
 
-                },
+                }
 
             });
 
-        },
-
+        }
     },
 };
 </script>

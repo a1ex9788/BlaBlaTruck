@@ -163,6 +163,7 @@ function EncargoRepository(dbContext) {
         parameters.push({ name: 'Largo', type: TYPES.Decimal, val: req.body.params.Largo });
         parameters.push({ name: 'Origen', type: TYPES.VarChar, val: req.body.params.Origen });
         parameters.push({ name: 'Destino', type: TYPES.VarChar, val: req.body.params.Destino });
+        parameters.push({ name: 'FechaMax', type: TYPES.Date, val: req.body.params.FechaMax});
 
         parameters.push({ name: 'AltitudOrigen', type: TYPES.VarChar, val: req.body.params.AltitudOrigen });
         parameters.push({ name: 'AltitudDestino', type: TYPES.VarChar, val: req.body.params.Destino });
@@ -176,8 +177,8 @@ function EncargoRepository(dbContext) {
        /* var query= "INSERT INTO Encargo (id,NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,AltitudOrigen,AltitudDestino,LongitudOrigen,LongitudDestino,Precio,Pagado,DNICliente) "+
         "VALUES(@id,@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@AltitudOrigen,@AltitudDestino,@LongitudOrigen,@LongitudDestino,@Precio,@Pagado,@DNICliente)";
         */
-       var query= "INSERT INTO Encargo (NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,Precio,Pagado,DNICliente) "+
-        "VALUES(@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@Precio,@Pagado,@DNICliente)";
+       var query= "INSERT INTO Encargo (NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,FechaEntrega,Precio,Pagado,DNICliente) "+
+        "VALUES(@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@FechaMax,@Precio,@Pagado,@DNICliente)";
        
         dbContext.getQuery(query, parameters, true, function (error, data) {
          return res.json(response(data, error));
