@@ -20,4 +20,5 @@ module.exports = function (router) {
     router.route('/encargo/anular')
     .put(encargoRepository.anularEncargo)
     router.route('/encargo/estado').get(encargoRepository.getEstados)
+    router.route('/encargo/tamanyo').get(encargoRepository.getTamanyo)
   }

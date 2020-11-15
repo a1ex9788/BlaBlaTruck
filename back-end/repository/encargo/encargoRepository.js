@@ -272,6 +272,26 @@ function EncargoRepository(dbContext) {
    
     }
 
+    
+    function getEncargosPorTamanyo(req,res) {
+       
+        var parameters = [];
+       
+        parameters.push({ name: 'Alto', type: TYPES.Decimal, val: req.query.Alto });
+        parameters.push({ name: 'Ancho', type: TYPES.Decimal, val: req.query.Ancho });
+        parameters.push({ name: 'Largo', type: TYPES.Decimal, val: req.query.Largo });
+       
+        var query = "select * from Encargo where DNITransportista IS NULL AND Alto=@Alto AND Ancho=@Ancho AND Largo=@Largo"
+        
+        dbContext.getQuery(query, parameters, true, function (error, data) {
+           
+            return res.json(response(data, error));
+        });
+       
+   
+    }
+    
+
     return {
         getAll: getEncargos,
         //put: putEncargo,
@@ -285,6 +305,7 @@ function EncargoRepository(dbContext) {
         getEncargosPorNaturalezaCliente: getEncargosPorNaturalezaCliente,
         getEncargosPorNaturalezaTransportista: getEncargosPorNaturalezaTransportista,
         getEstados: getEncargosPorEstado,
+        getTamanyo: getEncargosPorTamanyo,
         reservarEncargo: añadirDNITransportistaAEncargo,
         anularEncargo: quitarDNITransportistaDeEncargo
     }
