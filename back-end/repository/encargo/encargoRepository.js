@@ -63,6 +63,7 @@ function EncargoRepository(dbContext) {
         var query = "select e.Origen, e.Destino, e.FechaEntrega, e.FechaRecogida, p.Nombre + ' ' + p.Apellidos as NombreCompleto, e.Id, e.FechaMaximaEntrega" 
         + " from Encargo e, Persona p" 
         + " where p.DNI = e.DNICliente and DNITransportista LIKE @DNITransportista"
+        + " order by  e.FechaRecogida"
 
         dbContext.getQuery(query, parameters, true, function (error, data) {
             return res.json(response(data, error));

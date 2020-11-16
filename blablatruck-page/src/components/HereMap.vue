@@ -118,7 +118,7 @@ export default {
             },
 
             routingService: {},
-            items: [],
+            items: [],           
             coordenadasEncargosPendientes: [{
                 origen: {
                     lat: undefined,
@@ -278,6 +278,7 @@ export default {
                                         if (value) {
                                             map.removeObject(marker);
                                             this.ui.removeBubble(bubble);
+                                            window.location.reload()
                                         }
                                     })
                                 };
@@ -291,6 +292,7 @@ export default {
                                             //Añadir aqui la ventana de confirmación de paquete reservado y esperar a que el cliente acepte
                                             //para recargar la pagina.
                                             //
+                                            
                                             modal();
                                         }),
                                         (error) => {
@@ -666,7 +668,7 @@ export default {
         async getEncargos() {
 
             var respuesta = [];
-            // var todas_respuestas = [];
+            var todas_respuestas = [];
             var service = this.platform.getSearchService();
             var coordOrigen;
             var coordDestino;
@@ -679,19 +681,17 @@ export default {
                 })
                 .then(
                     (response) => {
-                        respuesta = response.data[0];
-                        /*console.log(todas_respuestas);
-
-                         todas_respuestas.forEach(element => {
-                          if (element.FechaEntrega == null){
-                            //respuesta.push(element)
-                            this.items.push(element);
-                          }
-                        });  */
-
+                        todas_respuestas = response.data[0];
+                        console.log(todas_respuestas);
+                  
+                        todas_respuestas.forEach(element => {
+                            if (!element.FechaEntrega && element.NombreCompleto != "Por reservar"){
+                                respuesta.push(element);
+                            }
+                        }); 
+                        
                         console.log(respuesta);
-
-                        if (respuesta != null) {
+                        if (respuesta.length != 0) {
                             console.log("estoy aqui");
                             service.geocode({
                                 q: respuesta[0].Origen
