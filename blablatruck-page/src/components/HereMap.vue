@@ -55,14 +55,15 @@
         </div>
     </b-modal>
 
-    <b-modal id="modalTamanyoFilterDialog" @ok="filterByTamanyo" title="Filtrar por el tamaño del paquete">
-        <b-alert show variant="danger" :hidden="messageError">{{messageError2}}</b-alert>
+    <b-modal id="modalTamanyoFilterDialog" @ok="filterByTamanyo" @show="resetModalTamanyo" title="Filtrar por el tamaño del paquete">
+        <!--<b-form-invalid-feedback :state="messageError">El tamaño del paquete no puede ser un número negativo</b-form-invalid-feedback>-->
+        <b-alert show variant="danger" :hidden="messageError">El tamaño del paquete no puede ser un número negativo</b-alert>
         <b-form inline class="ml-10" style="width-: 25">
-            <b-form-input id="altura" class="mr-2" placeholder="alto" max="300" min="1" type="number" :state="altoError" @input="comprobarNumerosNegativosAltura"></b-form-input>
+            <b-form-input id="altura" class="mr-2" placeholder="alto" max="300" min="0" type="number" :state="altoError" @input="comprobarTamanyoAltura"></b-form-input>
             <label class="mr-2">x</label>
-            <b-form-input id="anchura" class="mr-2 " placeholder="ancho" max="240" min="1" type="number" :state="anchoError" @input="comprobarNumerosNegativosAnchura"></b-form-input>
+            <b-form-input id="anchura" class="mr-2 " placeholder="ancho" max="240" min="0" type="number" :state="anchoError" @input="comprobarTamanyoAnchura"></b-form-input>
             <label class="mr-2">x</label>
-            <b-form-input id="largo" class="ml-2" placeholder="largo" max="1400" min="1" type="number" :state="largoError" @input="comprobarNumerosNegativosLargo" @></b-form-input>
+            <b-form-input id="largo" class="ml-2" placeholder="largo" max="1400" min="0" type="number" :state="largoError" @input="comprobarTamanyoLargo"></b-form-input>
             <label class="ml-2">(cm)</label>
         </b-form>
     </b-modal>
@@ -104,21 +105,18 @@ export default {
                     radius: 0
                 }
             },
-
-            altoError: undefined,
-            anchoError: undefined,
-            largoError: undefined,
+            altoError: true,
+            anchoError: true,
+            largoError: true,
             messageError: true,
-            messageError2: undefined,
             tamanyoFilter: {
                 isActive: false,
                 altura: undefined,
                 anchura: undefined,
-                largo: undefined,
+                largo: undefined
             },
-
             routingService: {},
-            items: [],           
+            items: [],
             coordenadasEncargosPendientes: [{
                 origen: {
                     lat: undefined,
@@ -209,7 +207,19 @@ export default {
         },
         async makerObjectsEncargos(map) {
             await this.getPackages();
+            await this.filterBy();
             await this.updateMap(this.packages, map);
+        },
+
+        async filterBy() {
+            if (this.originDestinationFilter.isActive) {
+                this.filterByOriginDestination();
+            }
+            if (this.tamanyoFilter.isActive) {
+
+                this.filterByTamanyo();
+            }
+
         },
         async getPackages() {
             await axios
@@ -292,7 +302,7 @@ export default {
                                             //Añadir aqui la ventana de confirmación de paquete reservado y esperar a que el cliente acepte
                                             //para recargar la pagina.
                                             //
-                                            
+
                                             modal();
                                         }),
                                         (error) => {
@@ -309,62 +319,83 @@ export default {
             else
                 this.$bvModal.show("noPackagesInMap")
         },
-        comprobarNumerosNegativosAltura() {
+
+        comprobarTamanyoAltura() {
             var altura = document.getElementById("altura");
             if (altura.value < 0) {
                 this.altoError = false;
                 this.messageError = false;
-                this.messageError2 = "El tamaño del paquete no puede ser un número negativo";
                 return;
             } else if (altura.value === "") {
                 this.altoError = false;
-                this.messageError = false;
-                this.messageError2 = "Tienes que completar todos los campos";
+                this.messageError = true;
                 return;
             }
+
             this.altoError = true;
             this.messageError = true;
         },
-        comprobarNumerosNegativosAnchura() {
+        comprobarTamanyoAnchura() {
             var anchura = document.getElementById("anchura");
             if (anchura.value < 0) {
                 this.anchoError = false;
                 this.messageError = false;
-                this.messageError2 = "El tamaño del paquete no puede ser un número negativo";
                 return;
             } else if (anchura.value === "") {
                 this.anchoError = false;
-                this.messageError = false;
-                this.messageError2 = "Tienes que completar todos los campos";
+                this.messageError = true;
                 return;
             }
+
             this.anchoError = true;
             this.messageError = true;
         },
-        comprobarNumerosNegativosLargo() {
+        comprobarTamanyoLargo() {
             var largo = document.getElementById("largo");
             if (largo.value < 0) {
                 this.largoError = false;
                 this.messageError = false;
-                this.messageError2 = "El tamaño del paquete no puede ser un número negativo";
                 return;
             } else if (largo.value === "") {
                 this.largoError = false;
-                this.messageError = false;
-                this.messageError2 = "Tienes que completar todos los campos";
+                this.messageError = true;
                 return;
             }
+
             this.largoError = true;
             this.messageError = true;
         },
         async openTamanyoModalWindow() {
-            if(!this.tamanyoFilter.isActive){
-                 await this.$bvModal.show('modalTamanyoFilterDialog');
-            }else{
+
+            if (!this.tamanyoFilter.isActive) {
+
+                await this.$bvModal.show('modalTamanyoFilterDialog');
+                $("#altura")[0].addEventListener("input", () => {
+                    this.tamanyoFilter.altura = document.getElementById("altura").value;
+                });
+                $("#anchura")[0].addEventListener("input", () => {
+                    this.tamanyoFilter.anchura = document.getElementById("anchura").value;
+                });
+                $("#largo")[0].addEventListener("input", () => {
+                    this.tamanyoFilter.largo = document.getElementById("largo").value;
+                });
+
+            } else {
                 this.tamanyoFilter.isActive = false;
                 this.changeButtonFilterTamanyo();
+                this.makerObjectsEncargos(map);
             }
-           
+
+        },
+        resetModalTamanyo() {
+            this.tamanyoFilter.altura = null;
+            this.tamanyoFilter.anchura = null;
+            this.tamanyoFilter.largo = null;
+
+            this.altoError = null;
+            this.anchoError = null;
+            this.largoError = null;
+            this.messageError = true;
         },
         changeButtonFilterTamanyo() {
             if (this.tamanyoFilter.isActive) {
@@ -375,38 +406,64 @@ export default {
                 $('#tamanyoButton').html('Tamaño');
             }
         },
-        async filterByTamanyo() {
-            //let packagesFilterdByTamanyo = []
+        comprobarTamanyoVacios() {
 
-            axios.get('http://localhost:3300/api/encargo/tamanyo', {
+            if (this.tamanyoFilter.altura === null) {
+                this.altoError = false;
+            }
+            if (this.tamanyoFilter.anchura === null) {
+                this.anchoError = false;
+            }
+            if (this.tamanyoFilter.largo === null) {
+                this.largoError = false;
+            }
+            return;
+        },
 
-                params: {
-                    Alto: 2,
-                    Ancho: 2,
-                    Largo: 2,
+        async filterByTamanyo(bvModalEvt) {
 
-                },
+            if (this.tamanyoFilter.altura >= 0 && this.tamanyoFilter.anchura >= 0 &&
+                this.tamanyoFilter.largo >= 0 && this.tamanyoFilter.altura != null &&
+                this.tamanyoFilter.anchura != null && this.tamanyoFilter.largo != null) {
+                /**comprobacion de valores con mensajes console.log()*/
+                /*
+                console.log("Se han comprobado todas las medidas del tamaño y son correctas");
+                console.log("Los valores son:");
+                console.log("Altura: " + this.tamanyoFilter.altura);
+                console.log("Anchura: " + this.tamanyoFilter.anchura);
+                console.log("Largo: " + this.tamanyoFilter.largo);*/
 
-            }).then((response) => {
+                let promiseTamanyo = new Promise((resolve) => {
 
-                if (response.status == 200) {
-                    // console.log(packagesFilterdByTamanyo.push(response.data[0]));
-                    //packagesFilterdByTamanyo.push(response.data[0]);
-                    //this.updateMap(packagesFilterdByTamanyo,map)
-                    this.tamanyoFilter.isActive = true;
-                    this.changeButtonFilterTamanyo();
-                    console.log(response.data);
+                    let filteredPackagesTamanyo = [];
+                    if (this.packages != null && this.packages.length > 0) {
+                        for (let i = 0; i < this.packages.length; i++) {
+                            if (this.packages[i].Alto <= this.tamanyoFilter.altura &&
+                                this.packages[i].Ancho <= this.tamanyoFilter.anchura &&
+                                this.packages[i].Largo <= this.tamanyoFilter.largo) {
 
-                };
+                                filteredPackagesTamanyo.push(this.packages[i]);
+                            }
+                        }
+                        resolve(filteredPackagesTamanyo);
 
-            }, (error) => {
-                
+                    };
+                });
+
+                promiseTamanyo.then((filteredPackagesTamanyo) => {
+                    this.packages = filteredPackagesTamanyo;
+                    this.updateMap(this.packages, map);
+
+                });
                 this.tamanyoFilter.isActive = true;
                 this.changeButtonFilterTamanyo();
-                console.log("No se ha podido conectar");
-                console.log(error);
-
-            });
+            } else {
+                await bvModalEvt.preventDefault();
+                this.comprobarTamanyoVacios();
+                //console.log("No se cumplen las condiciones relacionadas con el tamaño");
+                this.changeButtonFilterTamanyo();
+                return;
+            }
 
         },
 
@@ -477,13 +534,14 @@ export default {
                 });
 
             } else {
-                await this.makerObjectsEncargos(map);
+
                 this.originDestinationFilter.isActive = false;
                 this.originDestinationFilter.origin.position.lat = undefined;
                 this.originDestinationFilter.origin.position.lng = undefined;
                 this.originDestinationFilter.destination.position.lat = undefined;
                 this.originDestinationFilter.destination.position.lng = undefined;
                 this.changeButtonFilterOriginDestination();
+                await this.makerObjectsEncargos(map);
             }
         },
         clickItemDropPlaces(address, isOrigin) {
@@ -538,6 +596,8 @@ export default {
         },
         /*Elimina aquellos paquetes que no cumplen el filtro de la lista this.packages*/
         async filterByOriginDestination(bvModalEvt) {
+            //console.log($("#originForm"));
+            //if($("#originForm")[0] != undefined)
             if ($("#originForm")[0].value !== undefined && $("#originForm")[0].value.trim().length > 3 &&
                 $("#destinationForm")[0].value !== undefined && $("#destinationForm")[0].value.trim().length > 3) {
                 const H = window.H;
@@ -683,13 +743,13 @@ export default {
                     (response) => {
                         todas_respuestas = response.data[0];
                         console.log(todas_respuestas);
-                  
+
                         todas_respuestas.forEach(element => {
-                            if (!element.FechaEntrega && element.NombreCompleto != "Por reservar"){
+                            if (!element.FechaEntrega && element.NombreCompleto != "Por reservar") {
                                 respuesta.push(element);
                             }
-                        }); 
-                        
+                        });
+
                         console.log(respuesta);
                         if (respuesta.length != 0) {
                             console.log("estoy aqui");
@@ -726,10 +786,10 @@ export default {
                     }
                 );
         },
-        modifyFormat(dateTime)
-        {
-            if (dateTime) { return dateTime.substring(0, 10) }
-            else return "No hay"
+        modifyFormat(dateTime) {
+            if (dateTime) {
+                return dateTime.substring(0, 10)
+            } else return "No hay"
         }
 
     }
