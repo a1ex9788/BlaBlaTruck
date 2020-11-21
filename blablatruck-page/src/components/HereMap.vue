@@ -68,7 +68,7 @@
     </b-modal>
     <b-modal id="modalNatureFilterDialog" @ok="filterByNature" title="Filtrar por la naturaleza del paquete">
         <b-form-group id="input-group-Naturaleza" label="Naturaleza:" label-for="input-Naturaleza">
-            <b-form-select id="input-Naturaleza" v-model="natureFilter.nature" :options="optionsNaturaleza"></b-form-select>
+            <b-form-select id="input-Naturaleza" v-model="natureFilter.nature" :options="optionsNaturaleza" :state="natureError" v-on:input="comprobarNaturaleza"></b-form-select>
         </b-form-group>
     </b-modal>
     <b-modal id="modalDialog" @ok="this.hide = true; window.location.reload();">Su paquete ha sido reservado con éxito!</b-modal>
@@ -119,7 +119,8 @@ export default {
                 isActive: false,
                 nature: null
             },
-            optionsNaturaleza: [{
+            optionsNaturaleza: [
+                {
                     value: null,
                     text: "Selecciona una opción"
                 },
@@ -136,6 +137,7 @@ export default {
                     text: "Normal"
                 }
             ],
+            natureError: undefined,
             altoError: true,
             anchoError: true,
             largoError: true,
@@ -374,6 +376,7 @@ export default {
         comprobarTamanyoAnchura() {
 
             var anchura = document.getElementById("anchura");
+
             if (anchura.value < 0) {
                 this.anchoError = false;
                 this.messageError = false;
@@ -411,6 +414,20 @@ export default {
             this.largoError = true;
             this.messageError = true;
         },
+
+        comprobarNaturaleza(){
+            var naturaleza = document.getElementById("input-Naturaleza");
+            if (naturaleza.value === '') {
+                this.natureError = false;
+                this.messageError = false;
+            } else {              
+                this.natureError = true;
+                this.messageError = true;
+            }
+
+        },
+        
+
         async openOriginDestinationModalWindow() {
             if (!this.originDestinationFilter.isActive) {
                 await this.$bvModal.show('modalOriginDestinationFilterDialog')
@@ -512,7 +529,7 @@ export default {
             }
         },
         async openNatureModalWindow() {
-
+           
             if (!this.natureFilter.isActive) {
                 await this.$bvModal.show('modalNatureFilterDialog');
             } else {
@@ -600,27 +617,42 @@ export default {
         },
         async filterByNature(bvModalEvt)
         {
-            let promiseNature = new Promise((resolve) => {
+            var naturaleza = document.getElementById("input-Naturaleza");
 
-                let filteredPackagesNature = [];
-                if (this.packages != null && this.packages.length > 0) {
-                    for (let i = 0; i < this.packages.length; i++) {
-                        if (this.packages[i].Naturaleza == this.natureFilter.nature) {
+            if (naturaleza.value === '') {
+                this.natureError = false;
+                this.messageError = false;
+            }
 
-                            filteredPackagesNature.push(this.packages[i]);
+            if (this.natureError){               
+                let promiseNature = new Promise((resolve) => {
+
+                    let filteredPackagesNature = [];
+                    if (this.packages != null && this.packages.length > 0) {
+                        for (let i = 0; i < this.packages.length; i++) {
+                            if (this.packages[i].NaturalezaEncargo == this.natureFilter.nature) {
+
+                                filteredPackagesNature.push(this.packages[i]);
+                            }
                         }
-                    }
-                    resolve(filteredPackagesNature);
-                };
-            });
+                        resolve(filteredPackagesNature);
+                    };
+                });
 
-            promiseNature.then((filteredPackagesNature) => {
-                this.packages = filteredPackagesNature;
-                this.updateMap(this.packages, map);
+                promiseNature.then((filteredPackagesNature) => {
+                    this.packages = filteredPackagesNature;
+                    this.updateMap(this.packages, map);
 
-            });
-            this.natureFilter.isActive = true;
-            this.changeButtonFilter(this.natureFilter, 'natureButton', 'Naturaleza');
+                });
+                this.natureFilter.isActive = true;
+                this.changeButtonFilter(this.natureFilter, 'natureButton', 'Naturaleza');
+
+            } else {
+                await bvModalEvt.preventDefault();
+                //this.comprobarTamanyoVacios();
+                //this.comprobarDecimales();
+                this.changeButtonFilter(this.natureFilter, 'natureButton', 'Naturaleza');
+            }
         },
         clickItemDropPlaces(address, isOrigin) {
             if (isOrigin) {
