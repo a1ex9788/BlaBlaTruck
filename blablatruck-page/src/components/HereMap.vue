@@ -321,6 +321,7 @@ export default {
         },
 
         comprobarTamanyoAltura() {
+
             var altura = document.getElementById("altura");
             if (altura.value < 0) {
                 this.altoError = false;
@@ -336,6 +337,7 @@ export default {
             this.messageError = true;
         },
         comprobarTamanyoAnchura() {
+
             var anchura = document.getElementById("anchura");
             if (anchura.value < 0) {
                 this.anchoError = false;
@@ -351,6 +353,7 @@ export default {
             this.messageError = true;
         },
         comprobarTamanyoLargo() {
+            
             var largo = document.getElementById("largo");
             if (largo.value < 0) {
                 this.largoError = false;
@@ -381,6 +384,7 @@ export default {
                 });
 
             } else {
+
                 this.tamanyoFilter.isActive = false;
                 this.changeButtonFilterTamanyo();
                 this.makerObjectsEncargos(map);
