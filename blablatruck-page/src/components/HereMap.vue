@@ -59,7 +59,7 @@
         <!--<b-form-invalid-feedback :state="messageError">El tamaño del paquete no puede ser un número negativo</b-form-invalid-feedback>-->
         <b-alert show variant="danger" :hidden="messageError">El tamaño del paquete no puede ser un número negativo</b-alert>
         <b-form inline class="ml-10" style="width-: 25">
-            <b-form-input id="altura" class="mr-2" placeholder="alto" max="300" min="0" type="number" :state="altoError" @input="comprobarTamanyoAltura"></b-form-input>
+            <b-form-input id="altura" class="mr-2" placeholder="alto" max="300" min="0" pattern="^[0-9]+" type="number" :state="altoError" @input="comprobarTamanyoAltura"></b-form-input>
             <label class="mr-2">x</label>
             <b-form-input id="anchura" class="mr-2 " placeholder="ancho" max="240" min="0" type="number" :state="anchoError" @input="comprobarTamanyoAnchura"></b-form-input>
             <label class="mr-2">x</label>
@@ -331,6 +331,10 @@ export default {
                 this.altoError = false;
                 this.messageError = true;
                 return;
+            } else if (altura.value % 1 !== 0) {
+                this.altoError = false;
+                this.messageError = true;
+                return;
             }
 
             this.altoError = true;
@@ -347,19 +351,27 @@ export default {
                 this.anchoError = false;
                 this.messageError = true;
                 return;
+            } else if (anchura.value % 1 !== 0) {
+                this.anchoError = false;
+                this.messageError = true;
+                return;
             }
 
             this.anchoError = true;
             this.messageError = true;
         },
         comprobarTamanyoLargo() {
-            
+
             var largo = document.getElementById("largo");
             if (largo.value < 0) {
                 this.largoError = false;
                 this.messageError = false;
                 return;
             } else if (largo.value === "") {
+                this.largoError = false;
+                this.messageError = true;
+                return;
+            } else if (largo.value % 1 !== 0) {
                 this.largoError = false;
                 this.messageError = true;
                 return;
@@ -373,8 +385,9 @@ export default {
             if (!this.tamanyoFilter.isActive) {
 
                 await this.$bvModal.show('modalTamanyoFilterDialog');
-                $("#altura")[0].addEventListener("input", () => {
+                $("#altura")[0].addEventListener("input", (evento) => {
                     this.tamanyoFilter.altura = document.getElementById("altura").value;
+
                 });
                 $("#anchura")[0].addEventListener("input", () => {
                     this.tamanyoFilter.anchura = document.getElementById("anchura").value;
@@ -423,12 +436,22 @@ export default {
             }
             return;
         },
+        comprobarDecimales() {
+            if (this.tamanyoFilter.altura % 1 !== 0) {
+                this.altoError = false;
+            }
+            if (this.tamanyoFilter.anchura % 1 !== 0) {
+                this.anchoError = false;
+            }
+            if (this.tamanyoFilter.largo % 1 !== 0) {
+                this.largoError = false;
+            }
+            return;
+        },
 
         async filterByTamanyo(bvModalEvt) {
 
-            if (this.tamanyoFilter.altura >= 0 && this.tamanyoFilter.anchura >= 0 &&
-                this.tamanyoFilter.largo >= 0 && this.tamanyoFilter.altura != null &&
-                this.tamanyoFilter.anchura != null && this.tamanyoFilter.largo != null) {
+            if (this.altoError && this.anchoError && this.largoError) {
                 /**comprobacion de valores con mensajes console.log()*/
                 /*
                 console.log("Se han comprobado todas las medidas del tamaño y son correctas");
@@ -464,6 +487,7 @@ export default {
             } else {
                 await bvModalEvt.preventDefault();
                 this.comprobarTamanyoVacios();
+                this.comprobarDecimales();
                 //console.log("No se cumplen las condiciones relacionadas con el tamaño");
                 this.changeButtonFilterTamanyo();
                 return;
