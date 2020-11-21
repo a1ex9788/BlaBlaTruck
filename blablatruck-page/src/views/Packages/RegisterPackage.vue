@@ -16,7 +16,7 @@
                     <b-list-group-item>Peso: {{this.peso}} kg</b-list-group-item>
                     <b-list-group-item>Naturaleza: {{this.naturalezaEncargo}}</b-list-group-item>
                     <b-list-group-item>Tamaño: {{this.alto}} x {{this.ancho}} x {{this.largo}} cm</b-list-group-item>
-                    <b-list-group-item>Fecha máxima de entrega: {{this.fechaMax}}</b-list-group-item>
+                    <b-list-group-item>Fecha máxima de entrega: {{modifyFormat(this.fechaMax)}}</b-list-group-item>
                 </b-list-group>
 
             </b-card>
@@ -167,6 +167,11 @@ export default {
                 console.log(error);
 
             });
+
+        },
+        modifyFormat(date){
+            if(date) return date;
+            else return "No tiene fecha máxima"
 
         }
 

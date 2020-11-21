@@ -79,7 +79,7 @@
             <br>
             <h4> {{this.calcularPrecio() }} euros </h4>
             <br>
-            <h3 class="mt-5">Seleccione una fecha máxima para la entrega del paquete:</h3>
+            <h3 class="mt-5">Fecha máxima para la entrega (Opcional)</h3>
             <br>
             <div>
                 <b-form-datepicker id="datepicker" :min="min" placeholder="Seleccione una fecha" class="mb-2"

@@ -162,13 +162,13 @@ export default {
             return res
         },
         async onCancelButton(event) {
-          this.$bvModal.msgBoxConfirm('Please confirm that you want to delete everything.', {
-          title: 'Please Confirm',
+          this.$bvModal.msgBoxConfirm('¿Está seguro que quiere cancelar la reserva?', {
+          title: 'Confirmación',
           size: 'sm',
           buttonSize: 'sm',
           okVariant: 'danger',
-          okTitle: 'YES',
-          cancelTitle: 'NO',
+          okTitle: 'Sí',
+          cancelTitle: 'No',
           footerClass: 'p-2',
           hideHeaderClose: false,
           centered: true

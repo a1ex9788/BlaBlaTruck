@@ -292,15 +292,15 @@ export default {
                             marker.addEventListener('tap', () => {
                                 var bubble = new H.ui.InfoBubble(item.position, {
                                     //read custom data
-                                    content: "Cliente: ".bold().fontsize(5) + element.DNICliente.fontsize(3).fontcolor('#0055FF') +
-                                        " Origen: ".bold().fontsize(5) + element.Origen.fontsize(3).fontcolor('#0055FF') +
-                                        " Destino: ".bold().fontsize(5) + element.Destino.fontsize(3).fontcolor('#0055FF') +
-                                        " Fecha máx.: ".bold().fontsize(4) + this.modifyFormat(element.FechaMaximaEntrega).fontsize(3).fontcolor('#0055FF') +
-                                        " Naturaleza: ".bold().fontsize(4) + element.NaturalezaEncargo.fontsize(3).fontcolor('#0055FF') +
-                                        " Dimensiones: ".bold().fontsize(4) + element.Alto.toString().fontsize(3).fontcolor('#0055FF') +
+                                    content: "Cliente: ".bold().fontsize(5) + "<br>" + element.DNICliente.fontsize(3).fontcolor('#0055FF') + "<br>" +
+                                        " Origen: ".bold().fontsize(5) + "<br>" + element.Origen.fontsize(3).fontcolor('#0055FF') + "<br>" +
+                                        " Destino: ".bold().fontsize(5) + "<br>" + element.Destino.fontsize(3).fontcolor('#0055FF') + "<br>" +
+                                        " Fecha máx.: ".bold().fontsize(4) + "<br>" + this.modifyFormat(element.FechaMaximaEntrega).fontsize(3).fontcolor('#0055FF') + "<br>" +
+                                        " Naturaleza: ".bold().fontsize(4) + "<br>" + element.NaturalezaEncargo.fontsize(3).fontcolor('#0055FF') + "<br>" +
+                                        " Dimensiones: ".bold().fontsize(4) + "<br>" + element.Alto.toString().fontsize(3).fontcolor('#0055FF') + 
                                         " x " + element.Ancho.toString().fontsize(3).fontcolor('#0055FF') +
                                         " x " + element.Largo.toString().fontsize(3).fontcolor('#0055FF') +
-                                        "<button type='button' id='" + element.Id.toString() + "' class='btn btn-primary'>Reservar</button>"
+                                        "<button type='button' id='" + element.Id.toString() + "' class='btn btn-primary mt-2'>Reservar</button>"
 
                                 });
 
