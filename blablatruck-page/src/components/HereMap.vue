@@ -54,7 +54,6 @@
             <div id="mapDestination" class="filterMap"></div>
         </div>
     </b-modal>
-
     <b-modal id="modalTamanyoFilterDialog" @ok="filterByTamanyo" @show="resetModalTamanyo" title="Filtrar por el tamaño del paquete">
         <!--<b-form-invalid-feedback :state="messageError">El tamaño del paquete no puede ser un número negativo</b-form-invalid-feedback>-->
         <b-alert show variant="danger" :hidden="messageError">El tamaño del paquete no puede ser un número negativo</b-alert>
@@ -66,6 +65,11 @@
             <b-form-input id="largo" class="ml-2" placeholder="largo" max="1400" min="0" type="number" :state="largoError" @input="comprobarTamanyoLargo"></b-form-input>
             <label class="ml-2">(cm)</label>
         </b-form>
+    </b-modal>
+    <b-modal id="modalNatureFilterDialog" @ok="filterByNature" title="Filtrar por la naturaleza del paquete">
+        <b-form-group id="input-group-Naturaleza" label="Naturaleza:" label-for="input-Naturaleza">
+            <b-form-select id="input-Naturaleza" v-model="natureFilter.nature" :options="optionsNaturaleza"></b-form-select>
+        </b-form-group>
     </b-modal>
     <b-modal id="modalDialog" @ok="this.hide = true; window.location.reload();">Su paquete ha sido reservado con éxito!</b-modal>
     <!--In the following div the HERE Map will render-->
@@ -105,16 +109,37 @@ export default {
                     radius: 0
                 }
             },
-            altoError: true,
-            anchoError: true,
-            largoError: true,
-            messageError: true,
             tamanyoFilter: {
                 isActive: false,
                 altura: undefined,
                 anchura: undefined,
                 largo: undefined
             },
+            natureFilter: {
+                isActive: false,
+                nature: null
+            },
+            optionsNaturaleza: [{
+                    value: null,
+                    text: "Selecciona una opción"
+                },
+                {
+                    value: "Frágil",
+                    text: "Frágil"
+                },
+                {
+                    value: "Congelado",
+                    text: "Congelado"
+                },
+                {
+                    value: "Normal",
+                    text: "Normal"
+                }
+            ],
+            altoError: true,
+            anchoError: true,
+            largoError: true,
+            messageError: true,
             routingService: {},
             items: [],
             coordenadasEncargosPendientes: [{
@@ -128,7 +153,7 @@ export default {
                 }
             }],
             personDNI: undefined,
-        };
+        }
     },
 
     async created() {
@@ -189,8 +214,9 @@ export default {
             overlayFilterPanel.renderInternal = function (el) {
                 /* Añadir aquí todos los botones que redirigirán a las pestañas de los filtros*/
                 el.innerHTML = "<p class='mt-2 h4'>Filtrar por:</p>" +
-                    '<button class="btn" id="originDestinationButton">Origen-Destino</button>' +
-                    '<button class="btn" id="tamanyoButton">Tamaño</button>';
+                    '<button class="btn" id="originDestinationButton">Origen-Destino</button><br>' +
+                    '<button class="btn" id="tamanyoButton">Tamaño</button><br>' +
+                    '<button class="btn" id="natureButton">Naturaleza</button>';
                 el.style.color = "black"
             };
 
@@ -203,6 +229,7 @@ export default {
             // Añadir aqui las funciones para abrir las ventanas modales para los filtros
             $('#originDestinationButton')[0].onclick = this.openOriginDestinationModalWindow;
             $('#tamanyoButton')[0].onclick = this.openTamanyoModalWindow;
+            $('#natureButton')[0].onclick = this.openNatureModalWindow;
 
         },
         async makerObjectsEncargos(map) {
@@ -212,14 +239,18 @@ export default {
         },
 
         async filterBy() {
-            if (this.originDestinationFilter.isActive) {
+            if (this.originDestinationFilter.isActive)
+            {
                 this.filterByOriginDestination();
             }
-            if (this.tamanyoFilter.isActive) {
-
+            if (this.tamanyoFilter.isActive)
+            {
                 this.filterByTamanyo();
             }
-
+            if (this.natureFilter.isActive)
+            {
+                this.filterByNature();
+            }
         },
         async getPackages() {
             await axios
@@ -380,121 +411,6 @@ export default {
             this.largoError = true;
             this.messageError = true;
         },
-        async openTamanyoModalWindow() {
-
-            if (!this.tamanyoFilter.isActive) {
-
-                await this.$bvModal.show('modalTamanyoFilterDialog');
-                $("#altura")[0].addEventListener("input", (evento) => {
-                    this.tamanyoFilter.altura = document.getElementById("altura").value;
-
-                });
-                $("#anchura")[0].addEventListener("input", () => {
-                    this.tamanyoFilter.anchura = document.getElementById("anchura").value;
-                });
-                $("#largo")[0].addEventListener("input", () => {
-                    this.tamanyoFilter.largo = document.getElementById("largo").value;
-                });
-
-            } else {
-
-                this.tamanyoFilter.isActive = false;
-                this.changeButtonFilterTamanyo();
-                this.makerObjectsEncargos(map);
-            }
-
-        },
-        resetModalTamanyo() {
-            this.tamanyoFilter.altura = null;
-            this.tamanyoFilter.anchura = null;
-            this.tamanyoFilter.largo = null;
-
-            this.altoError = null;
-            this.anchoError = null;
-            this.largoError = null;
-            this.messageError = true;
-        },
-        changeButtonFilterTamanyo() {
-            if (this.tamanyoFilter.isActive) {
-                $('#tamanyoButton').addClass("btn-danger");
-                $('#tamanyoButton').html('x Tamaño');
-            } else {
-                $('#tamanyoButton').removeClass("btn-danger");
-                $('#tamanyoButton').html('Tamaño');
-            }
-        },
-        comprobarTamanyoVacios() {
-
-            if (this.tamanyoFilter.altura === null) {
-                this.altoError = false;
-            }
-            if (this.tamanyoFilter.anchura === null) {
-                this.anchoError = false;
-            }
-            if (this.tamanyoFilter.largo === null) {
-                this.largoError = false;
-            }
-            return;
-        },
-        comprobarDecimales() {
-            if (this.tamanyoFilter.altura % 1 !== 0) {
-                this.altoError = false;
-            }
-            if (this.tamanyoFilter.anchura % 1 !== 0) {
-                this.anchoError = false;
-            }
-            if (this.tamanyoFilter.largo % 1 !== 0) {
-                this.largoError = false;
-            }
-            return;
-        },
-
-        async filterByTamanyo(bvModalEvt) {
-
-            if (this.altoError && this.anchoError && this.largoError) {
-                /**comprobacion de valores con mensajes console.log()*/
-                /*
-                console.log("Se han comprobado todas las medidas del tamaño y son correctas");
-                console.log("Los valores son:");
-                console.log("Altura: " + this.tamanyoFilter.altura);
-                console.log("Anchura: " + this.tamanyoFilter.anchura);
-                console.log("Largo: " + this.tamanyoFilter.largo);*/
-
-                let promiseTamanyo = new Promise((resolve) => {
-
-                    let filteredPackagesTamanyo = [];
-                    if (this.packages != null && this.packages.length > 0) {
-                        for (let i = 0; i < this.packages.length; i++) {
-                            if (this.packages[i].Alto <= this.tamanyoFilter.altura &&
-                                this.packages[i].Ancho <= this.tamanyoFilter.anchura &&
-                                this.packages[i].Largo <= this.tamanyoFilter.largo) {
-
-                                filteredPackagesTamanyo.push(this.packages[i]);
-                            }
-                        }
-                        resolve(filteredPackagesTamanyo);
-
-                    };
-                });
-
-                promiseTamanyo.then((filteredPackagesTamanyo) => {
-                    this.packages = filteredPackagesTamanyo;
-                    this.updateMap(this.packages, map);
-
-                });
-                this.tamanyoFilter.isActive = true;
-                this.changeButtonFilterTamanyo();
-            } else {
-                await bvModalEvt.preventDefault();
-                this.comprobarTamanyoVacios();
-                this.comprobarDecimales();
-                //console.log("No se cumplen las condiciones relacionadas con el tamaño");
-                this.changeButtonFilterTamanyo();
-                return;
-            }
-
-        },
-
         async openOriginDestinationModalWindow() {
             if (!this.originDestinationFilter.isActive) {
                 await this.$bvModal.show('modalOriginDestinationFilterDialog')
@@ -568,9 +484,143 @@ export default {
                 this.originDestinationFilter.origin.position.lng = undefined;
                 this.originDestinationFilter.destination.position.lat = undefined;
                 this.originDestinationFilter.destination.position.lng = undefined;
-                this.changeButtonFilterOriginDestination();
+                this.changeButtonFilter(this.originDestinationFilter, "originDestinationButton", "Origen-Destino");
                 await this.makerObjectsEncargos(map);
             }
+        },
+        async openTamanyoModalWindow() {
+
+            if (!this.tamanyoFilter.isActive) {
+
+                await this.$bvModal.show('modalTamanyoFilterDialog');
+                $("#altura")[0].addEventListener("input", (evento) => {
+                    this.tamanyoFilter.altura = document.getElementById("altura").value;
+
+                });
+                $("#anchura")[0].addEventListener("input", () => {
+                    this.tamanyoFilter.anchura = document.getElementById("anchura").value;
+                });
+                $("#largo")[0].addEventListener("input", () => {
+                    this.tamanyoFilter.largo = document.getElementById("largo").value;
+                });
+
+            } else {
+
+                this.tamanyoFilter.isActive = false;
+                this.changeButtonFilter(this.tamanyoFilter, 'tamanyoButton', 'Tamaño');
+                this.makerObjectsEncargos(map);
+            }
+        },
+        async openNatureModalWindow() {
+
+            if (!this.natureFilter.isActive) {
+                await this.$bvModal.show('modalNatureFilterDialog');
+            } else {
+                this.natureFilter.isActive = false;
+                this.changeButtonFilter(this.natureFilter, 'natureButton', 'Naturaleza');
+                this.makerObjectsEncargos(map);
+            }
+        },
+        resetModalTamanyo() {
+            this.tamanyoFilter.altura = null;
+            this.tamanyoFilter.anchura = null;
+            this.tamanyoFilter.largo = null;
+
+            this.altoError = null;
+            this.anchoError = null;
+            this.largoError = null;
+            this.messageError = true;
+        },
+        comprobarTamanyoVacios() {
+
+            if (this.tamanyoFilter.altura === null) {
+                this.altoError = false;
+            }
+            if (this.tamanyoFilter.anchura === null) {
+                this.anchoError = false;
+            }
+            if (this.tamanyoFilter.largo === null) {
+                this.largoError = false;
+            }
+            return;
+        },
+        comprobarDecimales() {
+            if (this.tamanyoFilter.altura % 1 !== 0) {
+                this.altoError = false;
+            }
+            if (this.tamanyoFilter.anchura % 1 !== 0) {
+                this.anchoError = false;
+            }
+            if (this.tamanyoFilter.largo % 1 !== 0) {
+                this.largoError = false;
+            }
+            return;
+        },
+        async filterByTamanyo(bvModalEvt) {
+
+            if (this.altoError && this.anchoError && this.largoError) {
+                /**comprobacion de valores con mensajes console.log()*/
+                /*
+                console.log("Se han comprobado todas las medidas del tamaño y son correctas");
+                console.log("Los valores son:");
+                console.log("Altura: " + this.tamanyoFilter.altura);
+                console.log("Anchura: " + this.tamanyoFilter.anchura);
+                console.log("Largo: " + this.tamanyoFilter.largo);*/
+
+                let promiseTamanyo = new Promise((resolve) => {
+
+                    let filteredPackagesTamanyo = [];
+                    if (this.packages != null && this.packages.length > 0) {
+                        for (let i = 0; i < this.packages.length; i++) {
+                            if (this.packages[i].Alto <= this.tamanyoFilter.altura &&
+                                this.packages[i].Ancho <= this.tamanyoFilter.anchura &&
+                                this.packages[i].Largo <= this.tamanyoFilter.largo) {
+
+                                filteredPackagesTamanyo.push(this.packages[i]);
+                            }
+                        }
+                        resolve(filteredPackagesTamanyo);
+
+                    };
+                });
+
+                promiseTamanyo.then((filteredPackagesTamanyo) => {
+                    this.packages = filteredPackagesTamanyo;
+                    this.updateMap(this.packages, map);
+
+                });
+                this.tamanyoFilter.isActive = true;
+                this.changeButtonFilter(this.tamanyoFilter, 'tamanyoButton', 'Tamaño');
+            } else {
+                await bvModalEvt.preventDefault();
+                this.comprobarTamanyoVacios();
+                this.comprobarDecimales();
+                this.changeButtonFilter(this.tamanyoFilter, 'tamanyoButton', 'Tamaño');
+            }
+        },
+        async filterByNature(bvModalEvt)
+        {
+            let promiseNature = new Promise((resolve) => {
+
+                let filteredPackagesNature = [];
+                if (this.packages != null && this.packages.length > 0) {
+                    for (let i = 0; i < this.packages.length; i++) {
+                        if (this.packages[i].Naturaleza == this.natureFilter.nature) {
+
+                            filteredPackagesNature.push(this.packages[i]);
+                        }
+                    }
+                    resolve(filteredPackagesNature);
+                };
+            });
+
+            promiseNature.then((filteredPackagesNature) => {
+                this.packages = filteredPackagesNature;
+                this.updateMap(this.packages, map);
+
+            });
+            this.natureFilter.isActive = true;
+            this.changeButtonFilter(this.natureFilter, 'natureButton', 'Naturaleza');
         },
         clickItemDropPlaces(address, isOrigin) {
             if (isOrigin) {
@@ -677,7 +727,7 @@ export default {
                                         this.packages = filteredPackagesOriginDestination;
                                         this.updateMap(filteredPackagesOriginDestination, map)
                                         this.originDestinationFilter.isActive = true;
-                                        this.changeButtonFilterOriginDestination();
+                                        this.changeButtonFilter(this.originDestinationFilter, 'originDestinationButton', 'Origen-Destino');
                                     }
                                 }
                             })
@@ -685,7 +735,7 @@ export default {
                     } else {
                         this.updateMap(filteredPackagesOrigin, map)
                         this.originDestinationFilter.isActive = true;
-                        this.changeButtonFilterOriginDestination();
+                        this.changeButtonFilter(this.originDestinationFilter, 'originDestinationButton', 'Origen-Destino');
                     }
                 });
             } else {
@@ -696,13 +746,15 @@ export default {
                     this.originDestinationFilter.errorDestination = false;
             }
         },
-        changeButtonFilterOriginDestination() {
-            if (this.originDestinationFilter.isActive) {
-                $('#originDestinationButton').addClass("btn-danger");
-                $('#originDestinationButton').html('x Origen-Destino');
+        changeButtonFilter(filter, buttonName, buttonText) {
+            let button = '#' + buttonName
+
+            if (filter.isActive) {
+                $(button).addClass("btn-danger");
+                $(button).html('x ' + buttonText);
             } else {
-                $('#originDestinationButton').removeClass("btn-danger");
-                $('#originDestinationButton').html('Origen-Destino');
+                $(button).removeClass("btn-danger");
+                $(button).html(buttonText);
             }
         },
         drawRoute(start, finish, map) {
@@ -780,7 +832,6 @@ export default {
 
                         console.log(respuesta);
                         if (respuesta.length != 0) {
-                            console.log("estoy aqui");
                             service.geocode({
                                 q: respuesta[0].Origen
                             }, (res) => {
