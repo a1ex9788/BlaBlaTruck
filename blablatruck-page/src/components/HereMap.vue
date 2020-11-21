@@ -423,8 +423,9 @@ export default {
         async filterByTamanyo(bvModalEvt) {
 
             if (this.tamanyoFilter.altura >= 0 && this.tamanyoFilter.anchura >= 0 &&
-                this.tamanyoFilter.largo >= 0 && this.tamanyoFilter.altura != null &&
-                this.tamanyoFilter.anchura != null && this.tamanyoFilter.largo != null) {
+                this.tamanyoFilter.largo >= 0 && this.tamanyoFilter.altura !== null &&
+                this.tamanyoFilter.anchura !== null && this.tamanyoFilter.largo !== null && this.altoError
+                && this.anchoError && this.largoError ) {
                 /**comprobacion de valores con mensajes console.log()*/
                 /*
                 console.log("Se han comprobado todas las medidas del tamaño y son correctas");
