@@ -4,6 +4,7 @@
     <div id="groupForm">
         <div class="container-fluid">
             <div class="row mt-2">
+                <h4 id="groupTitle" class="mt-5" v-if="nonReservedPackages.length + ongoingPackages.length + endedPackages.length == 0">No se han encontrado envíos.</h4>
                 <b-list-group id="groupTitle" >
                     <b-list-group-item v-for="item in nonReservedPackages" v-bind:key="item.id">
                         <b-row>
@@ -220,8 +221,8 @@ export default {
 }
 
 #groupTitle {
-    max-width: 600px;
-    min-width: 600px;
+    max-width: 800px;
+    min-width: 800px;
     text-align: center;
 }
 

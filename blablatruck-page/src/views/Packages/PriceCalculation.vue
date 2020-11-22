@@ -9,7 +9,7 @@
 
             <b-form @submit="onSubmit" @reset="onReset">
 
-                <b-form-group class="mt-4" id="input-group-1" label="Origen:" label-for="input-1">
+                <b-form-group class="mt-4" label="Origen:" label-for="input-1">
                     <b-form-input id="input-Origen" v-model="$v.form.origen.value.$model" :state="validateState('origen')" type="text" placeholder="Direccion: Calle | nrº | planta | puerta">
                     </b-form-input>
                 </b-form-group>
