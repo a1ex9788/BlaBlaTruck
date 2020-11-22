@@ -66,7 +66,7 @@
             <label class="ml-2">(cm)</label>
         </b-form>
     </b-modal>
-    <b-modal id="modalNatureFilterDialog" @ok="filterByNature" title="Filtrar por la naturaleza del paquete">
+    <b-modal id="modalNatureFilterDialog" @ok="filterByNature" @show="resetModalNature" title="Filtrar por la naturaleza del paquete">
         <b-form-group id="input-group-Naturaleza" label="Naturaleza:" label-for="input-Naturaleza">
             <b-form-select id="input-Naturaleza" v-model="natureFilter.nature" :options="optionsNaturaleza" :state="natureError" v-on:input="comprobarNaturaleza"></b-form-select>
         </b-form-group>
@@ -546,6 +546,12 @@ export default {
             this.altoError = null;
             this.anchoError = null;
             this.largoError = null;
+            this.messageError = true;
+        },
+        resetModalNature() {
+            this.natureFilter.nature = null;
+
+            this.natureError = null;
             this.messageError = true;
         },
         comprobarTamanyoVacios() {
