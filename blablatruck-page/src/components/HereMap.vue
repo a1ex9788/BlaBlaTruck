@@ -623,6 +623,7 @@ export default {
                 this.comprobarDecimales();
                 this.changeButtonFilter(this.tamanyoFilter, 'tamanyoButton', 'Tamaño');
             }
+            await this.addEncargosToList();
         },
         async filterByNature(bvModalEvt)
         {
@@ -662,6 +663,7 @@ export default {
                 //this.comprobarDecimales();
                 this.changeButtonFilter(this.natureFilter, 'natureButton', 'Naturaleza');
             }
+            await this.addEncargosToList();
         },
         clickItemDropPlaces(address, isOrigin) {
             if (isOrigin) {
@@ -786,6 +788,7 @@ export default {
                 if ($("#destinationForm")[0].value == undefined || $("#destinationForm")[0].value.trim().length <= 3)
                     this.originDestinationFilter.errorDestination = false;
             }
+            await this.addEncargosToList();
         },
         changeButtonFilter(filter, buttonName, buttonText) {
             let button = '#' + buttonName
@@ -864,15 +867,13 @@ export default {
                 .then(
                     (response) => {
                         todas_respuestas = response.data[0];
-                        console.log(todas_respuestas);
-
+                        
                         todas_respuestas.forEach(element => {
                             if (!element.FechaEntrega && element.NombreCompleto != "Por reservar") {
                                 respuesta.push(element);
                             }
                         });
 
-                        console.log(respuesta);
                         if (respuesta.length != 0) {
                             service.geocode({
                                 q: respuesta[0].Origen
@@ -891,10 +892,11 @@ export default {
                                     var svgMarkup = '<svg width="18" height="18" ' +
                                         'xmlns="http://www.w3.org/2000/svg">' +
                                         '<circle cx="8" cy="8" r="8" ' +
-                                        'fill="red" stroke="black" stroke-width="2"  />' +
+                                        'fill="green" stroke="black" stroke-width="2"  />' +
                                         '</svg>'; 
+                                   
                                    var customIcon = new H.map.Icon(svgMarkup);
-                                    //var customIcon = new H.map.Icon("blablatruck-page\src\assets\Destino.png"); //No funciona por ruta :(                               
+                                    //var customIcon = new H.map.Icon("..\assets\Destino.png"); //No funciona por ruta :(                               
                                     var customMarker = new H.map.Marker({
                                             lat: this.coordenadasEncargosPendientes[0].origen.lat,
                                             lng: this.coordenadasEncargosPendientes[0].origen.lng
@@ -902,10 +904,18 @@ export default {
 
                                     map.addObject(customMarker);
                                     
+                                    var svgMarkup2 = '<svg width="18" height="18" ' +
+                                        'xmlns="http://www.w3.org/2000/svg">' +
+                                        '<circle cx="8" cy="8" r="8" ' +
+                                        'fill="red" stroke="black" stroke-width="2"  />' +
+                                        '</svg>'; 
+
+                                    var customIcon2 = new H.map.Icon(svgMarkup2.replace('${FILL}', 'blue').replace('${STROKE}', 'red'));
+
                                     var customMarker2 = new H.map.Marker({
                                             lat: this.coordenadasEncargosPendientes[0].destino.lat,
                                             lng: this.coordenadasEncargosPendientes[0].destino.lng
-                                        }, {icon: customIcon});
+                                        }, {icon: customIcon2});
 
                                     map.addObject(customMarker2);
 
