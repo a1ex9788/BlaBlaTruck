@@ -796,6 +796,7 @@ export default {
             }
         },
         drawRoute(start, finish, map) {
+  
             this.routingService.calculateRoute({
                     "mode": "fastest;car;traffic:enabled",
                     "waypoint0": `${start.lat},${start.lng}`,
@@ -883,6 +884,28 @@ export default {
                                     coordDestino = res.items[0].position;
                                     this.coordenadasEncargosPendientes[0].destino.lat = coordDestino.lat;
                                     this.coordenadasEncargosPendientes[0].destino.lng = coordDestino.lng;
+
+                                    var svgMarkup = '<svg width="18" height="18" ' +
+                                        'xmlns="http://www.w3.org/2000/svg">' +
+                                        '<circle cx="8" cy="8" r="8" ' +
+                                        'fill="red" stroke="black" stroke-width="2"  />' +
+                                        '</svg>'; 
+                                   var customIcon = new H.map.Icon(svgMarkup);
+                                    //var customIcon = new H.map.Icon("blablatruck-page\src\assets\Destino.png"); //No funciona por ruta :(                               
+                                    var customMarker = new H.map.Marker({
+                                            lat: this.coordenadasEncargosPendientes[0].origen.lat,
+                                            lng: this.coordenadasEncargosPendientes[0].origen.lng
+                                        }, {icon: customIcon});
+
+                                    map.addObject(customMarker);
+                                    
+                                    var customMarker2 = new H.map.Marker({
+                                            lat: this.coordenadasEncargosPendientes[0].destino.lat,
+                                            lng: this.coordenadasEncargosPendientes[0].destino.lng
+                                        }, {icon: customIcon});
+
+                                    map.addObject(customMarker2);
+
 
                                     this.drawRoute({
                                             lat: this.coordenadasEncargosPendientes[0].origen.lat,
