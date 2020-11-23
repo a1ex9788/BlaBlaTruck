@@ -503,6 +503,7 @@ export default {
                 this.originDestinationFilter.destination.position.lng = undefined;
                 this.changeButtonFilter(this.originDestinationFilter, "originDestinationButton", "Origen-Destino");
                 await this.makerObjectsEncargos(map);
+                await this.addEncargosToList();
             }
         },
         async openTamanyoModalWindow() {
@@ -525,7 +526,8 @@ export default {
 
                 this.tamanyoFilter.isActive = false;
                 this.changeButtonFilter(this.tamanyoFilter, 'tamanyoButton', 'Tamaño');
-                this.makerObjectsEncargos(map);
+                await this.makerObjectsEncargos(map);
+                await this.addEncargosToList();
             }
         },
         async openNatureModalWindow() {
@@ -535,7 +537,8 @@ export default {
             } else {
                 this.natureFilter.isActive = false;
                 this.changeButtonFilter(this.natureFilter, 'natureButton', 'Naturaleza');
-                this.makerObjectsEncargos(map);
+                await this.makerObjectsEncargos(map);
+                await this.addEncargosToList();
             }
         },
         resetModalTamanyo() {
