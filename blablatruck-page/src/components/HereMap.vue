@@ -534,6 +534,11 @@ export default {
            
             if (!this.natureFilter.isActive) {
                 await this.$bvModal.show('modalNatureFilterDialog');
+
+                $("#input-Naturaleza")[0].addEventListener("change",()=> {
+                    this.natureFilter.nature = document.getElementById("input-Naturaleza");
+                }
+                );
             } else {
                 this.natureFilter.isActive = false;
                 this.changeButtonFilter(this.natureFilter, 'natureButton', 'Naturaleza');
@@ -627,9 +632,17 @@ export default {
         },
         async filterByNature(bvModalEvt)
         {
+            /*
             var naturaleza = document.getElementById("input-Naturaleza");
 
             if (naturaleza.value === '') {
+                this.natureError = false;
+                this.messageError = false;
+            }
+             */
+
+            if (this.natureFilter.nature === null) {
+                //console.log(this.natureFilter.nature);
                 this.natureError = false;
                 this.messageError = false;
             }
