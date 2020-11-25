@@ -9,14 +9,14 @@
 
             <b-form @submit="onSubmit" @reset="onReset">
 
-                <b-form-group class="mt-4" label="Origen:" label-for="input-1">
-                    <b-form-input id="input-Origen" v-model="$v.form.origen.value.$model" :state="validateState('origen')" type="text" placeholder="Direccion: Calle | nrº | planta | puerta">
-                    </b-form-input>
+                <b-form-group class="mt-4" id="input-group-1" label="Origen:" label-for="input-1" v-model="$v.form.origen.value.$model" :state="true">
+                    <vue-bootstrap-typeahead id="input-Origen" :data="adresses" v-model="addressSearch" placeholder="Direccion: Calle | nrº | planta | puerta" @hit="selectedAddress = $event" :state="validateStateOrigen('origen')">
+                    </vue-bootstrap-typeahead> 
                 </b-form-group>
 
                 <b-form-group id="input-group-2" label="Destino:" label-for="input-2">
-                    <b-form-input id="input-Destino" v-model="$v.form.destino.value.$model" :state="validateState('destino')" type="text" placeholder="Direccion: Calle | nrº | planta | puerta">
-                    </b-form-input>
+                    <vue-bootstrap-typeahead id="input-Destino" :data="adresses" :minMatchingChars="0" v-model="addressSearch" placeholder="Direccion: Calle | nrº | planta | puerta" @hit="selectedAddress = $event" :state="validateStateDestino('origen')">
+                    </vue-bootstrap-typeahead>
                 </b-form-group>
 
                 <b-form-group id="input-group-Naturaleza" label="Naturaleza:" label-for="input-Naturaleza">
@@ -79,7 +79,7 @@
             <br>
             <h4> {{this.calcularPrecio() }} euros </h4>
             <br>
-            <h3 class="mt-5">Fecha máxima para la entrega (Opcional)</h3>
+            <h3 class="mt-5">Seleccione una fecha máxima para la entrega del paquete:</h3>
             <br>
             <div>
                 <b-form-datepicker id="datepicker" :min="min" placeholder="Seleccione una fecha" class="mb-2"
@@ -96,6 +96,11 @@
 </template>
 
 <script>
+const platform = new window.H.service.Platform({
+            apikey: 'h_XTwwPMEk8Iz2QvPW6rtB5D99xqPDwbW9aVqNRe1HI'
+        });
+var service = platform.getSearchService();
+import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 import Sidebar from '../../components/Sidebar'
 import {
     validationMixin
@@ -106,14 +111,19 @@ import {
     minValue,
     maxValue
 } from "vuelidate/lib/validators";
+import _ from 'underscore'
 export default {
     mixins: [validationMixin],
     name: "FormComponent",
     components: {
         Sidebar,
+        VueBootstrapTypeahead,
     },
     data() {
         return {
+            adresses: [],
+            addressSearch: '',
+            selectedAddress: null,
             min: new Date(),
             form: {
                 origen: {
@@ -169,7 +179,7 @@ export default {
                     text: "Congelado"
                 },
                 {
-                    value: "Normal",
+                    value: "Normes qal",
                     text: "Normal"
                 }
             ],
@@ -184,7 +194,6 @@ export default {
                 value: {
                     required,
                 },
-
             },
 
             destino: {
@@ -262,7 +271,17 @@ export default {
             return $dirty ? !$error : null;
         },
 
-        validateState(prop) {
+        validateStateOrigen(prop) {
+            this.$v.form.origen.value.$model = this.addressSearch;
+            const {
+                $dirty,
+                $error
+            } = this.$v.form[prop];
+            return $dirty ? !$error : null;
+        },
+
+        validateStateDestino(prop) {
+            this.$v.form.destino.value.$model = this.addressSearch;
             const {
                 $dirty,
                 $error
@@ -275,7 +294,7 @@ export default {
         },
 
         showPrice() {
-            this.$v.$touch()
+            this.$v.$touch();
             if (!this.$v.$invalid) {
                 this.show = false;
             }
@@ -299,7 +318,7 @@ export default {
         },
 
         next() {
-
+            console.log("next");
             this.precio.value = this.calcularPrecio();
 
             this.$router.push({
@@ -314,14 +333,30 @@ export default {
                     origen: this.form.origen.value,
                     destino: this.form.destino.value,
                     precio: this.precio.value,
-
                 }
-
             });
-
-        }
+        },
+        async getAddresses(query) {
+            //console.log("buscando sugerencias");
+            await service.autosuggest({
+                q: query,
+                at: '39.46975,-0.37739'
+            }, (result) =>{
+                var suggestions = [];
+                var resultLength = result.items.length;
+                for(var i = 0; i < resultLength; i++){
+                    var suggest = result.items[i].title;
+                    suggestions.push(suggest);
+                }
+                this.adresses = suggestions;
+            });
+        },
+    },
+    watch: {
+        addressSearch: _.debounce(function(addr) { this.getAddresses(addr) }, 500),
     },
 };
+
 </script>
 
 <style>
