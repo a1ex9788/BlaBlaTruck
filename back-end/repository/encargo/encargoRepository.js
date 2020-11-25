@@ -307,7 +307,8 @@ function EncargoRepository(dbContext) {
         getEncargosPorNaturalezaTransportista: getEncargosPorNaturalezaTransportista,
         getEstados: getEncargosPorEstado,
         reservarEncargo: añadirDNITransportistaAEncargo,
-        anularEncargo: quitarDNITransportistaDeEncargo
+        anularEncargo: quitarDNITransportistaDeEncargo,
+        entregarEncargo: añadirFechaDeEntrega
     }
 }
 module.exports = EncargoRepository;
