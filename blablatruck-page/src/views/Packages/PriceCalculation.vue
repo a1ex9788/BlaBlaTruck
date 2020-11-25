@@ -15,7 +15,7 @@
                 </b-form-group>
 
                 <b-form-group id="input-group-2" label="Destino:" label-for="input-2">
-                    <vue-bootstrap-typeahead id="input-Destino" :data="adresses" :minMatchingChars="0" v-model="addressSearch" placeholder="Direccion: Calle | nrº | planta | puerta" @hit="selectedAddress = $event" :state="validateStateDestino('origen')">
+                    <vue-bootstrap-typeahead id="input-Destino" :data="adresses" :minMatchingChars="0" v-model="addressSearchDestino" placeholder="Direccion: Calle | nrº | planta | puerta" @hit="selectedAddress = $event" :state="validateStateDestino('destino')">
                     </vue-bootstrap-typeahead>
                 </b-form-group>
 
@@ -123,6 +123,7 @@ export default {
         return {
             adresses: [],
             addressSearch: '',
+            addressSearchDestino: '',
             selectedAddress: null,
             min: new Date(),
             form: {
@@ -179,7 +180,7 @@ export default {
                     text: "Congelado"
                 },
                 {
-                    value: "Normes qal",
+                    value: "Normal",
                     text: "Normal"
                 }
             ],
@@ -281,7 +282,7 @@ export default {
         },
 
         validateStateDestino(prop) {
-            this.$v.form.destino.value.$model = this.addressSearch;
+            this.$v.form.destino.value.$model = this.addressSearchDestino;
             const {
                 $dirty,
                 $error
