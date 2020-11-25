@@ -309,6 +309,7 @@ function EncargoRepository(dbContext) {
         reservarEncargo: añadirDNITransportistaAEncargo,
         anularEncargo: quitarDNITransportistaDeEncargo,
         entregarEncargo: añadirFechaDeEntrega
+        
     }
 }
 module.exports = EncargoRepository;
