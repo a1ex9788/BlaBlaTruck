@@ -241,7 +241,25 @@ function EncargoRepository(dbContext) {
         }
 
     }
+    function añadirFechaDeEntrega(req,res)
+    {
+        if (req.body.params.IdEncargo && req.body.params.FechaEntrega){
+            var parameters = [];
 
+            parameters.push({ name: 'IdEncargo', type: TYPES.BigInt, val: req.body.params.IdEncargo });
+            parameters.push({ name: 'FechaEntrega', type: TYPES.Date, val: req.body.params.FechaEntrega });
+            
+
+            var query = "update Encargo set FechaEntrega = @FechaEntrega where Id = @IdEncargo"
+           
+            dbContext.getQuery(query, parameters, false, function (error, data) {
+                return res.json(response(data, error));
+            });
+        }else {
+            console.log("The parameters are not correct")
+            return res.send("The parameters are not correct");
+        }
+    }
     function quitarDNITransportistaDeEncargo(req, res)
     {
         if (req.body.params.IdEncargo) {
