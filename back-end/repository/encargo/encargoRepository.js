@@ -27,7 +27,6 @@ function EncargoRepository(dbContext) {
     
     }
 
-
     function getEncargosPorDniCliente(req, res)
     {
             var parameters=[];
@@ -99,7 +98,6 @@ function EncargoRepository(dbContext) {
         });
    
     }
-
 
     /* Buscar un encargo? hara falta si ya hay get?
     function findEncargo(req,res,next){ 
@@ -241,6 +239,7 @@ function EncargoRepository(dbContext) {
         }
 
     }
+
     function añadirFechaDeEntrega(req,res)
     {
         if (req.body.params.IdEncargo && req.body.params.FechaEntrega){
@@ -260,6 +259,7 @@ function EncargoRepository(dbContext) {
             return res.send("The parameters are not correct");
         }
     }
+
     function quitarDNITransportistaDeEncargo(req, res)
     {
         if (req.body.params.IdEncargo) {
@@ -278,8 +278,6 @@ function EncargoRepository(dbContext) {
         }
     }
 
-
-
     function getEncargosPorEstado(req,res) {
        
         var parameters = [];
@@ -292,6 +290,26 @@ function EncargoRepository(dbContext) {
    
     }
     
+    function añadirValoracion(req, res)
+    {
+        if (req.body.params.IdEncargo && req.body.params.ValoracionTiempo && req.body.params.ValoracionEstado && req.body.params.Comentarios){
+            var parameters = [];
+
+            parameters.push({ name: 'IdEncargo', type: TYPES.BigInt, val: req.body.params.IdEncargo });
+            parameters.push({ name: 'ValoracionTiempo', type: TYPES.Int, val: req.body.params.ValoracionTiempo });
+            parameters.push({ name: 'ValoracionEstado', type: TYPES.Int, val: req.body.params.ValoracionEstado });
+            parameters.push({ name: 'Comentarios', type: TYPES.Char, val: req.body.params.Comentarios });            
+
+            var query = "update Encargo set ValoracionEstadoPaquete = @ValoracionTiempo, ValoracionTiempoEntrega = @ValoracionEstado, ComentariosValoracion = @Comentarios where Id = @IdEncargo"
+           
+            dbContext.getQuery(query, parameters, false, function (error, data) {
+                return res.json(response(data, error));
+            });
+        }else {
+            console.log("The parameters are not correct")
+            return res.send("The parameters are not correct");
+        }
+    }
 
     return {
         getAll: getEncargos,
@@ -308,8 +326,8 @@ function EncargoRepository(dbContext) {
         getEstados: getEncargosPorEstado,
         reservarEncargo: añadirDNITransportistaAEncargo,
         anularEncargo: quitarDNITransportistaDeEncargo,
-        entregarEncargo: añadirFechaDeEntrega
-        
+        entregarEncargo: añadirFechaDeEntrega,
+        valorarEncargo: añadirValoracion
     }
 }
 module.exports = EncargoRepository;
