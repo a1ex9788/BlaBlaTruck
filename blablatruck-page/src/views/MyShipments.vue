@@ -35,7 +35,7 @@
                                 <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida, false) }}</div>
                                 <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega, false) }}</div>
                                 <b-button v-bind:id="item.Id" @click="onCancelButton" v-if="!item.FechaRecogida" class="btn-danger mt-2">Cancelar</b-button>
-                                <b-button v-bind:id="item.Id" @click="onConfirmation" v-if="item.FechaRecogida && !item.FechaEntrega" class="btn-success">Confirmar entrega</b-button>
+                                <b-button v-bind:id="item.Id" @click="onConfirmation" v-if="item.FechaRecogida && !item.FechaEntrega" class="btn-success mt-2">Confirmar entrega</b-button>
                             </b-col>
                             <b-col md="auto">
                                 <div>
@@ -173,53 +173,50 @@ export default {
                 cancelTitle: 'No',
                 centered: true
             })
-                .then((value) =>{
-                        console.log("errores")
-                        if (value == true){     
-                                let currentDate = new Date();
-                                let currentDateBD = (currentDate.getFullYear() + "-" + (currentDate.getMonth() +1) + "-" + currentDate.getDate());
+            .then((value) =>{
+                if (value == true){     
+                    let currentDate = new Date();
+                    let currentDateBD = (currentDate.getFullYear() + "-" + (currentDate.getMonth() +1) + "-" + currentDate.getDate());
 
-                                axios.put("http://localhost:3300/api/encargo/entregar",{
-                                    params: {
-                                        IdEncargo: event.target.id,
-                                        FechaEntrega: currentDateBD
-                                    }
-                                })
-                                .then(() => {
-                                    this.$bvModal.msgBoxOk('Ha confirmado su entrega',{
-                                        title: 'Confirmación',
-                                        size: 'sm',
-                                        buttonSize: 'sm',
-                                        okVariant: 'info',
-                                        headerClass: 'p-2 border-bottom-0',
-                                        footerClass: 'p-2 border-top-0',
-                                        centered: true
-                                    })
-                                    .then(() => {window.location.reload()})
-                                }),
-                                (error) => {
-                                    console.log(error);
-                                }
+                    axios.put("http://localhost:3300/api/encargo/entregar",{
+                        params: {
+                            IdEncargo: event.target.id,
+                            FechaEntrega: currentDateBD
                         }
                     })
-                    .catch(err => {
-                         console.log("error al cancelar"+ err);
-                         });
-                      
-                     
+                    .then(() => {
+                        this.$bvModal.msgBoxOk('Ha confirmado su entrega',{
+                            title: 'Confirmación',
+                            size: 'sm',
+                            buttonSize: 'sm',
+                            okVariant: 'info',
+                            headerClass: 'p-2 border-bottom-0',
+                            footerClass: 'p-2 border-top-0',
+                            centered: true
+                        })
+                        .then(() => {window.location.reload()})
+                    }),
+                    (error) => {
+                        console.log(error);
+                    }
+                }
+            })
+            .catch(err => {
+                console.log("error al confirmar"+ err);
+            });  
         },
         async onCancelButton(event) {
-          this.$bvModal.msgBoxConfirm('¿Está seguro que quiere cancelar la reserva?', {
-          title: 'Confirmación',
-          size: 'sm',
-          buttonSize: 'sm',
-          okVariant: 'danger',
-          okTitle: 'Sí',
-          cancelTitle: 'No',
-          footerClass: 'p-2',
-          hideHeaderClose: false,
-          centered: true
-        })
+            this.$bvModal.msgBoxConfirm('¿Está seguro que quiere cancelar la reserva?', {
+            title: 'Confirmación',
+            size: 'sm',
+            buttonSize: 'sm',
+            okVariant: 'danger',
+            okTitle: 'Sí',
+            cancelTitle: 'No',
+            footerClass: 'p-2',
+            hideHeaderClose: false,
+            centered: true
+            })
             .then((value) =>{
                 if(value == true){
                     axios.put("http://localhost:3300/api/encargo/anular",{
