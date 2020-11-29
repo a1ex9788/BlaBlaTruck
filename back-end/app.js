@@ -21,3 +21,5 @@ app.use(cookieParser());
 var router = require('./routes')();
 
 app.use('/api', router);
+
+module.exports = app;

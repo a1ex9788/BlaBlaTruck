@@ -183,7 +183,7 @@ function EncargoRepository(dbContext) {
             "VALUES(@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@Precio,@Pagado,@DNICliente,@FechaMax)";
            
             dbContext.getQuery(query, parameters, true, function (error, data) {
-             return response(data, error)
+                return response(data, error)
             });
 
         }
@@ -195,14 +195,14 @@ function EncargoRepository(dbContext) {
     }
 
     function deleteEncargoCliente(req, res) {
-
-        if (req.data.Id) {
+        console.log(req.body)
+        if (req.body.params.Id) {
             var parameters = [];
 
-            parameters.push({ name: 'Id', type: TYPES.BigInt, val: req.data.Id });
-            parameters.push({ name: 'DNICLiente', type: TYPES.Char, val: req.data.DNICliente });
+            parameters.push({ name: 'Id', type: TYPES.BigInt, val: req.body.params.Id });
+            parameters.push({ name: 'DNICliente', type: TYPES.Char, val: req.body.params.DNICliente });
           
-            var query = "delete from Encargo where persona DNICLiente LIKE @DNICLiente AND Id LIKE @Id"
+            var query = "delete from Encargo where DNICliente LIKE @DNICliente AND Id LIKE @Id"
            
             dbContext.getQuery(query, parameters, false, function (error, data, rowCount) {
                 if (rowCount > 0) {
