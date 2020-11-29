@@ -45,6 +45,13 @@
                         </b-row>
                     </b-list-group-item>
                 </b-list-group>
+                <b-modal id="carrierAssessmentDialog" title="Valorar al transportista">
+                    <b-button ><b-img src="../assets/greyStar.png"></b-img></b-button>
+                    <b-button ><b-img src="../assets/greyStar.png"></b-img></b-button>
+                    <b-button ><b-img src="../assets/greyStar.png"></b-img></b-button>
+                    <b-button ><b-img src="../assets/greyStar.png"></b-img></b-button>
+                    <b-button ><b-img src="../assets/greyStar.png"></b-img></b-button>
+                </b-modal>
                 <b-list-group class="mt-3" id="groupTitle" >
                     <b-list-group-item v-for="item in endedPackages" v-bind:key="item.id">
                         <b-row>
@@ -102,6 +109,8 @@ export default {
         this.updateMyShipments();
     },
     methods: {
+
+        
 
         getClientType()
         {
@@ -193,8 +202,11 @@ export default {
                             headerClass: 'p-2 border-bottom-0',
                             footerClass: 'p-2 border-top-0',
                             centered: true
+                    })
+                        .then(() => {
+                            this.$bvModal.show('carrierAssessmentDialog')
+                            .then(() => {window.location.reload()})
                         })
-                        .then(() => {window.location.reload()})
                     }),
                     (error) => {
                         console.log(error);
