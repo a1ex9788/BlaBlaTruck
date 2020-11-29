@@ -1,5 +1,6 @@
 .DS_Store
 blablatruck-page/node_modules
+tests/node_modules
 dist
 
 # Built application files
