@@ -68,33 +68,28 @@ function PersonaRepository(dbContext) {
         });
     }
     
-    function invokePostPersona(nombre, apellidos, dni, telefono, email, usuario, contraseña, iban, numeroCuentaBancaria)
-    {
-        var parameters = [];
-
-        parameters.push({ name: 'Nombre', type: TYPES.VarChar, val: nombre });
-        parameters.push({ name: 'Apellidos', type: TYPES.VarChar, val: apellidos });
-        parameters.push({ name: 'DNI', type: TYPES.Char, val: dni });
-        parameters.push({ name: 'Telefono', type: TYPES.Int, val: telefono });
-        parameters.push({ name: 'Email', type: TYPES.VarChar, val: email });
-        parameters.push({ name: 'Usuario', type: TYPES.VarChar, val: usuario });
-        parameters.push({ name: 'Contraseña', type: TYPES.VarChar, val: contraseña });
-        parameters.push({ name: 'IBAN', type: TYPES.VarChar, val: iban });
-        parameters.push({ name: 'NumeroCuentaBancaria', type: TYPES.VarChar, val: numeroCuentaBancaria});
-
-        dbContext.post("InsertOrUpdatePersona", parameters, function (error, data) {
-            console.log("response works!")
-            return response(data, error);
-        });
-
-    }
-    
      function postPersona(req, res) {
 
-        return res.json(invokePostPersona(req.body.Nombre, req.body.Apellidos, req.body.DNI, req.body.Telefono, req.body.Email,
-             req.body.Usuario, req.body.Contraseña, req.body.IBAN, req.body.NumeroCuentaBancaria, res))
+        var parameters = [];
+
+        parameters.push({ name: 'Nombre', type: TYPES.VarChar, val: req.body.Nombre });
+        parameters.push({ name: 'Apellidos', type: TYPES.VarChar, val: req.body.Apellidos });
+        parameters.push({ name: 'DNI', type: TYPES.Char, val: req.body.DNI });
+        parameters.push({ name: 'Telefono', type: TYPES.Int, val: req.body.Telefono });
+        parameters.push({ name: 'Email', type: TYPES.VarChar, val: req.body.Email });
+        parameters.push({ name: 'Usuario', type: TYPES.VarChar, val: req.body.Usuario });
+        parameters.push({ name: 'Contraseña', type: TYPES.VarChar, val: req.body.Contraseña });
+        parameters.push({ name: 'IBAN', type: TYPES.VarChar, val: req.body.IBAN });
+        parameters.push({ name: 'NumeroCuentaBancaria', type: TYPES.VarChar, val: req.body.NumeroCuentaBancaria});
+       // parameters.push({ name: 'Empresa', type: TYPES.VarChar, val: req.body.Empresa });
+        // Object.entries(employee).forEach((property)=>{
+        //     parameters.push({name:'@'+property[0]})
+        // });
         console.log("postPersona");
-        
+        dbContext.post("InsertOrUpdatePersona", parameters, function (error, data) {
+            console.log("response works!")
+            return res.json(response(data, error));
+        });
     }
 
     function deletePersona(req, res) {

@@ -68,25 +68,26 @@ function TransportistaRepository(dbContext) {
         });
     }
     
-    function invokePostTransportista(dni, naturalezaCamion, capacidad)
-    {
+     function postTransportista(req, res) {
+
         var parameters = [];
 
-        parameters.push({ name: 'DNI', type: TYPES.Char, val: dni });
-        parameters.push({ name: 'NaturalezaCamion', type: TYPES.VarChar, val: naturalezaCamion});
-        parameters.push({ name: 'Capacidad', type: TYPES.Decimal, val: capacidad });
+        parameters.push({ name: 'DNI', type: TYPES.Char, val: req.body.DNI });
+        parameters.push({ name: 'NaturalezaCamion', type: TYPES.VarChar, val: req.body.NaturalezaCamion});
+        parameters.push({ name: 'Capacidad', type: TYPES.Decimal, val: req.body.Capacidad });
 
+        // Object.entries(employee).forEach((property)=>{
+        //     parameters.push({name:'@'+property[0]})
+        // });
         var query = "INSERT INTO Transportista (DNI,NaturalezaCamion,Capacidad) VALUES (@DNI,@NaturalezaCamion,@Capacidad)";
-
+        //console.log("postTransportista");
+        /*
+        dbContext.post("InsertOrUpdateTransportista", parameters, function (error, data) {
+            return res.json(response(data, error));
+        });*/
         dbContext.getQuery(query, parameters,true, function (error, data) {
-            return response(data, error);
+            return res.json(response(data, error));
         });
-    }
-
-    function postTransportista(req, res) {
-
-        return res.json(invokePostTransportista(req.body.DNI, req.body.NaturalezaCamion, req.body.Capacidad))
-        
     }
 
     function deleteTransportista(req, res) {

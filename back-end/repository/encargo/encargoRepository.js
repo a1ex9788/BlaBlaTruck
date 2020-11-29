@@ -27,7 +27,6 @@ function EncargoRepository(dbContext) {
     
     }
 
-
     function getEncargosPorDniCliente(req, res)
     {
             var parameters=[];
@@ -100,7 +99,6 @@ function EncargoRepository(dbContext) {
    
     }
 
-
     /* Buscar un encargo? hara falta si ya hay get?
     function findEncargo(req,res,next){ 
         if(req.params.DNICliente){
@@ -152,46 +150,38 @@ function EncargoRepository(dbContext) {
         });
     }*/
 
-    function invokePostEncargo(naturaleza, peso, alto,ancho,largo,origen,destino,fechaMax,altitudOrigen,altitudDestino, longituOrigen, longitudDestino,
-        precio, pagado, dniCliente){
-
-            var parameters = [];
-
-            //parameters.push({ name: 'Id', type: TYPES.Char, val: req.body.params.Id});
-            parameters.push({ name: 'NaturalezaEncargo', type: TYPES.VarChar, val:naturaleza});
-            parameters.push({ name: 'Peso', type: TYPES.Decimal, val: peso });
-            parameters.push({ name: 'Alto', type: TYPES.Decimal, val:  alto});
-            parameters.push({ name: 'Ancho', type: TYPES.Decimal, val:  ancho});
-            parameters.push({ name: 'Largo', type: TYPES.Decimal, val:largo});
-            parameters.push({ name: 'Origen', type: TYPES.VarChar, val:  origen});
-            parameters.push({ name: 'Destino', type: TYPES.VarChar, val:  destino});
-            parameters.push({ name: 'FechaMax', type: TYPES.Date, val:  fechaMax});
-    
-            parameters.push({ name: 'AltitudOrigen', type: TYPES.VarChar, val: altitudOrigen });
-            parameters.push({ name: 'AltitudDestino', type: TYPES.VarChar, val:  altitudDestino});
-            parameters.push({ name: 'LongitudOrigen', type: TYPES.VarChar, val:  longituOrigen});
-            parameters.push({ name: 'LongitudDestino', type: TYPES.VarChar, val:  longitudDestino});
-    
-            parameters.push({ name: 'Precio', type: TYPES.Decimal, val: precio });
-            parameters.push({ name: 'Pagado', type: TYPES.Decimal, val:  pagado});
-            parameters.push({ name: 'DNICliente', type: TYPES.Char, val: dniCliente});
-            
-           /* var query= "INSERT INTO Encargo (id,NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,AltitudOrigen,AltitudDestino,LongitudOrigen,LongitudDestino,Precio,Pagado,DNICliente) "+
-            "VALUES(@id,@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@AltitudOrigen,@AltitudDestino,@LongitudOrigen,@LongitudDestino,@Precio,@Pagado,@DNICliente)";
-            */
-           var query= "INSERT INTO Encargo (NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,Precio,Pagado,DNICliente,FechaMaximaEntrega) "+
-            "VALUES(@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@Precio,@Pagado,@DNICliente,@FechaMax)";
-           
-            dbContext.getQuery(query, parameters, true, function (error, data) {
-                return response(data, error)
-            });
-
-        }
-
     function postEncargo(req, res) {
-        return res.json(invokePostEncargo(req.body.params.NaturalezaEncargo, req.body.params.Peso, req.body.params.Alto, req.body.params.Ancho, req.body.params.Largo,
-            req.body.params.Origen, req.body.params.Destino, req.body.params.FechaMax, req.body.params.AltitudOrigen, req.body.params.Destino, req.body.params.Origen,
-            req.body.params.Destino, req.body.params.Precio, req.body.params.Pagado, req.body.params.DNICliente))
+
+        var parameters = [];
+
+        //parameters.push({ name: 'Id', type: TYPES.Char, val: req.body.params.Id});
+        parameters.push({ name: 'NaturalezaEncargo', type: TYPES.VarChar, val: req.body.params.NaturalezaEncargo });
+        parameters.push({ name: 'Peso', type: TYPES.Decimal, val: req.body.params.Peso });
+        parameters.push({ name: 'Alto', type: TYPES.Decimal, val: req.body.params.Alto });
+        parameters.push({ name: 'Ancho', type: TYPES.Decimal, val: req.body.params.Ancho });
+        parameters.push({ name: 'Largo', type: TYPES.Decimal, val: req.body.params.Largo });
+        parameters.push({ name: 'Origen', type: TYPES.VarChar, val: req.body.params.Origen });
+        parameters.push({ name: 'Destino', type: TYPES.VarChar, val: req.body.params.Destino });
+        parameters.push({ name: 'FechaMax', type: TYPES.Date, val: req.body.params.FechaMax });
+
+        parameters.push({ name: 'AltitudOrigen', type: TYPES.VarChar, val: req.body.params.AltitudOrigen });
+        parameters.push({ name: 'AltitudDestino', type: TYPES.VarChar, val: req.body.params.Destino });
+        parameters.push({ name: 'LongitudOrigen', type: TYPES.VarChar, val: req.body.params.Origen });
+        parameters.push({ name: 'LongitudDestino', type: TYPES.VarChar, val: req.body.params.Destino });
+
+        parameters.push({ name: 'Precio', type: TYPES.Decimal, val: req.body.params.Precio });
+        parameters.push({ name: 'Pagado', type: TYPES.Decimal, val: req.body.params.Pagado });
+        parameters.push({ name: 'DNICliente', type: TYPES.Char, val: req.body.params.DNICliente});
+        
+       /* var query= "INSERT INTO Encargo (id,NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,AltitudOrigen,AltitudDestino,LongitudOrigen,LongitudDestino,Precio,Pagado,DNICliente) "+
+        "VALUES(@id,@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@AltitudOrigen,@AltitudDestino,@LongitudOrigen,@LongitudDestino,@Precio,@Pagado,@DNICliente)";
+        */
+       var query= "INSERT INTO Encargo (NaturalezaEncargo,Peso,Alto,Ancho,Largo,Origen,Destino,Precio,Pagado,DNICliente,FechaMaximaEntrega) "+
+        "VALUES(@NaturalezaEncargo,@Peso,@Alto,@Ancho,@Largo,@Origen,@Destino,@Precio,@Pagado,@DNICliente,@FechaMax)";
+       
+        dbContext.getQuery(query, parameters, true, function (error, data) {
+         return res.json(response(data, error));
+        });
     }
 
     function deleteEncargoCliente(req, res) {
@@ -233,24 +223,21 @@ function EncargoRepository(dbContext) {
         }
     }
 
-    function invokeAñadirDNITransportistaAEncargo(idEncargo, DNITransportista){
+    function añadirDNITransportistaAEncargo(req, res)
+    {
         if (req.body.IdEncargo && req.body.DNITransportista) {
             var parameters = [];
             
-            parameters.push({ name: 'IdEncargo', type: TYPES.BigInt, val:  idEncargo});
-            parameters.push({ name: 'DNITransportista', type: TYPES.Char, val: DNITransportista });
+            parameters.push({ name: 'IdEncargo', type: TYPES.BigInt, val: req.body.IdEncargo });
+            parameters.push({ name: 'DNITransportista', type: TYPES.Char, val: req.body.DNITransportista });
             
             var query = "update Encargo set DNITransportista = @DNITransportista where Id = @IdEncargo"
            
             dbContext.getQuery(query, parameters, false, function (error, data) {
-                return response(data, error);
+                return res.json(response(data, error));
             });
         }
-    }
 
-    function añadirDNITransportistaAEncargo(req, res)
-    {
-        return res.json(invokeAñadirDNITransportistaAEncargo(req.body.IdEncargo,req.body.DNITransportista ))
     }
 
     function añadirFechaDeEntrega(req,res)
@@ -273,31 +260,23 @@ function EncargoRepository(dbContext) {
         }
     }
 
-    function invokeQuitarDNITransportistaDeEncargo(id)
-    {
-        var parameters = [];
-
-        parameters.push({ name: 'IdEncargo', type: TYPES.BigInt, val: id });
-
-        var query = "update Encargo set DNITransportista = NULL where Id = @IdEncargo"
-            dbContext.getQuery(query, parameters, false, function (error, data) {
-                return response(data, error);
-            });
-    }
-
     function quitarDNITransportistaDeEncargo(req, res)
     {
         if (req.body.params.IdEncargo) {
-            
-            return res.json(invokeQuitarDNITransportistaDeEncargo(req.body.params.IdEncargo));
+            var parameters = [];
+
+            parameters.push({ name: 'IdEncargo', type: TYPES.BigInt, val: req.body.params.IdEncargo });
+          
+            var query = "update Encargo set DNITransportista = NULL where Id = @IdEncargo"
+            dbContext.getQuery(query, parameters, false, function (error, data) {
+                return res.json(response(data, error));
+            });
      
         } else {
             console.log("The parameters are not correct")
             return res.send("The parameters are not correct");
         }
     }
-
-
 
     function getEncargosPorEstado(req,res) {
        
@@ -310,22 +289,27 @@ function EncargoRepository(dbContext) {
         });
    
     }
-
-
-    function invokeGetEncargosPorDniTransportistaGetId(dniTransportista) {
-
-        var parameters = [];
-
-        parameters.push({ name: 'DNITransportista', type: TYPES.Char, val: dniTransportista });
-        var query = "select Id"
-            + " from Encargo "
-            + " where DNITransportista LIKE @DNITransportista"
-
-        dbContext.getQuery(query, parameters, true, function (error, data) {
-            return response(data, error);
-        });
-    }
     
+    function añadirValoracion(req, res)
+    {
+        if (req.body.params.IdEncargo && req.body.params.ValoracionTiempo && req.body.params.ValoracionEstado && req.body.params.Comentarios){
+            var parameters = [];
+
+            parameters.push({ name: 'IdEncargo', type: TYPES.BigInt, val: req.body.params.IdEncargo });
+            parameters.push({ name: 'ValoracionTiempo', type: TYPES.Int, val: req.body.params.ValoracionTiempo });
+            parameters.push({ name: 'ValoracionEstado', type: TYPES.Int, val: req.body.params.ValoracionEstado });
+            parameters.push({ name: 'Comentarios', type: TYPES.Char, val: req.body.params.Comentarios });            
+
+            var query = "update Encargo set ValoracionEstadoPaquete = @ValoracionTiempo, ValoracionTiempoEntrega = @ValoracionEstado, ComentariosValoracion = @Comentarios where Id = @IdEncargo"
+           
+            dbContext.getQuery(query, parameters, false, function (error, data) {
+                return res.json(response(data, error));
+            });
+        }else {
+            console.log("The parameters are not correct")
+            return res.send("The parameters are not correct");
+        }
+    }
 
     return {
         getAll: getEncargos,
@@ -342,8 +326,8 @@ function EncargoRepository(dbContext) {
         getEstados: getEncargosPorEstado,
         reservarEncargo: añadirDNITransportistaAEncargo,
         anularEncargo: quitarDNITransportistaDeEncargo,
-        entregarEncargo: añadirFechaDeEntrega
-        
+        entregarEncargo: añadirFechaDeEntrega,
+        valorarEncargo: añadirValoracion
     }
 }
 module.exports = EncargoRepository;
