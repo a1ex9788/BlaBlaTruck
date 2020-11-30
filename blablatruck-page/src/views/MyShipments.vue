@@ -46,11 +46,11 @@
                     </b-list-group-item>
                 </b-list-group>
                 <b-modal id="carrierAssessmentDialog" title="Valorar al transportista">
-                    <b-button ><b-img src="../assets/greyStar.png"></b-img></b-button>
-                    <b-button ><b-img src="../assets/greyStar.png"></b-img></b-button>
-                    <b-button ><b-img src="../assets/greyStar.png"></b-img></b-button>
-                    <b-button ><b-img src="../assets/greyStar.png"></b-img></b-button>
-                    <b-button ><b-img src="../assets/greyStar.png"></b-img></b-button>
+                    <b-button @click="onStarImageClick" id="buttonStarImage" ><b-img id="starImage1" src="../assets/greyStar.png"></b-img></b-button>
+                    <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage2" src= srcYellowStar ></b-img></b-button>
+                    <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage3" src="../assets/greyStar.png" ></b-img></b-button>
+                    <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage4" src="../assets/greyStar.png" ></b-img></b-button>
+                    <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage5" src="../assets/greyStar.png" ></b-img></b-button>
                 </b-modal>
                 <b-list-group class="mt-3" id="groupTitle" >
                     <b-list-group-item v-for="item in endedPackages" v-bind:key="item.id">
@@ -93,6 +93,7 @@ export default {
             endedPackages: [],
             personDNI: undefined,
             isCarrier: undefined,
+            srcYellowStar: "../assets/yellowStar.png"
         };
     },
     created() {
@@ -172,6 +173,25 @@ export default {
             
             return res
         },
+        async onStarImageClick(event){
+            switch(event.target.id){
+                case "starImage1":
+                    console.log(this.srcYellowStar )
+                    event.target.src = this.srcYellowStar;
+                    console.log(event.target.src )
+                    break;
+                case "starImage2":
+                    break;
+                case "starImage3":
+                    break;
+                case "starImage4":
+                    break;
+                case "starImage5":
+                    break;
+                default:
+                    break;
+            }
+        },
         async onConfirmation(event){
             this.$bvModal.msgBoxConfirm('¿Desea confirmar la entrega?',{
                 title: 'Confirmación',
@@ -189,7 +209,7 @@ export default {
 
                     axios.put("http://localhost:3300/api/encargo/entregar",{
                         params: {
-                            IdEncargo: event.target.id,
+                            //IdEncargo: event.target.id,
                             FechaEntrega: currentDateBD
                         }
                     })
@@ -292,4 +312,36 @@ export default {
 .text-center {
   text-align: center;
 }
+
+#starImage1{
+    max-width: 35px;
+    max-height: 35px;
+
+}
+#starImage2{
+    max-width: 35px;
+    max-height: 35px;
+
+}
+#starImage3{
+    max-width: 35px;
+    max-height: 35px;
+
+}
+#starImage4{
+    max-width: 35px;
+    max-height: 35px;
+
+}
+#starImage5{
+    max-width: 35px;
+    max-height: 35px;
+
+}
+#buttonStarImage{
+    background-color: #fff;
+    border-color: #fff;
+}
+
+
 </style>
