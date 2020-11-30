@@ -45,13 +45,28 @@
                         </b-row>
                     </b-list-group-item>
                 </b-list-group>
-                <b-modal id="carrierAssessmentDialog" title="Valorar al transportista">
-                    <b-button @click="onStarImageClick" id="buttonStarImage" ><b-img id="starImage1" src="../assets/greyStar.png"></b-img></b-button>
-                    <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage2" src= srcYellowStar ></b-img></b-button>
+                <b-modal @ok="saveCarrierAssessement" id="carrierAssessmentDialog" title="Valorar al transportista">
+                    <label><strong> Rapidez entrega </strong></label>
+                    <br>
+                    <b-button @click="onStarImageClick" id="buttonStarImage" ><b-img id="starImage1" src="../assets/yellowStar.png"></b-img></b-button>
+                    <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage2" src= "../assets/greyStar.png" ></b-img></b-button>
                     <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage3" src="../assets/greyStar.png" ></b-img></b-button>
                     <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage4" src="../assets/greyStar.png" ></b-img></b-button>
                     <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage5" src="../assets/greyStar.png" ></b-img></b-button>
-                </b-modal>
+                    <b-button id="buttonStarImageProva" class="ml-2"><b-img id="starImageGray" src="../assets/greyStar.png" ></b-img></b-button>
+                    <br>
+                    <label class="mt-3"><strong> Estado paquete </strong></label>
+                    <br>
+                    <b-button @click="onStarImageClickState" id="buttonStarImage" ><b-img id="starImage6" src="../assets/yellowStar.png"></b-img></b-button>
+                    <b-button @click="onStarImageClickState" id="buttonStarImage" class="ml-2"><b-img id="starImage7" src= "../assets/greyStar.png" ></b-img></b-button>
+                    <b-button @click="onStarImageClickState" id="buttonStarImage" class="ml-2"><b-img id="starImage8" src="../assets/greyStar.png" ></b-img></b-button>
+                    <b-button @click="onStarImageClickState" id="buttonStarImage" class="ml-2"><b-img id="starImage9" src="../assets/greyStar.png" ></b-img></b-button>
+                    <b-button @click="onStarImageClickState" id="buttonStarImage" class="ml-2"><b-img id="starImage10" src="../assets/greyStar.png" ></b-img></b-button>
+                    <br>
+                    <label class="mt-3"><strong> Comentarios: </strong></label>
+                    <br>
+                    <b-form-textarea v-model="textAreaComentariosText" placeholder="Añadir comentarios" rows=4> </b-form-textarea> 
+                </b-modal>    
                 <b-list-group class="mt-3" id="groupTitle" >
                     <b-list-group-item v-for="item in endedPackages" v-bind:key="item.id">
                         <b-row>
@@ -93,7 +108,7 @@ export default {
             endedPackages: [],
             personDNI: undefined,
             isCarrier: undefined,
-            srcYellowStar: "../assets/yellowStar.png"
+            textAreaComentariosText: ""
         };
     },
     created() {
@@ -174,24 +189,153 @@ export default {
             return res
         },
         async onStarImageClick(event){
-            switch(event.target.id){
-                case "starImage1":
-                    console.log(this.srcYellowStar )
-                    event.target.src = this.srcYellowStar;
-                    console.log(event.target.src )
-                    break;
-                case "starImage2":
-                    break;
-                case "starImage3":
-                    break;
-                case "starImage4":
-                    break;
-                case "starImage5":
-                    break;
-                default:
-                    break;
+            var srcYellowStar = starImage1.src
+            var srcGrayStar = starImageGray.src
+            if(event.target.src != srcYellowStar){
+                switch(event.target.id){
+                    case "starImage2":
+                        event.target.src = srcYellowStar
+                        break;
+                    case "starImage3":
+                        starImage2.src = srcYellowStar
+                        event.target.src = srcYellowStar
+                        break;
+                    case "starImage4":
+                        starImage2.src = srcYellowStar
+                        starImage3.src = srcYellowStar
+                        event.target.src = srcYellowStar
+                        break;
+                    case "starImage5":
+                        starImage2.src = srcYellowStar
+                        starImage3.src = srcYellowStar
+                        starImage4.src = srcYellowStar
+                        event.target.src = srcYellowStar
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                switch(event.target.id){
+                    case "starImage1":
+                        starImage2.src = srcGrayStar
+                        starImage3.src = srcGrayStar
+                        starImage4.src = srcGrayStar
+                        starImage5.src = srcGrayStar
+                        break;
+                    case "starImage2":
+                        starImage3.src = srcGrayStar
+                        starImage4.src = srcGrayStar
+                        starImage5.src = srcGrayStar
+                        break;
+                    case "starImage3":
+                        starImage4.src = srcGrayStar
+                        starImage5.src = srcGrayStar
+                        break;
+                    case "starImage4":
+                        starImage5.src = srcGrayStar
+                        break;
+                    default:
+                        break;
+                }
             }
         },
+
+        async onStarImageClickState(event){
+            var srcYellowStar = starImage1.src
+            var srcGrayStar = starImageGray.src
+            if(event.target.src != srcYellowStar){
+                switch(event.target.id){
+                    case "starImage7":
+                        event.target.src = srcYellowStar
+                        break;
+                    case "starImage8":
+                        starImage7.src = srcYellowStar
+                        event.target.src = srcYellowStar
+                        break;
+                    case "starImage9":
+                        starImage7.src = srcYellowStar
+                        starImage8.src = srcYellowStar
+                        event.target.src = srcYellowStar
+                        break;
+                    case "starImage10":
+                        starImage7.src = srcYellowStar
+                        starImage8.src = srcYellowStar
+                        starImage9.src = srcYellowStar
+                        event.target.src = srcYellowStar
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                switch(event.target.id){
+                    case "starImage6":
+                        starImage7.src = srcGrayStar
+                        starImage8.src = srcGrayStar
+                        starImage9.src = srcGrayStar
+                        starImage10.src = srcGrayStar
+                        break;
+                    case "starImage7":
+                        starImage8.src = srcGrayStar
+                        starImage9.src = srcGrayStar
+                        starImage10.src = srcGrayStar
+                        break;
+                    case "starImage8":
+                        starImage9.src = srcGrayStar
+                        starImage10.src = srcGrayStar
+                        break;
+                    case "starImage9":
+                        starImage10.src = srcGrayStar
+                        break;
+                    default:
+                        break;
+                }
+            }
+        },
+
+        getStarsSpeed(){
+            var srcYellowStar = starImage1.src
+            if (starImage5.src == srcYellowStar) return 5;
+            if (starImage4.src == srcYellowStar) return 4;
+            if (starImage3.src == srcYellowStar) return 3;
+            if (starImage2.src == srcYellowStar) return 2;
+            if (starImage1.src == srcYellowStar) return 1;
+        },
+        getStarsState(){
+            var srcYellowStar = starImage1.src
+            if (starImage10.src == srcYellowStar) return 5;
+            if (starImage9.src == srcYellowStar) return 4;
+            if (starImage8.src == srcYellowStar) return 3;
+            if (starImage7.src == srcYellowStar) return 2;
+            if (starImage6.src == srcYellowStar) return 1;
+        },
+        async saveCarrierAssessement(){
+             axios.put("http://localhost:3300/api/encargo/valorar",{
+                        params: {
+                            IdEncargo: event.target.id,
+                            ValoracionTiempo: this.getStarsSpeed(),
+                            ValoracionEstado: this.getStarsState(),
+                            Comentarios: this.textAreaComentariosText
+                        }
+                    })
+                    .then(() => {
+                        this.$bvModal.msgBoxOk('Ha confirmado su entrega',{
+                            title: 'Confirmación',
+                            size: 'sm',
+                            buttonSize: 'sm',
+                            okVariant: 'info',
+                            headerClass: 'p-2 border-bottom-0',
+                            footerClass: 'p-2 border-top-0',
+                            centered: true
+                    })
+                        .then(() => {
+                            this.$bvModal.show('carrierAssessmentDialog')
+                        })
+                    }),
+                    (error) => {
+                        console.log(error);
+                    }
+        },
+
         async onConfirmation(event){
             this.$bvModal.msgBoxConfirm('¿Desea confirmar la entrega?',{
                 title: 'Confirmación',
@@ -225,7 +369,6 @@ export default {
                     })
                         .then(() => {
                             this.$bvModal.show('carrierAssessmentDialog')
-                            .then(() => {window.location.reload()})
                         })
                     }),
                     (error) => {
@@ -338,10 +481,46 @@ export default {
     max-height: 35px;
 
 }
+#starImage5{
+    max-width: 35px;
+    max-height: 35px;
+
+}
+#starImage6{
+    max-width: 35px;
+    max-height: 35px;
+
+}
+#starImage7{
+    max-width: 35px;
+    max-height: 35px;
+
+}
+#starImage8{
+    max-width: 35px;
+    max-height: 35px;
+
+}
+#starImage9{
+    max-width: 35px;
+    max-height: 35px;
+
+}
+#starImage10{
+    max-width: 35px;
+    max-height: 35px;
+
+}
+#buttonStarImageProva{
+    visibility: hidden;
+    max-width: 0px;
+    max-height: 0px;
+}
 #buttonStarImage{
     background-color: #fff;
     border-color: #fff;
 }
+
 
 
 </style>
