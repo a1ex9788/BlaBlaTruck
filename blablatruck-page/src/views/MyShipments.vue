@@ -45,28 +45,6 @@
                         </b-row>
                     </b-list-group-item>
                 </b-list-group>
-                <b-modal @ok="saveCarrierAssessement" id="carrierAssessmentDialog" title="Valorar al transportista">
-                    <label><strong> Rapidez entrega </strong></label>
-                    <br>
-                    <b-button @click="onStarImageClick" id="buttonStarImage" ><b-img id="starImage1" src="../assets/yellowStar.png"></b-img></b-button>
-                    <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage2" src= "../assets/greyStar.png" ></b-img></b-button>
-                    <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage3" src="../assets/greyStar.png" ></b-img></b-button>
-                    <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage4" src="../assets/greyStar.png" ></b-img></b-button>
-                    <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage5" src="../assets/greyStar.png" ></b-img></b-button>
-                    <b-button id="buttonStarImageProva" class="ml-2"><b-img id="starImageGray" src="../assets/greyStar.png" ></b-img></b-button>
-                    <br>
-                    <label class="mt-3"><strong> Estado paquete </strong></label>
-                    <br>
-                    <b-button @click="onStarImageClickState" id="buttonStarImage" ><b-img id="starImage6" src="../assets/yellowStar.png"></b-img></b-button>
-                    <b-button @click="onStarImageClickState" id="buttonStarImage" class="ml-2"><b-img id="starImage7" src= "../assets/greyStar.png" ></b-img></b-button>
-                    <b-button @click="onStarImageClickState" id="buttonStarImage" class="ml-2"><b-img id="starImage8" src="../assets/greyStar.png" ></b-img></b-button>
-                    <b-button @click="onStarImageClickState" id="buttonStarImage" class="ml-2"><b-img id="starImage9" src="../assets/greyStar.png" ></b-img></b-button>
-                    <b-button @click="onStarImageClickState" id="buttonStarImage" class="ml-2"><b-img id="starImage10" src="../assets/greyStar.png" ></b-img></b-button>
-                    <br>
-                    <label class="mt-3"><strong> Comentarios: </strong></label>
-                    <br>
-                    <b-form-textarea v-model="textAreaComentariosText" placeholder="Añadir comentarios" rows=4> </b-form-textarea> 
-                </b-modal>    
                 <b-list-group class="mt-3" id="groupTitle" >
                     <b-list-group-item v-for="item in endedPackages" v-bind:key="item.id">
                         <b-row>
@@ -86,6 +64,23 @@
                         </b-row>
                     </b-list-group-item>
                 </b-list-group>
+                <b-modal @ok="saveCarrierAssessement" @show="resetTextAreaComentarios" id="carrierAssessmentDialog" title="Valorar al transportista">
+                    <label><strong> Rapidez entrega </strong></label> <br>
+                    <b-button @click="onStarImageClick" id="buttonStarImage" ><b-img id="starImage1" src="../assets/yellowStar.png"></b-img></b-button>
+                    <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage2" src= "../assets/greyStar.png" ></b-img></b-button>
+                    <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage3" src="../assets/greyStar.png" ></b-img></b-button>
+                    <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage4" src="../assets/greyStar.png" ></b-img></b-button>
+                    <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage5" src="../assets/greyStar.png" ></b-img></b-button>
+                    <b-button id="buttonStarImageProva" class="ml-2"><b-img id="starImageGray" src="../assets/greyStar.png" ></b-img></b-button> <br>
+                    <label class="mt-3"><strong> Estado paquete </strong></label> <br>
+                    <b-button @click="onStarImageClickState" id="buttonStarImage" ><b-img id="starImage6" src="../assets/yellowStar.png"></b-img></b-button>
+                    <b-button @click="onStarImageClickState" id="buttonStarImage" class="ml-2"><b-img id="starImage7" src= "../assets/greyStar.png" ></b-img></b-button>
+                    <b-button @click="onStarImageClickState" id="buttonStarImage" class="ml-2"><b-img id="starImage8" src="../assets/greyStar.png" ></b-img></b-button>
+                    <b-button @click="onStarImageClickState" id="buttonStarImage" class="ml-2"><b-img id="starImage9" src="../assets/greyStar.png" ></b-img></b-button>
+                    <b-button @click="onStarImageClickState" id="buttonStarImage" class="ml-2"><b-img id="starImage10" src="../assets/greyStar.png" ></b-img></b-button> <br>
+                    <label class="mt-3"><strong> Comentarios: </strong></label> <br>
+                    <b-form-textarea v-model="textAreaComentariosText" placeholder="Añadir comentarios" rows=4> </b-form-textarea> 
+                </b-modal>    
             </div>
         </div>
     </div>
@@ -108,13 +103,13 @@ export default {
             endedPackages: [],
             personDNI: undefined,
             isCarrier: undefined,
-            textAreaComentariosText: ""
+            textAreaComentariosText: "",
+            currentShipmentId: undefined
         };
     },
     created() {
         this.personDNI = this.$cookies.get("loginToken").Dni;
         this.isCarrier = this.$cookies.get("loginToken").Type === "Transportista";
-
 
         // Pruebas manuales. Cuando se llame a este view será necesario pasar sus parámetros
         if (!this.personDNI) this.personDNI = "11111111r";
@@ -125,9 +120,6 @@ export default {
         this.updateMyShipments();
     },
     methods: {
-
-        
-
         getClientType()
         {
             if (this.isCarrier) return "Cliente";
@@ -298,7 +290,7 @@ export default {
             if (starImage4.src == srcYellowStar) return 4;
             if (starImage3.src == srcYellowStar) return 3;
             if (starImage2.src == srcYellowStar) return 2;
-            if (starImage1.src == srcYellowStar) return 1;
+            return 1;
         },
         getStarsState(){
             var srcYellowStar = starImage1.src
@@ -306,34 +298,34 @@ export default {
             if (starImage9.src == srcYellowStar) return 4;
             if (starImage8.src == srcYellowStar) return 3;
             if (starImage7.src == srcYellowStar) return 2;
-            if (starImage6.src == srcYellowStar) return 1;
+            return 1;
         },
         async saveCarrierAssessement(){
-             axios.put("http://localhost:3300/api/encargo/valorar",{
-                        params: {
-                            IdEncargo: event.target.id,
-                            ValoracionTiempo: this.getStarsSpeed(),
-                            ValoracionEstado: this.getStarsState(),
-                            Comentarios: this.textAreaComentariosText
-                        }
-                    })
-                    .then(() => {
-                        this.$bvModal.msgBoxOk('Ha confirmado su entrega',{
-                            title: 'Confirmación',
-                            size: 'sm',
-                            buttonSize: 'sm',
-                            okVariant: 'info',
-                            headerClass: 'p-2 border-bottom-0',
-                            footerClass: 'p-2 border-top-0',
-                            centered: true
-                    })
-                        .then(() => {
-                            this.$bvModal.show('carrierAssessmentDialog')
-                        })
-                    }),
-                    (error) => {
-                        console.log(error);
-                    }
+            axios.put("http://localhost:3300/api/encargo/valorar",{
+                params: {
+                    IdEncargo: this.currentShipmentId,
+                    ValoracionTiempo: this.getStarsSpeed(),
+                    ValoracionEstado: this.getStarsState(),
+                    Comentarios: this.textAreaComentariosText
+                }
+            })
+            .then(() => {
+                this.$bvModal.msgBoxOk('¡Muchas gracias por su valoración!',{
+                    title: 'Confirmación',
+                    size: 'sm',
+                    buttonSize: 'sm',
+                    okVariant: 'info',
+                    headerClass: 'p-2 border-bottom-0',
+                    footerClass: 'p-2 border-top-0',
+                    centered: true
+            })
+            .then(() => window.location.reload())
+            })
+        },
+
+        resetTextAreaComentarios()
+        {
+            this.textAreaComentariosText = ""
         },
 
         async onConfirmation(event){
@@ -351,9 +343,11 @@ export default {
                     let currentDate = new Date();
                     let currentDateBD = (currentDate.getFullYear() + "-" + (currentDate.getMonth() +1) + "-" + currentDate.getDate());
 
+                    this.currentShipmentId = event.target.id;
+
                     axios.put("http://localhost:3300/api/encargo/entregar",{
                         params: {
-                            //IdEncargo: event.target.id,
+                            IdEncargo: this.currentShipmentId,
                             FechaEntrega: currentDateBD
                         }
                     })
@@ -368,7 +362,8 @@ export default {
                             centered: true
                     })
                         .then(() => {
-                            this.$bvModal.show('carrierAssessmentDialog')
+                            if (!this.isCarrier) this.$bvModal.show('carrierAssessmentDialog')
+                            else window.location.reload()
                         })
                     }),
                     (error) => {
@@ -446,7 +441,6 @@ export default {
 
 #phote {
     width: 80px;
-
 }
 
 #name{
@@ -459,57 +453,46 @@ export default {
 #starImage1{
     max-width: 35px;
     max-height: 35px;
-
 }
 #starImage2{
     max-width: 35px;
     max-height: 35px;
-
 }
 #starImage3{
     max-width: 35px;
     max-height: 35px;
-
 }
 #starImage4{
     max-width: 35px;
     max-height: 35px;
-
 }
 #starImage5{
     max-width: 35px;
     max-height: 35px;
-
 }
 #starImage5{
     max-width: 35px;
     max-height: 35px;
-
 }
 #starImage6{
     max-width: 35px;
     max-height: 35px;
-
 }
 #starImage7{
     max-width: 35px;
     max-height: 35px;
-
 }
 #starImage8{
     max-width: 35px;
     max-height: 35px;
-
 }
 #starImage9{
     max-width: 35px;
     max-height: 35px;
-
 }
 #starImage10{
     max-width: 35px;
     max-height: 35px;
-
 }
 #buttonStarImageProva{
     visibility: hidden;
@@ -520,7 +503,4 @@ export default {
     background-color: #fff;
     border-color: #fff;
 }
-
-
-
 </style>

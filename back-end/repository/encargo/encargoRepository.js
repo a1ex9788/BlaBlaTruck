@@ -300,7 +300,7 @@ function EncargoRepository(dbContext) {
             parameters.push({ name: 'ValoracionEstado', type: TYPES.Int, val: req.body.params.ValoracionEstado });
             parameters.push({ name: 'Comentarios', type: TYPES.Char, val: req.body.params.Comentarios });            
 
-            var query = "update Encargo set ValoracionEstadoPaquete = @ValoracionTiempo, ValoracionTiempoEntrega = @ValoracionEstado, ComentariosValoracion = @Comentarios where Id = @IdEncargo"
+            var query = "update Encargo set ValoracionTiempoEntrega = @ValoracionTiempo, ValoracionEstadoPaquete = @ValoracionEstado, ComentariosValoracion = @Comentarios where Id = @IdEncargo"
            
             dbContext.getQuery(query, parameters, false, function (error, data) {
                 return res.json(response(data, error));
