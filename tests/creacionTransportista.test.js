@@ -26,12 +26,29 @@ describe('Post transportista', () => {
         .post('/api/transportista')
         .send({ params: {
             DNI: "50501010A",
-            NaturalezaCamion: "Congelado",
+            NaturalezaCamion: "Producto frágil",
             Capacidad: 250.00        
         }})
         .on('requestCompleted',async (resInsert) => {
             expect(resInsert.statusCode).toEqual(200);
         })
     })
+
+    it('Comprobar la inserción del transportista', async() => {
+        let isInserted = false;
+
+        await request('http://localhost:3300')
+        .get('/api/transportista/50501010A')
+        .then((response) => {
+            if (response) isInserted = true;
+        })
+        expect(isInserted).toBe(true);
+        if(isInserted){
+            await request('http://localhost:3300')
+            .delete('/api/transportista/50501010A')
+        }    
+    })
+
+
 
 })
