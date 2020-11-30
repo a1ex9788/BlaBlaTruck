@@ -36,12 +36,18 @@ describe('Post transportista', () => {
 
     it('Comprobar la inserción del transportista', async() => {
         let isInserted = false;
+        let transportista;
 
         await request('http://localhost:3300')
         .get('/api/transportista/50501010A')
         .then((response) => {
-            if (response) isInserted = true;
+            transportista = response           
         })
+        
+        if(transportista.text !== "Not Found") {
+            isInserted = true;
+        }
+
         expect(isInserted).toBe(true);
         if(isInserted){
             await request('http://localhost:3300')
