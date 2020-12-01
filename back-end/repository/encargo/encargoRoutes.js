@@ -19,6 +19,7 @@ module.exports = function (router) {
     .put(encargoRepository.reservarEncargo)
     router.route('/encargo/anular')
     .put(encargoRepository.anularEncargo)
+    router.route('/encargo/recoger').put(encargoRepository.putEncargoRecogida)
     router.route('/encargo/estado').get(encargoRepository.getEstados)
     router.route('/encargo/entregar').put(encargoRepository.entregarEncargo)
     router.route('/encargo/valorar').put(encargoRepository.valorarEncargo)

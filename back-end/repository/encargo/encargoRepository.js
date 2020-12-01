@@ -311,6 +311,21 @@ function EncargoRepository(dbContext) {
         }
     }
 
+    function putFechaRecogida(req,res) {
+        if(req.body.IdEncargo && req.body.FechaRecogida){
+            var parameters = [];
+            
+            parameters.push({ name: 'IdEncargo', type: TYPES.BigInt, val: req.body.IdEncargo });
+            parameters.push({ name: 'FechaRecogida', type: TYPES.Date, val: req.body.FechaRecogida });
+
+            var query = "update Encargo set FechaRecogida = @FechaRecogida where Id = @IdEncargo"
+
+            dbContext.getQuery(query, parameters, false, function (error, data) {
+                return res.json(response(data, error));
+            });
+        }
+    }
+
     return {
         getAll: getEncargos,
         //put: putEncargo,
@@ -324,6 +339,7 @@ function EncargoRepository(dbContext) {
         getEncargosPorNaturalezaCliente: getEncargosPorNaturalezaCliente,
         getEncargosPorNaturalezaTransportista: getEncargosPorNaturalezaTransportista,
         getEstados: getEncargosPorEstado,
+        putEncargoRecogida: putFechaRecogida,
         reservarEncargo: añadirDNITransportistaAEncargo,
         anularEncargo: quitarDNITransportistaDeEncargo,
         entregarEncargo: añadirFechaDeEntrega,
