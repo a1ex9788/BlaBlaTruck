@@ -4,7 +4,8 @@ module.exports = function (router) {
     const transportistaRepository = _transportistaRepository(dbContext);
     router.route('/transportista')
         .get(transportistaRepository.getAll)
-        .post(transportistaRepository.post);
+        .post(transportistaRepository.post)
+        .delete(transportistaRepository.deleteByDNI)
         
 
     router.use('/transportista/:transportistaDNI', transportistaRepository.intercept);
@@ -12,6 +13,5 @@ module.exports = function (router) {
     router.route('/transportista/:transportistaDNI')
         .get(transportistaRepository.get)
         .put(transportistaRepository.put) 
-        .delete(transportistaRepository.delete)
        // .get(transportistaRepository.find);  
 }
