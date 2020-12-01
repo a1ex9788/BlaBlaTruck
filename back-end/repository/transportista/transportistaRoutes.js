@@ -13,6 +13,5 @@ module.exports = function (router) {
     router.route('/transportista/:transportistaDNI')
         .get(transportistaRepository.get)
         .put(transportistaRepository.put) 
-        .delete(transportistaRepository.delete)
        // .get(transportistaRepository.find);  
 }
