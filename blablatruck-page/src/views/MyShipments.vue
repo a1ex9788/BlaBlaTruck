@@ -124,7 +124,7 @@ export default {
         this.updateMyShipments();
     },
     methods: {
-        onRecogida() 
+        onRecogida(event) 
         {
             this.$bvModal.msgBoxConfirm('¿Desea confirmar la recogida del paquete?',{
                 title: 'Confirmación',
@@ -140,14 +140,11 @@ export default {
                     let currentDate = new Date();
                     let currentDateBD = (currentDate.getFullYear() + "-" + (currentDate.getMonth() +1) + "-" + currentDate.getDate());
 
-                    this.currentShipmentId = event.target.id;
+                    console.log(currentDateBD + " " + event.target.id)
 
-                    axios.put("http://localhost:3300/api/encargo/recogido",{
-                        params: {
-                            IdEncargo: this.currentShipmentId,
-                            FechaRecogida: currentDateBD,
-                            EsCliente: !this.isCarrier
-                        }
+                    axios.put("http://localhost:3300/api/encargo/recoger",{
+                            IdEncargo: event.target.id,
+                            FechaRecogida: currentDateBD
                     })
                     .then(() => {
                         this.$bvModal.msgBoxOk('Ha confirmado la recogida del paquete',{
