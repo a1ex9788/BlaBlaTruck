@@ -33,11 +33,11 @@ function EncargoRepository(dbContext) {
 
             parameters.push({name: 'DNICliente', type: TYPES.Char, val: req.query.DNICliente});
             
-            var query = "(select e.Origen, e.Destino, e.FechaEntrega, e.FechaRecogida, p.Nombre + ' ' + p.Apellidos as NombreCompleto, e.Id, e.FechaMaximaEntrega"
+            var query = "(select e.Origen, e.Destino, e.FechaEntrega, e.FechaRecogida, p.Nombre + ' ' + p.Apellidos as NombreCompleto, e.Id, e.FechaMaximaEntrega, e.ValoracionTiempoEntrega, e.ConfirmadoPorCliente"
             + " from Encargo e, Persona p"
             + " where p.DNI = e.DNITransportista and DNICliente LIKE @DNICliente)"
             + " union all"
-            + " (select distinct e.Origen, e.Destino, e.FechaEntrega, e.FechaRecogida, 'Por reservar' as NombreCompleto, e.Id, e.FechaMaximaEntrega"
+            + " (select distinct e.Origen, e.Destino, e.FechaEntrega, e.FechaRecogida, 'Por reservar' as NombreCompleto, e.Id, e.FechaMaximaEntrega, e.ValoracionTiempoEntrega, e.ConfirmadoPorCliente"
             + " from Encargo e"
             + " where e.DNITransportista is null and DNICliente LIKE @DNICliente)";
 
@@ -247,9 +247,9 @@ function EncargoRepository(dbContext) {
 
             parameters.push({ name: 'IdEncargo', type: TYPES.BigInt, val: req.body.params.IdEncargo });
             parameters.push({ name: 'FechaEntrega', type: TYPES.Date, val: req.body.params.FechaEntrega });
-            
+            parameters.push({ name: 'EsCliente', type: TYPES.Bit, val: req.body.params.EsCliente });
 
-            var query = "update Encargo set FechaEntrega = @FechaEntrega where Id = @IdEncargo"
+            var query = "update Encargo set FechaEntrega = @FechaEntrega, ConfirmadoPorCliente = @EsCliente where Id = @IdEncargo"
            
             dbContext.getQuery(query, parameters, false, function (error, data) {
                 return res.json(response(data, error));
