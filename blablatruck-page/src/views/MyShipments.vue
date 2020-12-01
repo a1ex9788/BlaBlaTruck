@@ -37,6 +37,7 @@
                                 <b-button v-bind:id="item.Id" @click="onCancelButton" v-if="!item.FechaRecogida" class="btn-danger mt-2">Cancelar</b-button>
                                 <!-- Transportista -->
                                 <b-button v-bind:id="item.Id" @click="onConfirmation" v-if="isCarrierM() &&item.FechaRecogida && !item.FechaEntrega" class="btn-success mt-2">Confirmar entrega</b-button>
+                                <b-button v-bind:id="item.Id" @click="onRecogida" v-if="isCarrierM() &&!item.FechaRecogida && !item.FechaEntrega" class="btn-info mt-2 ml-2">Confirmar recogida</b-button>
                                 <!-- Cliente -->
                                 <b-button v-bind:id="item.Id" @click="onConfirmation" v-if="!isCarrierM() && item.FechaRecogida && item.FechaEntrega && !item.ConfirmadoPorCliente" class="btn-success mt-2">Confirmar entrega</b-button>
                             </b-col>
@@ -123,6 +124,55 @@ export default {
         this.updateMyShipments();
     },
     methods: {
+        onRecogida() 
+        {
+            this.$bvModal.msgBoxConfirm('¿Desea confirmar la recogida del paquete?',{
+                title: 'Confirmación',
+                size: 'sm',
+                buttonSize: 'sm',
+                okVariant: 'success',
+                okTitle:'Sí',
+                cancelTitle: 'No',
+                centered: true
+            })
+            .then((value) =>{
+                if (value == true){     
+                    let currentDate = new Date();
+                    let currentDateBD = (currentDate.getFullYear() + "-" + (currentDate.getMonth() +1) + "-" + currentDate.getDate());
+
+                    this.currentShipmentId = event.target.id;
+
+                    axios.put("http://localhost:3300/api/encargo/recogido",{
+                        params: {
+                            IdEncargo: this.currentShipmentId,
+                            FechaRecogida: currentDateBD,
+                            EsCliente: !this.isCarrier
+                        }
+                    })
+                    .then(() => {
+                        this.$bvModal.msgBoxOk('Ha confirmado la recogida del paquete',{
+                            title: 'Confirmación',
+                            size: 'sm',
+                            buttonSize: 'sm',
+                            okVariant: 'info',
+                            headerClass: 'p-2 border-bottom-0',
+                            footerClass: 'p-2 border-top-0',
+                            centered: true
+                        })
+                        .then(() => {
+                            if (!this.isCarrier) this.$bvModal.show('carrierAssessmentDialog')
+                            else window.location.reload()
+                        })
+                    }),
+                    (error) => {
+                        console.log(error);
+                    }
+                }
+            })
+            .catch(err => {
+                console.log("error al confirmar"+ err);
+            });  
+        },
         isCarrierM()
         {
             return this.isCarrier
