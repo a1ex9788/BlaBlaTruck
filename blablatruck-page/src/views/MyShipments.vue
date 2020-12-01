@@ -137,14 +137,12 @@ export default {
             })
             .then((value) =>{
                 if (value == true){     
-                    let currentDate = new Date();
-                    let currentDateBD = (currentDate.getFullYear() + "-" + (currentDate.getMonth() +1) + "-" + currentDate.getDate());
-
-                    console.log(currentDateBD + " " + event.target.id)
+                    const timeElapsed = Date.now();
+                    const today = new Date(timeElapsed);
 
                     axios.put("http://localhost:3300/api/encargo/recoger",{
                             IdEncargo: event.target.id,
-                            FechaRecogida: currentDateBD
+                            FechaRecogida: today
                     })
                     .then(() => {
                         this.$bvModal.msgBoxOk('Ha confirmado la recogida del paquete',{
@@ -399,15 +397,15 @@ export default {
             })
             .then((value) =>{
                 if (value == true){     
-                    let currentDate = new Date();
-                    let currentDateBD = (currentDate.getFullYear() + "-" + (currentDate.getMonth() +1) + "-" + currentDate.getDate());
+                    const timeElapsed = Date.now();
+                    const today = new Date(timeElapsed);
 
                     this.currentShipmentId = event.target.id;
 
                     axios.put("http://localhost:3300/api/encargo/entregar",{
                         params: {
                             IdEncargo: this.currentShipmentId,
-                            FechaEntrega: currentDateBD,
+                            FechaEntrega: today,
                             EsCliente: !this.isCarrier
                         }
                     })
