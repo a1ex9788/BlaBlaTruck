@@ -35,7 +35,10 @@
                                 <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida, false) }}</div>
                                 <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega, false) }}</div>
                                 <b-button v-bind:id="item.Id" @click="onCancelButton" v-if="!item.FechaRecogida" class="btn-danger mt-2">Cancelar</b-button>
-                                <b-button v-bind:id="item.Id" @click="onConfirmation" v-if="item.FechaRecogida && !item.FechaEntrega" class="btn-success mt-2">Confirmar entrega</b-button>
+                                <!-- Transportista -->
+                                <b-button v-bind:id="item.Id" @click="onConfirmation" v-if="isCarrierM() &&item.FechaRecogida && !item.FechaEntrega" class="btn-success mt-2">Confirmar entrega</b-button>
+                                <!-- Cliente -->
+                                <b-button v-bind:id="item.Id" @click="onConfirmation" v-if="!isCarrierM() && item.FechaRecogida && item.FechaEntrega && !item.ConfirmadoPorCliente" class="btn-success mt-2">Confirmar entrega</b-button>
                             </b-col>
                             <b-col md="auto">
                                 <div>
@@ -64,7 +67,7 @@
                         </b-row>
                     </b-list-group-item>
                 </b-list-group>
-                <b-modal @ok="saveCarrierAssessement" @show="resetTextAreaComentarios" id="carrierAssessmentDialog" title="Valorar al transportista">
+                <b-modal @ok="saveCarrierAssessement" @cancel="cancelSaveAssessement" @show="resetTextAreaComentarios" id="carrierAssessmentDialog" title="Valorar el transporte">
                     <label><strong> Rapidez entrega </strong></label> <br>
                     <b-button @click="onStarImageClick" id="buttonStarImage" ><b-img id="starImage1" src="../assets/yellowStar.png"></b-img></b-button>
                     <b-button @click="onStarImageClick" id="buttonStarImage" class="ml-2"><b-img id="starImage2" src= "../assets/greyStar.png" ></b-img></b-button>
@@ -78,7 +81,7 @@
                     <b-button @click="onStarImageClickState" id="buttonStarImage" class="ml-2"><b-img id="starImage8" src="../assets/greyStar.png" ></b-img></b-button>
                     <b-button @click="onStarImageClickState" id="buttonStarImage" class="ml-2"><b-img id="starImage9" src="../assets/greyStar.png" ></b-img></b-button>
                     <b-button @click="onStarImageClickState" id="buttonStarImage" class="ml-2"><b-img id="starImage10" src="../assets/greyStar.png" ></b-img></b-button> <br>
-                    <label class="mt-3"><strong> Comentarios: </strong></label> <br>
+                    <label class="mt-3"><strong> Comentarios </strong></label> <br>
                     <b-form-textarea v-model="textAreaComentariosText" placeholder="Añadir comentarios" rows=4> </b-form-textarea> 
                 </b-modal>    
             </div>
@@ -120,6 +123,11 @@ export default {
         this.updateMyShipments();
     },
     methods: {
+        isCarrierM()
+        {
+            return this.isCarrier
+        },
+
         getClientType()
         {
             if (this.isCarrier) return "Cliente";
@@ -136,10 +144,9 @@ export default {
         async updateMyShipments() {
             var historical = await this.getMyShipments();
             historical.forEach(element => {
-                if (element.FechaEntrega) this.endedPackages.push(element)
+                if (element.ConfirmadoPorCliente) this.endedPackages.push(element)
                 else if (element.NombreCompleto == "Por reservar") this.nonReservedPackages.push(element)
-                else this.ongoingPackages.push(element)
-                
+                else this.ongoingPackages.push(element)                
             });
         },
 
@@ -323,6 +330,11 @@ export default {
             })
         },
 
+        cancelSaveAssessement()
+        {
+            window.location.reload()
+        },
+
         resetTextAreaComentarios()
         {
             this.textAreaComentariosText = ""
@@ -348,7 +360,8 @@ export default {
                     axios.put("http://localhost:3300/api/encargo/entregar",{
                         params: {
                             IdEncargo: this.currentShipmentId,
-                            FechaEntrega: currentDateBD
+                            FechaEntrega: currentDateBD,
+                            EsCliente: !this.isCarrier
                         }
                     })
                     .then(() => {
@@ -360,7 +373,7 @@ export default {
                             headerClass: 'p-2 border-bottom-0',
                             footerClass: 'p-2 border-top-0',
                             centered: true
-                    })
+                        })
                         .then(() => {
                             if (!this.isCarrier) this.$bvModal.show('carrierAssessmentDialog')
                             else window.location.reload()
