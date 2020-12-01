@@ -1,39 +1,45 @@
 const request = require('supertest');
 
-describe('Post transportista', () => {
-    it('Insertar un persona en la BD sin fallos', async () =>{
-        await request('http://localhost:3300')
+/*Creamos un transportista en la BD  */
+beforeAll(async () => {
+    await request('http://localhost:3300')
         .post('/api/personas')
-        .send({ params: {
-            Nombre: "Gervasio",
-            Apellidos: "Domingo Giménez",           
-            DNI: "50501010A",
+        .send({ 
+            Nombre: 'Gervasio',
+            Apellidos: 'Domingo Giménez',
+            DNI: '50501010A',
             Telefono: 123456789,
-            Email: "gervasio@gmail.com",
-            Usuario: "ElTransporter",
-            Contraseña: "1234",
-            IBAN: "ES65",
-            NumeroCuentaBancaria: "01234567890123456789"
-
-        }})
-        .on('requestCompleted',async (resInsert) => {
-            expect(resInsert.statusCode).toEqual(200);
+            Email: 'gervasio@gmail.com',
+            Usuario: 'ElTransporter',
+            Contraseña: '1234',
+            IBAN: 'ES65',
+            NumeroCuentaBancaria: '01234567890123456789',
         })
-    })
-
-    it('Insertar un transportista en la BD sin fallos', async () =>{
-        await request('http://localhost:3300')
+    await request('http://localhost:3300')
         .post('/api/transportista')
-        .send({ params: {
-            DNI: "50501010A",
-            NaturalezaCamion: "Producto frágil",
-            Capacidad: 250.00        
-        }})
-        .on('requestCompleted',async (resInsert) => {
-            expect(resInsert.statusCode).toEqual(200);
-        })
-    })
+        .send({
+            DNI: '50501010A',
+            NaturalezaCamion: 'Producto frágil',
+            Capacidad: 250.00,               
+        })       
+})
 
+/*Borramos el transportista creado */
+afterAll(async() => {
+    await request('http://localhost:3300')
+      .delete('/api/transportista')
+      .send({
+        dni: '50501010A'
+      })
+    await request('http://localhost:3300')
+      .delete('/api/personas')
+      .send({
+        dni: '50501010A'
+      })
+})
+
+/*Comprobamos que el transportista ha sido creado correctamente en la BD */
+describe('Post transportista', () => {
     it('Comprobar la inserción del transportista', async() => {
         let isInserted = false;
         let transportista;
@@ -49,12 +55,5 @@ describe('Post transportista', () => {
         }
 
         expect(isInserted).toBe(true);
-        if(isInserted){
-            await request('http://localhost:3300')
-            .delete('/api/transportista/50501010A')
-        }    
     })
-
-
-
 })
