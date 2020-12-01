@@ -119,6 +119,22 @@ function TransportistaRepository(dbContext) {
             return res.json(response(data,error));
         });
     }
+    function deleteByDNI(req, res) {
+        if (req.body.dni) {
+            var parameters = [];
+
+            parameters.push({ name: 'DNI', type: TYPES.Char, val: req.body.dni });
+
+            var query = "delete from Transportista where DNI = @DNI"
+
+            dbContext.getQuery(query, parameters, false, function (error, data, rowCount) {
+                if (rowCount > 0) {
+                    return res.json('Record is deleted');
+                }
+                return res.sendStatus(404);
+            });
+        }
+    }
 
     return {
             getAll: getTransportistas,
@@ -128,7 +144,8 @@ function TransportistaRepository(dbContext) {
          //   getMulti: getClienteEmpresa,
             find: searchTransportistaNaturaleza,
             intercept: findTransportista,
-            delete: deleteTransportista
+            delete: deleteTransportista,
+            deleteByDNI: deleteByDNI
         }
 }
 module.exports = TransportistaRepository;

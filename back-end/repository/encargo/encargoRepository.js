@@ -326,6 +326,36 @@ function EncargoRepository(dbContext) {
         }
     }
 
+    function getAll(req, res) {
+        var parameters = [];
+        
+        
+        var query = "select * from Encargo"
+
+        dbContext.getQuery(query, parameters, true, function (error, data) {
+            return res.json(response(data, error));
+        });
+    }
+
+    function deleteEncargoById(req, res)
+    {
+        if (req.body.Id) {
+            var parameters = [];
+
+            parameters.push({ name: 'Id', type: TYPES.BigInt, val: req.body.Id });
+          
+            var query = "delete from Encargo where Id LIKE @Id"
+           
+            dbContext.getQuery(query, parameters, false, function (error, data, rowCount) {
+                if (rowCount > 0) {
+                    return res.json('Record is deleted');
+                }
+                return res.sendStatus(404);
+            });
+     
+        }
+    }
+
     return {
         getAll: getEncargos,
         //put: putEncargo,
@@ -343,7 +373,9 @@ function EncargoRepository(dbContext) {
         reservarEncargo: añadirDNITransportistaAEncargo,
         anularEncargo: quitarDNITransportistaDeEncargo,
         entregarEncargo: añadirFechaDeEntrega,
-        valorarEncargo: añadirValoracion
+        valorarEncargo: añadirValoracion,
+        getAllDeVerdad: getAll,
+        deleteEncargo: deleteEncargoById
     }
 }
 module.exports = EncargoRepository;

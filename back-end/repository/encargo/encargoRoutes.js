@@ -2,7 +2,10 @@ const _encargoRepository = require('./encargoRepository');
 const dbContext = require('../../dataBase/dbContext');
 module.exports = function (router) {
     const encargoRepository = _encargoRepository(dbContext);
-    router.route('/encargo').get(encargoRepository.getAll)
+    router.route('/encargo')
+    .get(encargoRepository.getAll)
+    .delete(encargoRepository.deleteEncargo)
+    router.route('/encargo/todos').get(encargoRepository.getAllDeVerdad)
   
     router.use('/encargo/naturalezaEncargosCliente', encargoRepository.getEncargosPorNaturalezaCliente);
     router.use('/encargo/naturalezaEncargosTransportista', encargoRepository.getEncargosPorNaturalezaTransportista);
