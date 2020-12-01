@@ -127,6 +127,22 @@ function ClientRepository(dbContext) {
             return res.json(response(data,error));
         });
     }
+    function deleteByDNI(req, res) {
+        if (req.body.dni) {
+            var parameters = [];
+
+            parameters.push({ name: 'DNI', type: TYPES.Char, val: req.body.dni });
+
+            var query = "delete from Cliente where DNI = @DNI"
+
+            dbContext.getQuery(query, parameters, false, function (error, data, rowCount) {
+                if (rowCount > 0) {
+                    return res.json('Record is deleted');
+                }
+                return res.sendStatus(404);
+            });
+        }
+    }
 
     return {
             getAll: getClientes,
@@ -136,7 +152,8 @@ function ClientRepository(dbContext) {
             getMulti: getClienteEmpresa,
             find: searchCliente,
             intercept: findCliente,
-            delete: deleteClient
+            delete: deleteClient,
+            deleteByDNI: deleteByDNI
         }
 }
 module.exports = ClientRepository;

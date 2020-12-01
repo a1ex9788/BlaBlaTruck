@@ -4,7 +4,8 @@ module.exports = function (router) {
     const personaRepository = _personaRepository(dbContext);
     router.route('/personas')
         .get(personaRepository.getAll)
-        .post(personaRepository.post);
+        .post(personaRepository.post)
+        .delete(personaRepository.deleteByDNI);
     router.use('/personas/userExists', personaRepository.usernameExists);
     router.use('/personas/login', personaRepository.getMulti);
     router.use('/personas/:personaDNI', personaRepository.intercept);

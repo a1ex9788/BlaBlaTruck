@@ -4,8 +4,8 @@ module.exports = function (router) {
     const clienteRepository = _clienteRepository(dbContext);
     router.route('/cliente')
         .get(clienteRepository.getAll)
-        .post(clienteRepository.post);
-    
+        .post(clienteRepository.post)
+        .delete(clienteRepository.deleteByDNI);
     router.route('/cliente/empresa')
         .get(clienteRepository.getMulti);
 
