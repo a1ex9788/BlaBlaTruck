@@ -9,7 +9,6 @@ function ClientRepository(dbContext) {
             var query = "select * from Cliente"
             
             dbContext.getQuery(query, parameters, true, function (error, data) {
-                console.log("esto va bien");
                 return res.json(response(data, error));
             });
     }
@@ -69,7 +68,6 @@ function ClientRepository(dbContext) {
     }
     
      function postCliente(req, res) {
-
         var parameters = [];
 
         //parameters.push({ name: 'Nombre', type: TYPES.VarChar, val: req.body.Nombre });
@@ -89,7 +87,8 @@ function ClientRepository(dbContext) {
         /*dbContext.post("InsertOrUpdateClient", parameters, function (error, data) {
             return res.json(response(data, error));
         });*/
-        dbContext.getQuery(query, parameters,true, function (error, data) {
+        console.log(query);
+        dbContext.getQuery(query, parameters, true, function (error, data) {
             return res.json(response(data, error));
         });
     }
@@ -98,7 +97,7 @@ function ClientRepository(dbContext) {
 
         var parameters = [];
 
-        if (req.data.DNI) {
+        if (req.params.DNI) {
             var parameters = [];
 
             parameters.push({ name: 'Dni', type: TYPES.Int, val: req.data.DNI });
