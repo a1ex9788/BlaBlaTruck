@@ -59,6 +59,7 @@
                                 <div><strong>Fecha máxima de entrega: </strong>{{ modifyFormat(item.FechaMaximaEntrega, true) }}</div>
                                 <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida, false) }}</div>
                                 <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega, false) }}</div>
+                                <b-button v-bind:id="item.Id" @click="onAssessmentButton" v-if="!isCarrierM() && !item.ValoracionTiempoEntrega" class="btn-info mt-2">Valorar transporte</b-button>
                             </b-col>
                             <b-col md="auto">
                                 <div>
@@ -108,7 +109,8 @@ export default {
             personDNI: undefined,
             isCarrier: undefined,
             textAreaComentariosText: "",
-            currentShipmentId: undefined
+            currentShipmentId: undefined,
+            refreshOnCancelAssessmentModal: undefined
         };
     },
     created() {
@@ -377,7 +379,7 @@ export default {
 
         cancelSaveAssessement()
         {
-            window.location.reload()
+            if(this.refreshOnCancelAssessmentModal) window.location.reload()
         },
 
         resetTextAreaComentarios()
@@ -400,6 +402,7 @@ export default {
                     const timeElapsed = Date.now();
                     const today = new Date(timeElapsed);
 
+                    this.refreshOnCancelAssessmentModal = true;
                     this.currentShipmentId = event.target.id;
 
                     axios.put("http://localhost:3300/api/encargo/entregar",{
@@ -479,6 +482,12 @@ export default {
             //         }
             //     });
             // }
+        },
+
+        onAssessmentButton(event){
+            this.refreshOnCancelAssessmentModal = false
+            this.currentShipmentId = event.target.id;
+            this.$bvModal.show('carrierAssessmentDialog')
         }
     }
     
