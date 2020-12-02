@@ -14,7 +14,21 @@ function ClientRepository(dbContext) {
     }
 
     function getCliente(req,res) {
-        return res.json(req.data);
+        if (req.params.clienteDNI) {
+            console.log("getCliente");
+            var parameters = [];
+            parameters.push({name: 'DNI', type: TYPES.VarChar, val: req.params.clienteDNI});
+
+            var query = "select c.DNI, c.Empresa, p.Nombre, p.Apellidos, p.Email, p.Telefono, p.IBAN, p.NumeroCuentaBancaria "
+                + "from Cliente c, Persona p "
+                + "where c.DNI = @DNI and p.DNI = @DNI"
+            dbContext.getQuery(query, parameters, true, function (error, data) {            
+                return res.json(response(data, error));
+            });
+        } else {
+            console.log("The parameters are not correct")
+            return res.send("The parameters are not correct");
+        }
     }
 
     function findCliente(req, res, next) {
@@ -44,6 +58,7 @@ function ClientRepository(dbContext) {
         var parameters = [];
 
         Object.entries(req.data).forEach((property) => {
+            console.log("putCliente");
             if (req.body[property[0]]) {
                 parameters.push(
                     {
@@ -52,7 +67,6 @@ function ClientRepository(dbContext) {
                         type: TYPES.VarChar
                     });
             } else {
-
                 parameters.push(
                     {
                         name: property[0],
@@ -112,11 +126,13 @@ function ClientRepository(dbContext) {
             });
         }
     }
+
     function getClienteEmpresa(req, res) {
         dbContext.get("getClienteEmpresa", function (error, data) {
             return res.json(response(data, error));
         });
     }
+
     function searchCliente(req,res) {
         var parameters = [];
         parameters.push({name: 'Empresa', type: TYPES.VarChar, val: req.query.Empresa});
@@ -127,6 +143,7 @@ function ClientRepository(dbContext) {
             return res.json(response(data,error));
         });
     }
+
     function deleteByDNI(req, res) {
         if (req.body.dni) {
             var parameters = [];
