@@ -19,7 +19,7 @@ function ClientRepository(dbContext) {
             var parameters = [];
             parameters.push({name: 'DNI', type: TYPES.VarChar, val: req.params.clienteDNI});
 
-            var query = "select c.DNI, c.Empresa, p.Nombre, p.Apellidos, p.Email, p.Telefono, p.IBAN, p.NumeroCuentaBancaria "
+            var query = "select c.DNI, c.Empresa, p.Nombre, p.Apellidos, p.Email, p.Telefono, p.IBAN, p.NumeroCuentaBancaria, p.Usuario "
                 + "from Cliente c, Persona p "
                 + "where c.DNI = @DNI and p.DNI = @DNI"
             dbContext.getQuery(query, parameters, true, function (error, data) {            

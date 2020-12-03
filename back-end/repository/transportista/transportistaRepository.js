@@ -19,7 +19,7 @@ function TransportistaRepository(dbContext) {
             var parameters = [];
             parameters.push({name: 'DNI', type: TYPES.VarChar, val: req.params.transportistaDNI});
 
-            var query = "select t.DNI, t.Capacidad, t.NaturalezaCamion, p.Nombre, p.Apellidos, p.Email, p.Telefono, p.IBAN, p.NumeroCuentaBancaria "
+            var query = "select t.DNI, t.Capacidad, t.NaturalezaCamion, p.Nombre, p.Apellidos, p.Email, p.Telefono, p.IBAN, p.NumeroCuentaBancaria, p.Usuario "
                 + "from Transportista t, Persona p "
                 + "where t.DNI = @DNI and p.DNI = @DNI"
             dbContext.getQuery(query, parameters, true, function (error, data) {            
@@ -164,7 +164,6 @@ function TransportistaRepository(dbContext) {
             });
         }
     }
-
     return {
             getAll: getTransportistas,
             get: getTransportista,

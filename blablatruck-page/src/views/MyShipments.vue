@@ -537,10 +537,6 @@ export default {
     max-width: 35px;
     max-height: 35px;
 }
-#starImage5{
-    max-width: 35px;
-    max-height: 35px;
-}
 #starImage6{
     max-width: 35px;
     max-height: 35px;
