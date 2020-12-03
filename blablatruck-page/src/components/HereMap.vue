@@ -155,6 +155,10 @@ export default {
                 }
             }],
             personDNI: undefined,
+            actualLocation:{
+                longitude: undefined,
+                latitude: undefined
+            }
         }
     },
 
@@ -173,6 +177,8 @@ export default {
         this.initializeHereMap();
         await this.makerObjectsEncargos(map);
         await this.addEncargosToList();
+        this.getTrackingLocation();
+
     },
 
     methods: {
@@ -956,6 +962,38 @@ export default {
             if (dateTime) {
                 return dateTime.substring(0, 10)
             } else return "No hay"
+        },
+
+        getTrackingLocation() {
+            var options = {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            };
+
+         if (navigator.geolocation){
+             navigator.geolocation.getCurrentPosition(this.successFindLocation, this.errorFindLocation, options);
+             }
+         else{
+             alert("Geolocation is not supported by this browser");
+             console.log("Geolocation is not supported by this browser");
+             }
+  
+        },
+
+        successFindLocation(pos) {
+        var crd = pos.coords;
+        console.log('Tu posición actual es: ');
+        console.log('Latitude : ' + crd.latitude);
+        this.actualLocation.latitude = crd.latitude
+        console.log('Longitude: ' + crd.longitude);
+        this.actualLocation.longitude = crd.longitude;
+        console.log('Error de estimación: ' + crd.accuracy + ' metros.');
+        },
+
+        errorFindLocation(err) {
+        console.warn('ERROR(' + err.code + '): ' + err.message);
+        alert("Ha habido un error en encontrar su localización");
         }
 
     }
