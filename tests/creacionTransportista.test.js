@@ -19,7 +19,7 @@ beforeAll(async () => {
         .post('/api/transportista')
         .send({
             DNI: '50501010A',
-            NaturalezaCamion: 'Producto frágil',
+            NaturalezaCamion: '1',
             Capacidad: 250.00,               
         })       
 })
