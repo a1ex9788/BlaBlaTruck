@@ -73,6 +73,12 @@ const routes = [
     name: "MyShipments",
     component: () =>
       import("../views/MyShipments.vue")
+  },
+  {
+    path: "/profile",
+    name: "Mi perfil",
+    component: () =>
+      import("../views/Profile.vue")
   }
 ];
 

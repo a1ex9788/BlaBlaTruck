@@ -33,6 +33,10 @@ export default {
                     {
                         name: 'Mis envíos',
                         path: '/myShipments'
+                    },
+                                        {
+                        name: 'Mi perfil',
+                        path: '/profile'
                     }
             ],
             pagesTransportist: [
@@ -43,7 +47,12 @@ export default {
                     {
                         name: 'Mis envíos',
                         path: '/myShipments'
+                    },
+                    {
+                        name: 'Mi perfil',
+                        path: '/profile'
                     }
+
             ]
         }
         
