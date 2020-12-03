@@ -177,13 +177,11 @@ export default {
         this.initializeHereMap();
         await this.makerObjectsEncargos(map);
         await this.addEncargosToList();
-        this.getTrackingLocation();
-
+        this.getTrackingLocation(map);
     },
 
     methods: {
         initializeHereMap() { // rendering map
-
             const mapContainer = this.$refs.hereMap;
             const H = window.H;
             // Obtain the default map types from the platform object
@@ -853,9 +851,10 @@ export default {
                         map.getViewModel().setLookAtData({
                             bounds: polyline.getBoundingBox()
                         });
-
+                      
                     }
-
+                     map.setCenter({lat:this.actualLocation.latitude, lng:this.actualLocation.longitude});
+                     console.log("Centrado en la ubicación actual:"+this.actualLocation.latitude + ", " + this.actualLocation.longitude);
                 },
 
                 error => {
@@ -964,7 +963,7 @@ export default {
             } else return "No hay"
         },
 
-        getTrackingLocation() {
+        getTrackingLocation(map) {
             var options = {
                 enableHighAccuracy: true,
                 timeout: 5000,
@@ -989,6 +988,17 @@ export default {
         console.log('Longitude: ' + crd.longitude);
         this.actualLocation.longitude = crd.longitude;
         console.log('Error de estimación: ' + crd.accuracy + ' metros.');
+         const url = "https://cdn0.iconfinder.com/data/icons/pinpoint-interface/48/address-shipping-512.png"
+         var pngIcon = new H.map.Icon(url, {size: {w: 40, h: 40}});
+         var locationMarker = new H.map.Marker (
+         new H.geo.Point(
+             this.actualLocation.latitude, this.actualLocation.longitude),
+            {
+             icon: pngIcon
+            }
+          );
+        map.addObject(locationMarker);
+        console.log("icono añadido");
         },
 
         errorFindLocation(err) {
@@ -997,7 +1007,9 @@ export default {
         }
 
     }
+        
 }
+
 </script>
 
 <style>
