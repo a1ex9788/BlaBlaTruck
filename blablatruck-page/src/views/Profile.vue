@@ -20,6 +20,10 @@
                     <br>
                     <label id="labels" class="mt-3 mb-0"> <strong> Usuario: </strong>{{this.infoUsuario.Usuario}} </label>
                     <br>
+                    <label id="labels" class="mt-3 mb-0"> <strong> IBAN: </strong>{{this.infoUsuario.IBAN}} </label>
+                    <br>
+                    <label id="labels" class="mt-3 mb-0"> <strong> C. bancaria: </strong>{{this.infoUsuario.NumeroCuentaBancaria}} </label>
+                    <br>
                     <div v-if="isCarrierLogged()">
                         <label id="labels" class="mt-3 mb-0"> <strong> Naturaleza Camión: </strong> {{this.getNaturalezaCamion(this.infoUsuario.NaturalezaCamion)}}</label>
                         <br>
@@ -56,11 +60,6 @@
                     </b-row>
                     <br>
                     <b-row>
-                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> DNI: </strong> </label></b-col>
-                        <b-col sm="9" class="mt-2"><b-form-input id="dniText" type="text" :value = this.infoUsuario.DNI></b-form-input></b-col>
-                    </b-row>
-                    <br>
-                    <b-row>
                         <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> Teléfono: </strong> </label></b-col>
                         <b-col sm="9" class="mt-2"><b-form-input id="phoneText" type="number" :value = this.infoUsuario.Telefono></b-form-input></b-col>
                     </b-row>
@@ -69,12 +68,17 @@
                         <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> Email: </strong> </label></b-col>
                         <b-col sm="9" class="mt-2"><b-form-input id="emailText" type="text" :value = this.infoUsuario.Email></b-form-input></b-col>
                     </b-row>
-                    <br>
+                    <br>    
                     <b-row>
-                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> Usuario: </strong> </label></b-col>
-                        <b-col sm="9" class="mt-2"><b-form-input id="userText" type="text" :value = this.infoUsuario.Usuario></b-form-input></b-col>
+                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> IBAN: </strong> </label></b-col>
+                        <b-col sm="9" class="mt-2"><b-form-input id="ibanText" type="text" :value = this.infoUsuario.IBAN></b-form-input></b-col>
                     </b-row>
-                    <br>                                     
+                    <br>  
+                    <b-row>
+                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> C. bancaria: </strong> </label></b-col>
+                        <b-col sm="9" class="mt-2"><b-form-input id="numeroCuentaBancariaText" type="number" :value = this.infoUsuario.NumeroCuentaBancaria></b-form-input></b-col>
+                    </b-row>
+                    <br>                               
                     <div v-if="isCarrierLogged()">
                         <b-row>   
                             <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> Naturaleza Camión: </strong> </label></b-col>
@@ -119,10 +123,10 @@ export default {
             infoUsuario: {
                 Nombre: undefined,
                 Apellidos: undefined,
-                DNI: undefined,
                 Telefono: undefined,
                 Email: undefined,
-                Usuario: undefined,
+                IBAN: undefined,
+                NumeroCuentaBancaria: undefined,
                 Empresa: undefined,
                 Capacidad: undefined,
                 NaturalezaCamión: undefined,
@@ -150,11 +154,7 @@ export default {
         },
         onViewProfile(){
             this.isEditingProfile = false
-            setTimeout(this.updateValorations, 1)
-        },
-        saveChanges(){
-            //Guardar cambios en la BD 
-            this.onViewProfile()
+            if(this.isCarrier) setTimeout(this.updateValorations, 1)
         },
         getNaturalezaCamion(naturaleza){
             switch(naturaleza){
@@ -204,7 +204,7 @@ export default {
         },
         async updateMyProfile() {
             this.infoUsuario = await this.getMyProfile();
-            this.updateValorations()
+            this.onViewProfile()
         },
         async getMyProfile() {
             var res;
@@ -234,6 +234,53 @@ export default {
             }
             
             return res[0]
+        },
+        async saveChanges(){
+            if (this.isCarrier) {
+                await axios
+                .put("http://localhost:3300/api/transportista/" + this.personDNI, {
+                    Capacidad: capacityText.value,
+                    NaturalezaCamion: natureText.value
+                })
+                .then(
+                    (response) => {
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+            } else {
+                await axios
+                .put("http://localhost:3300/api/cliente/" + this.personDNI, {
+                    Empresa: companyText.value
+                })
+                .then(
+                    (response) => {
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+            }
+            await axios
+                .put("http://localhost:3300/api/personas/" + this.personDNI, {
+                    Nombre: nameText.value,
+                    Apellidos: surnamesText.value,
+                    Telefono: phoneText.value,
+                    Email: emailText.value,
+                    IBAN: ibanText.value,
+                    NumeroCuentaBancaria: numeroCuentaBancariaText.value
+                })
+                .then(
+                    (response) => {
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+
+            this.updateMyProfile()
+            this.onViewProfile()
         },
         
     }
