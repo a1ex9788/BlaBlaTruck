@@ -8,27 +8,40 @@
                 <h2 id="title" class="mt-4">Mi perfil</h2>
                 </div>
                 <div v-if="!isEditing()" id="groupForm2" class="container-fluid">
-                    <label id="labels" class="mt-3 mb-0"> <strong> Nombre: </strong> </label>
+                    <label id="labels" class="mt-3 mb-0"> <strong> Nombre:</strong> {{this.infoUsuario.Nombre}} </label>
                     <br>
-                    <label id="labels" class="mt-3 mb-0"> <strong> Apellidos: fejfh </strong> </label>
+                    <label id="labels" class="mt-3 mb-0"> <strong> Apellidos:</strong> {{this.infoUsuario.Apellidos}}</label>
                     <br>
-                    <label id="labels" class="mt-3 mb-0"> <strong> DNI: </strong> </label>
+                    <label id="labels" class="mt-3 mb-0"> <strong> DNI: </strong> {{this.infoUsuario.DNI}}</label>
                     <br>
-                    <label id="labels" class="mt-3 mb-0"> <strong> Teléfono: </strong> </label>
+                    <label id="labels" class="mt-3 mb-0"> <strong> Teléfono: </strong>{{this.infoUsuario.Telefono}} </label>
                     <br>
-                    <label id="labels" class="mt-3 mb-0"> <strong> Correo electrónico: </strong> </label>
+                    <label id="labels" class="mt-3 mb-0"> <strong> Email: </strong>{{this.infoUsuario.Email}} </label>
                     <br>
-                    <label id="labels" class="mt-3 mb-0"> <strong> Nombre de Usuario: </strong> </label>
+                    <label id="labels" class="mt-3 mb-0"> <strong> Usuario: </strong>{{this.infoUsuario.Usuario}} </label>
                     <br>
                     <div v-if="isCarrierLogged()">
-                        <label id="labels" class="mt-3 mb-0"> <strong> Naturaleza Camión: </strong> </label>
+                        <label id="labels" class="mt-3 mb-0"> <strong> Naturaleza Camión: </strong> {{this.infoUsuario.NaturalezaCamion}}</label>
                         <br>
-                        <label id="labels" class="mt-3 mb-0"> <strong> Capacidad: </strong> </label>
+                        <label id="labels" class="mt-3 mb-0"> <strong> Capacidad: </strong> {{this.infoUsuario.Capacidad}}</label>
                         <br>
-                        <label id="labels" class="mt-3 mb-0"> <strong> Valoración: </strong> </label>
+                        <label id="labels" class="mt-3 mb-0"> <strong> Valoración Velocidad: </strong></label>
+                        <b-img class = "ml-5" id="starImage6" src="../assets/yellowStar.png"></b-img>
+                        <b-img id="starImage7" src= "../assets/greyStar.png" ></b-img>
+                        <b-img id="starImage8" src="../assets/greyStar.png" ></b-img>
+                        <b-img id="starImage9" src="../assets/greyStar.png" ></b-img>
+                        <b-img id="starImage10" src="../assets/greyStar.png" ></b-img>
+                        <br>
+                        <label id="labels" class="mt-3 mb-0"> <strong> Valoración Estado: </strong></label>
+                        <b-img class = "ml-5" id="starImage1" src="../assets/yellowStar.png"></b-img>
+                        <b-img id="starImage2" src= "../assets/greyStar.png" ></b-img>
+                        <b-img id="starImage3" src="../assets/greyStar.png" ></b-img>
+                        <b-img id="starImage4" src="../assets/greyStar.png" ></b-img>
+                        <b-img id="starImage5" src="../assets/greyStar.png" ></b-img>
+                        <br>
                     </div>
                     <div v-if="!isCarrierLogged()">
-                        <label id="labels" class="mt-3 mb-0"> <strong> Empresa: </strong> </label>
+                        <label id="labels" class="mt-3 mb-0"> <strong> Empresa: </strong> {{this.infoUsuario.Empresa}}</label>
                     </div>
                 </div>
                 <div v-if="isEditing()" id="groupForm2" class="container-fluid">
@@ -44,7 +57,7 @@
                     <br>
                     <b-row>
                         <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> DNI: </strong> </label></b-col>
-                        <b-col sm="9" class="mt-2"><b-form-input id="dniText" type="text"></b-form-input></b-form-input></b-col>
+                        <b-col sm="9" class="mt-2"><b-form-input id="dniText" type="text"></b-form-input></b-col>
                     </b-row>
                     <br>
                     <b-row>
@@ -102,7 +115,8 @@ export default {
         return {
             personDNI: undefined,
             isCarrier: undefined,
-            isEditingProfile: undefined
+            isEditingProfile: undefined,
+            infoUsuario: undefined
         };
     },
     created() {
@@ -113,6 +127,8 @@ export default {
         if (!this.personDNI) this.personDNI = "11111111r";
         if (!this.isCarrier) this.isCarrier = false;
 
+
+        this.updateMyProfile();
     },
     methods: {
         isCarrierLogged(){
@@ -131,11 +147,55 @@ export default {
         saveChanges(){
             //Guardar cambios en la BD 
             this.onViewProfile()
-        }
-    
-        
-       
+        },
+        async updateMyProfile() {
+            this.infoUsuario = await this.getMyProfile();
+            this.getMyDoneEncargos()
+        },
+        async getMyProfile() {
+            var res;
 
+            if (this.isCarrier) {
+                await axios
+                .get("http://localhost:3300/api/transportista/" + this.personDNI, {})
+                .then(
+                    (response) => {
+                        res = response.data[0];
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+            } else {
+                await axios
+                .get("http://localhost:3300/api/cliente/" + this.personDNI, {})
+                .then(
+                    (response) => {
+                        res = response.data[0];
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+            }
+            
+            return res[0]
+        },
+        async getMyDoneEncargos() {
+            var res;
+                await axios
+                .get("http://localhost:3300/api/encargo/encargosFinalizados/" + this.personDNI, {})
+                .then(
+                    (response) => {
+                        res = response.data[0];
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+            console.log(res)
+            return res
+        }
     }
     
 };
@@ -159,5 +219,45 @@ export default {
 #buttons {
   margin: 10%;
   width: 100px;
+}
+#starImage1{
+    max-width: 35px;
+    max-height: 35px;
+}
+#starImage2{
+    max-width: 35px;
+    max-height: 35px;
+}
+#starImage3{
+    max-width: 35px;
+    max-height: 35px;
+}
+#starImage4{
+    max-width: 35px;
+    max-height: 35px;
+}
+#starImage5{
+    max-width: 35px;
+    max-height: 35px;
+}
+#starImage6{
+    max-width: 35px;
+    max-height: 35px;
+}
+#starImage7{
+    max-width: 35px;
+    max-height: 35px;
+}
+#starImage8{
+    max-width: 35px;
+    max-height: 35px;
+}
+#starImage9{
+    max-width: 35px;
+    max-height: 35px;
+}
+#starImage10{
+    max-width: 35px;
+    max-height: 35px;
 }
 </style>
