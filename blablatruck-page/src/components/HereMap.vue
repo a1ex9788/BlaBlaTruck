@@ -177,8 +177,7 @@ export default {
         this.initializeHereMap();
         await this.makerObjectsEncargos(map);
         await this.addEncargosToList();
-        this.getTrackingLocation();
-
+        this.getTrackingLocation(map);
     },
 
     methods: {
@@ -964,7 +963,7 @@ export default {
             } else return "No hay"
         },
 
-        getTrackingLocation() {
+        getTrackingLocation(map) {
             var options = {
                 enableHighAccuracy: true,
                 timeout: 5000,
@@ -989,15 +988,26 @@ export default {
         console.log('Longitude: ' + crd.longitude);
         this.actualLocation.longitude = crd.longitude;
         console.log('Error de estimación: ' + crd.accuracy + ' metros.');
+         const url = "https://cdn0.iconfinder.com/data/icons/pinpoint-interface/48/address-shipping-512.png"
+             var pngIcon = new H.map.Icon(url, {size: {w: 40, h: 40}});
+             var locationMarker = new H.map.Marker(
+             new H.geo.Point(this.actualLocation.latitude, this.actualLocation.longitude),
+            {
+             icon: pngIcon
+           }
+        );
+        map.addObject(locationMarker);
+        console.log("icono añadido");
         },
 
         errorFindLocation(err) {
         console.warn('ERROR(' + err.code + '): ' + err.message);
         alert("Ha habido un error en encontrar su localización");
-        }
-
+        },
     }
-}
+        
+    }
+
 </script>
 
 <style>
