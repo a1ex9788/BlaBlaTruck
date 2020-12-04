@@ -14,8 +14,14 @@ function PersonaRepository(dbContext) {
             });
     }
     function getPersona(req,res) {
-        console.log("getPersona");
-        return res.json(req.data);
+        var parameters = [];
+        parameters.push({name: 'personaDNI', type: TYPES.VarChar, val: req.params.personaDNI});
+        var query = "select * from Persona where DNI LIKE @personaDNI";
+        dbContext.getQuery(query, parameters, true, function (error, data){
+            console.log(data);
+            return res.json(response(data,error));
+        });
+       
     }
     function findPersona(req, res, next) {
         if(req.params.personaDNI){
