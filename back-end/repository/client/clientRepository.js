@@ -55,27 +55,10 @@ function ClientRepository(dbContext) {
 
     function putCliente(req, res) {
         console.log("putCliente");
-         
-        var parameters = [];
-        Object.entries(req.data).forEach((property) => {
-            if (req.body[property[0]]) {
-                parameters.push(
-                    {
-                        name: property[0],
-                        val: req.body[property[0]],
-                        type: TYPES.VarChar
-                    });
-            } else {
-                parameters.push(
-                    {
-                        name: property[0],
-                        val: property[1],
-                        type: TYPES.VarChar
-                    });
-            }
-        });
         
-        dbContext.post("InsertOrUpdateClient", parameters, function (error, data) {
+        var query = "UPDATE Cliente SET Empresa = '" + req.body.Empresa + "' WHERE DNI = '" + req.body.DNI + "'"
+
+        dbContext.getQuery(query, [], true, function (error, data) {
             return res.json(response(data, error));
         });
     }

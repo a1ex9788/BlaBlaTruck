@@ -5,47 +5,76 @@
         <div id="groupTitle" class="container-fluid">
             <div class="row mt-2">
                 <div class="col-md-10" id="titleDiv">
-                <h2 id="title" class="mt-4">Mi perfil</h2>
+                <h2 id="title" class="mt-4" style= "font-weight: bold">Mi perfil</h2>
                 </div>
                 <div v-if="!isEditing()" id="groupForm2" class="container-fluid">
-                    <label id="labels" class="mt-3 mb-0"> <strong> Nombre:</strong> {{this.infoUsuario.Nombre}} </label>
-                    <br>
-                    <label id="labels" class="mt-3 mb-0"> <strong> Apellidos:</strong> {{this.infoUsuario.Apellidos}}</label>
-                    <br>
-                    <label id="labels" class="mt-3 mb-0"> <strong> DNI: </strong> {{this.infoUsuario.DNI}}</label>
-                    <br>
-                    <label id="labels" class="mt-3 mb-0"> <strong> Teléfono: </strong>{{this.infoUsuario.Telefono}} </label>
-                    <br>
-                    <label id="labels" class="mt-3 mb-0"> <strong> Email: </strong>{{this.infoUsuario.Email}} </label>
-                    <br>
-                    <label id="labels" class="mt-3 mb-0"> <strong> Usuario: </strong>{{this.infoUsuario.Usuario}} </label>
-                    <br>
-                    <label id="labels" class="mt-3 mb-0"> <strong> IBAN: </strong>{{this.infoUsuario.IBAN}} </label>
-                    <br>
-                    <label id="labels" class="mt-3 mb-0"> <strong> C. bancaria: </strong>{{this.infoUsuario.NumeroCuentaBancaria}} </label>
-                    <br>
+                    <b-row>
+                        <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Nombre:</strong> </label></b-col>
+                        <b-col sm="7"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.Nombre}} </label></b-col>
+                    </b-row>
+                    <b-row>
+                        <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Apellidos:</strong> </label></b-col>
+                        <b-col sm="7"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.Apellidos}} </label></b-col>
+                    </b-row>
+                    <b-row>
+                        <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> DNI:</strong> </label></b-col>
+                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.DNI}} </label></b-col>
+                    </b-row>
+                    <b-row>
+                        <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Telefono:</strong> </label></b-col>
+                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.Telefono}} </label></b-col>
+                    </b-row>
+                    <b-row>
+                        <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Email:</strong> </label></b-col>
+                        <b-col sm="7"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.Email}} </label></b-col>
+                    </b-row>
+                    <b-row>
+                        <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Usuario:</strong> </label></b-col>
+                        <b-col sm="7"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.Usuario}} </label></b-col>
+                    </b-row>
+                    <b-row>
+                        <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> IBAN:</strong> </label></b-col>
+                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.IBAN}} </label></b-col>
+                    </b-row>
+                    <b-row>
+                        <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Cuenta bancaria:</strong> </label></b-col>
+                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.NumeroCuentaBancaria}} </label></b-col>
+                    </b-row>
                     <div v-if="isCarrierLogged()">
-                        <label id="labels" class="mt-3 mb-0"> <strong> Naturaleza Camión: </strong> {{this.getNaturalezaCamion(this.infoUsuario.NaturalezaCamion)}}</label>
-                        <br>
-                        <label id="labels" class="mt-3 mb-0"> <strong> Capacidad: </strong> {{this.infoUsuario.Capacidad}}</label>
-                        <br>
-                        <label id="labels" class="mt-3 mb-0"> <strong> Valoración Tiempo: </strong></label>
-                        <b-img class = "ml-5" id="starImage1" src="../assets/yellowStar.png"></b-img>
-                        <b-img id="starImage2" src= "../assets/greyStar.png" ></b-img>
-                        <b-img id="starImage3" src="../assets/greyStar.png" ></b-img>
-                        <b-img id="starImage4" src="../assets/greyStar.png" ></b-img>
-                        <b-img id="starImage5" src="../assets/greyStar.png" ></b-img>
-                        <br>
-                        <label id="labels" class="mt-3 mb-0"> <strong> Valoración Estado: </strong></label>
-                        <b-img class = "ml-5" id="starImage6" src="../assets/yellowStar.png"></b-img>
-                        <b-img id="starImage7" src= "../assets/greyStar.png" ></b-img>
-                        <b-img id="starImage8" src="../assets/greyStar.png" ></b-img>
-                        <b-img id="starImage9" src="../assets/greyStar.png" ></b-img>
-                        <b-img id="starImage10" src="../assets/greyStar.png" ></b-img>
-                        <br>
+                        <b-row>
+                            <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Naturaleza Camión:</strong> </label></b-col>
+                            <b-col sm="5"><label id="labels" class="mt-3 mb-0"> {{this.getNaturalezaCamion(this.infoUsuario.NaturalezaCamion)}} </label></b-col>
+                        </b-row>
+                        <b-row>
+                            <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Capacidad:</strong> </label></b-col>
+                            <b-col sm="3"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.Capacidad}} </label></b-col>
+                        </b-row>
+                        <b-row>
+                            <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Valoración Tiempo:</strong> </label></b-col>
+                            <b-col sm="7" class = "mt-3">
+                                <b-img id="starImage1" src="../assets/yellowStar.png"></b-img>
+                                <b-img class = "ml-2" id="starImage2" src= "../assets/greyStar.png" ></b-img>
+                                <b-img class = "ml-2" id="starImage3" src="../assets/greyStar.png" ></b-img>
+                                <b-img class = "ml-2" id="starImage4" src="../assets/greyStar.png" ></b-img>
+                                <b-img class = "ml-2" id="starImage5" src="../assets/greyStar.png" ></b-img>
+                            </b-col>
+                        </b-row>
+                        <b-row>
+                            <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Valoración Estado:</strong> </label></b-col>
+                            <b-col sm="7" class="mt-3">
+                                <b-img id="starImage6" src="../assets/yellowStar.png"></b-img>
+                                <b-img class = "ml-2" id="starImage7" src= "../assets/greyStar.png" ></b-img>
+                                <b-img class = "ml-2" id="starImage8" src="../assets/greyStar.png" ></b-img>
+                                <b-img class = "ml-2" id="starImage9" src="../assets/greyStar.png" ></b-img>
+                                <b-img class = "ml-2" id="starImage10" src="../assets/greyStar.png" ></b-img>
+                            </b-col>
+                        </b-row>
                     </div>
                     <div v-if="!isCarrierLogged()">
-                        <label id="labels" class="mt-3 mb-0"> <strong> Empresa: </strong> {{this.infoUsuario.Empresa}}</label>
+                    <b-row>
+                        <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Empresa:</strong> </label></b-col>
+                        <b-col sm="7"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.Empresa}} </label></b-col>
+                    </b-row>
                     </div>
                 </div>
                 <div v-if="isEditing()" id="groupForm2" class="container-fluid">
@@ -263,6 +292,7 @@ export default {
                         })
                     } else {
                         await axios.put("http://localhost:3300/api/cliente/" + this.personDNI, {
+                            DNI: this.personDNI,
                             Empresa: companyText.value
                         })
                         .then((error) => {
@@ -307,7 +337,6 @@ export default {
     max-width: 800px;
     margin: 0 auto;
 }
-
 #groupTitle {
     max-width: 800px;
     min-width: 800px;
@@ -316,6 +345,14 @@ export default {
 #groupForm2 {
   max-width: 500px;
   text-align: left;
+}
+#titleDiv {
+  padding-left: 19%;
+}
+@media (max-width: 480px) {
+  #titleDiv {
+    padding-right: 0%;
+  }
 }
 #buttons {
   margin: 10%;
