@@ -37,7 +37,7 @@ function TransportistaRepository(dbContext) {
             var parameters = [];
 
             parameters.push({name: 'transportistaDNI', type: TYPES.VarChar, val: req.params.transportistaDNI});
-            var query = "select * from Persona where DNI LIKE @transportistaDNI";
+            var query = "select * from Persona p, Transportista t where p.DNI = t.DNI and p.DNI LIKE @transportistaDNI";
 
             dbContext.getQuery(query, parameters, false, function(err, data) {
                 if(data) {
@@ -55,10 +55,10 @@ function TransportistaRepository(dbContext) {
     }
 
     function putTransportista(req, res) {
+        console.log("putTransportista");
+        
         var parameters = [];
-
         Object.entries(req.data).forEach((property) => {
-            console.log("putTransportista");
             if (req.body[property[0]]) {
                 parameters.push(
                     {
