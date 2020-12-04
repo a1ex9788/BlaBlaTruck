@@ -57,26 +57,9 @@ function TransportistaRepository(dbContext) {
     function putTransportista(req, res) {
         console.log("putTransportista");
         
-        var parameters = [];
-        Object.entries(req.data).forEach((property) => {
-            if (req.body[property[0]]) {
-                parameters.push(
-                    {
-                        name: property[0],
-                        val: req.body[property[0]],
-                        type: TYPES.VarChar
-                    });
-            } else {
-                parameters.push(
-                    {
-                        name: property[0],
-                        val: property[1],
-                        type: TYPES.VarChar
-                    });
-            }
-        });
+        var query = "UPDATE Transportista SET NaturalezaCamion = " + req.body.NaturalezaCamion + ", Capacidad = " + req.body.Capacidad + " WHERE DNI = '" + req.body.DNI + "'"
 
-        dbContext.post("InsertOrUpdateTransportista", parameters, function (error, data) {
+        dbContext.getQuery(query, [], true, function (error, data) {
             return res.json(response(data, error));
         });
     }

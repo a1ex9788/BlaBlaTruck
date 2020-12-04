@@ -249,6 +249,7 @@ export default {
                 if(value == true) {
                     if (this.isCarrier) {
                         axios.put("http://localhost:3300/api/transportista/" + this.personDNI, {
+                            DNI: this.personDNI,
                             Capacidad: capacityText.value,
                             NaturalezaCamion: natureText.value
                         })
