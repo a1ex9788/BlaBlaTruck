@@ -36,16 +36,15 @@ function ClientRepository(dbContext) {
             var parameters = [];
 
             parameters.push({name: 'clienteDNI', type: TYPES.VarChar, val: req.params.clienteDNI});
-            var query = "select * from Cliente where DNI LIKE @clienteDNI";
+            var query = "select * from Persona p, Cliente c where p.DNI = c.DNI and p.DNI LIKE @clienteDNI";
+
             dbContext.getQuery(query, parameters, false, function(err, data) {
                 if(data) {
                     req.data = data[0];
                     return next();
                 }
-                console.log("error 404");
                 return res.sendStatus(404);
-            });
-            
+            });            
         }
         else
         {
@@ -54,11 +53,11 @@ function ClientRepository(dbContext) {
         }
     }
 
-     function putCliente(req, res) {
+    function putCliente(req, res) {
+        console.log("putCliente");
+         
         var parameters = [];
-
         Object.entries(req.data).forEach((property) => {
-            console.log("putCliente");
             if (req.body[property[0]]) {
                 parameters.push(
                     {
@@ -75,13 +74,13 @@ function ClientRepository(dbContext) {
                     });
             }
         });
-
+        
         dbContext.post("InsertOrUpdateClient", parameters, function (error, data) {
             return res.json(response(data, error));
         });
     }
     
-     function postCliente(req, res) {
+    function postCliente(req, res) {
         var parameters = [];
 
         //parameters.push({ name: 'Nombre', type: TYPES.VarChar, val: req.body.Nombre });

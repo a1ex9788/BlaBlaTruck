@@ -40,11 +40,12 @@ function PersonaRepository(dbContext) {
         console.log("esto no funciona idk why");
     }
     }
-     function putPersona(req, res) {
+    
+    function putPersona(req, res) {
+        console.log("putPersona");
+         
         var parameters = [];
-
         Object.entries(req.data).forEach((property) => {
-            console.log("putPersona");
             if (req.body[property[0]]) {
                 parameters.push(
                     {
@@ -53,7 +54,6 @@ function PersonaRepository(dbContext) {
                         type: TYPES.VarChar
                     });
             } else {
-
                 parameters.push(
                     {
                         name: property[0],

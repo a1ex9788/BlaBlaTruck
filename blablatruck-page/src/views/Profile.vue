@@ -237,67 +237,62 @@ export default {
         },
         async saveChanges(){
             this.$bvModal.msgBoxConfirm('¿Desea guardar los cambios?',{
-                    title: 'Confirmación',
-                    size: 'sm',
-                    buttonSize: 'sm',
-                    okVariant: 'success',
-                    okTitle:'Sí',
-                    cancelTitle: 'No',
-                    centered: true
+                title: 'Confirmación',
+                size: 'sm',
+                buttonSize: 'sm',
+                okVariant: 'success',
+                okTitle:'Sí',
+                cancelTitle: 'No',
+                centered: true
+            })
+            .then((value)=>{
+                if(value == true) {
+                    if (this.isCarrier) {
+                        axios.put("http://localhost:3300/api/transportista/" + this.personDNI, {
+                            Capacidad: capacityText.value,
+                            NaturalezaCamion: natureText.value
+                        })
+                        .then((error) => {
+                            console.log(error);
+                        })
+                    } else {
+                        axios.put("http://localhost:3300/api/cliente/" + this.personDNI, {
+                            Empresa: companyText.value
+                        })
+                        .then((error) => {
+                            console.log(error);
+                        })                            
+                    }
+                    axios.put("http://localhost:3300/api/personas/" + this.personDNI, {
+                        Nombre: nameText.value,
+                        Apellidos: surnamesText.value,
+                        Telefono: phoneText.value,
+                        Email: emailText.value,
+                        IBAN: ibanText.value,
+                        NumeroCuentaBancaria: numeroCuentaBancariaText.value
                     })
-                    .then((value)=>{
-                        if(value == true){
-                            if (this.isCarrier) {
-                                axios.put("http://localhost:3300/api/transportista/" + this.personDNI, {
-                                    Capacidad: capacityText.value,
-                                    NaturalezaCamion: natureText.value
-                                })
-                                .then((error) => {
-                                    console.log(error);
-                                })
-                            } else {
-                                axios.put("http://localhost:3300/api/cliente/" + this.personDNI, {
-                                    Empresa: companyText.value
-                                })
-                                .then((error) => {
-                                    console.log(error);
-                                })
-                                
-                            }
-                            axios.put("http://localhost:3300/api/personas/" + this.personDNI, {
-                                Nombre: nameText.value,
-                                Apellidos: surnamesText.value,
-                                Telefono: phoneText.value,
-                                Email: emailText.value,
-                                IBAN: ibanText.value,
-                                NumeroCuentaBancaria: numeroCuentaBancariaText.value
-                            })
-                            .then(() => {
-                                this.$bvModal.msgBoxOk('Sus datos se han guardado correctamente',{
-                                    title: 'Confirmación',
-                                    size: 'sm',
-                                    buttonSize: 'sm',
-                                    okVariant: 'info',
-                                    headerClass: 'p-2 border-bottom-0',
-                                    footerClass: 'p-2 border-top-0',
-                                    centered: true
-                                })
-                                .then(()=> {
-                                    this.updateMyProfile()
-                                    this.onViewProfile()
-                                })
-                        }),
-                                (error) => {
-                                    console.log(error);
-                                } 
-                    }   
-                    
-                    })
-                    
+                    .then(() => {
+                        this.$bvModal.msgBoxOk('Sus datos se han guardado correctamente',{
+                            title: 'Confirmación',
+                            size: 'sm',
+                            buttonSize: 'sm',
+                            okVariant: 'info',
+                            headerClass: 'p-2 border-bottom-0',
+                            footerClass: 'p-2 border-top-0',
+                            centered: true
+                        })
+                        .then(()=> {
+                            this.updateMyProfile()
+                            this.onViewProfile()
+                        })
+                    }),
+                    (error) => {
+                        console.log(error);
+                    }
+                }
+            })  
         },
-        
     }
-    
 };
 </script>
 
