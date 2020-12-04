@@ -82,7 +82,7 @@
                     <div v-if="isCarrierLogged()">
                         <b-row>   
                             <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> Naturaleza Camión: </strong> </label></b-col>
-                            <b-col sm="9" class="mt-2"><b-form-input id="natureText" type="text" :value = this.infoUsuario.NaturalezaCamion></b-form-input></b-col>
+                            <b-col sm="9" class="mt-2"><b-form-select id="natureText" type="text" :options="natureOptions" :value = this.infoUsuario.NaturalezaCamion></b-form-select></b-col>
                         </b-row> 
                         <br>
                         <b-row>   
@@ -132,7 +132,12 @@ export default {
                 NaturalezaCamión: undefined,
                 MediaValoracionTiempo: undefined,
                 MediaValoracionEstado: undefined
-            }
+            },
+            natureOptions: [
+                { value: "1", text: "Producto frágil" },
+                { value: "2", text: "Producto perecedero" },
+                { value: "3", text: "Mercancía peligrosa" },
+      ],
         };
     },
     created() {
@@ -163,7 +168,7 @@ export default {
                 case '2':
                     return "Productos perecederos"
                 case '3':
-                    return "Productos peligrosos"
+                    return "Mercancías peligrosas"
             }
         },
         nombre(){
@@ -245,10 +250,10 @@ export default {
                 cancelTitle: 'No',
                 centered: true
             })
-            .then((value)=>{
+            .then(async (value)=>{
                 if(value == true) {
                     if (this.isCarrier) {
-                        axios.put("http://localhost:3300/api/transportista/" + this.personDNI, {
+                        await axios.put("http://localhost:3300/api/transportista/" + this.personDNI, {
                             DNI: this.personDNI,
                             Capacidad: capacityText.value,
                             NaturalezaCamion: natureText.value
@@ -257,14 +262,14 @@ export default {
                             console.log(error);
                         })
                     } else {
-                        axios.put("http://localhost:3300/api/cliente/" + this.personDNI, {
+                        await axios.put("http://localhost:3300/api/cliente/" + this.personDNI, {
                             Empresa: companyText.value
                         })
                         .then((error) => {
                             console.log(error);
                         })                            
                     }
-                    axios.put("http://localhost:3300/api/personas/" + this.personDNI, {
+                    await axios.put("http://localhost:3300/api/personas/" + this.personDNI, {
                         Nombre: nameText.value,
                         Apellidos: surnamesText.value,
                         Telefono: phoneText.value,
