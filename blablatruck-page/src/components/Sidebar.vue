@@ -53,6 +53,10 @@ export default {
           name: "Ubicación del transportista",
           path: "/navegator",
         },
+         {
+          name: "Buscar usuarios",
+          path: "/profileBrowser",
+        },
       ],
       pagesTransportist: [
         {
@@ -66,6 +70,10 @@ export default {
         {
           name: "Mi perfil",
           path: "/profile",
+        },
+         {
+          name: "Buscar usuarios",
+          path: "/profileBrowser",
         },
       ],
       nombreUsuario: undefined,
