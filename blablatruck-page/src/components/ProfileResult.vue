@@ -152,6 +152,7 @@ export default {
         this.isCarrier = this.$cookies.get("loginToken").Type === "Transportista";
         this.isEditingProfile = false;
         this.updateMyProfile();*/
+        this.isEditingProfile = false;
         
     },
     watch: {
@@ -232,7 +233,7 @@ export default {
 
             if (this.isCarrier) {
                 await axios
-                .get("http://localhost:3300/api/transportista/" + this.personDNI, {})
+                .get("http://localhost:3300/api/transportista/" + this.personDNI.trim(), {})
                 .then(
                     (response) => {
                         res = response.data[0];
@@ -243,7 +244,7 @@ export default {
                 );
             } else {
                 await axios
-                .get("http://localhost:3300/api/cliente/" + this.personDNI, {})
+                .get("http://localhost:3300/api/cliente/" + this.personDNI.trim(), {})
                 .then(
                     (response) => {
                         res = response.data[0];

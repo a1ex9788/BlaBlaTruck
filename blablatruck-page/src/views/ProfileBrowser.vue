@@ -118,6 +118,7 @@ export default {
           })
           .then(
             (response) => {
+                console.log(response)
               this.errorSearch = null;
               this.items = response.data[0];
               if (this.items == undefined) this.items = [];
