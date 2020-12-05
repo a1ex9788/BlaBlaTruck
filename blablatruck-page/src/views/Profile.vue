@@ -52,7 +52,7 @@
                         <b-row>
                             <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Valoración Tiempo:</strong> </label></b-col>
                             <b-col sm="7" class = "mt-3">
-                                <b-img id="starImage1" src="../assets/yellowStar.png"></b-img>
+                                <b-img id="starImage1" src="../assets/greyStar.png"></b-img>
                                 <b-img class = "ml-2" id="starImage2" src= "../assets/greyStar.png" ></b-img>
                                 <b-img class = "ml-2" id="starImage3" src="../assets/greyStar.png" ></b-img>
                                 <b-img class = "ml-2" id="starImage4" src="../assets/greyStar.png" ></b-img>
@@ -62,7 +62,8 @@
                         <b-row>
                             <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Valoración Estado:</strong> </label></b-col>
                             <b-col sm="7" class="mt-3">
-                                <b-img id="starImage6" src="../assets/yellowStar.png"></b-img>
+                                <b-img id="starImageInvisible" src="../assets/yellowStar.png"></b-img>
+                                <b-img id="starImage6" src="../assets/greyStar.png"></b-img>
                                 <b-img class = "ml-2" id="starImage7" src= "../assets/greyStar.png" ></b-img>
                                 <b-img class = "ml-2" id="starImage8" src="../assets/greyStar.png" ></b-img>
                                 <b-img class = "ml-2" id="starImage9" src="../assets/greyStar.png" ></b-img>
@@ -73,39 +74,39 @@
                     <div v-if="!isCarrierLogged()">
                     <b-row>
                         <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Empresa:</strong> </label></b-col>
-                        <b-col sm="7"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.Empresa}} </label></b-col>
+                        <b-col sm="7"><label id="labels" class="mt-3 mb-0"> {{getEmpresa(this.infoUsuario.Empresa)}} </label></b-col>
                     </b-row>
                     </div>
                 </div>
                 <div v-if="isEditing()" id="groupForm2" class="container-fluid">
                     <b-row>
                         <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> Nombre: </strong> </label></b-col>
-                        <b-col sm="9" class="mt-2"><b-form-input id="nameText" type="text" :value = this.infoUsuario.Nombre class=""></b-form-input></b-col>
+                        <b-col sm="9" class="mt-2"><b-form-input :state="nameError" id="nameText" type="text" :value = this.infoUsuario.Nombre class=""></b-form-input></b-col>
                     </b-row>
                     <br>
                     <b-row>
                         <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> Apellidos: </strong> </label></b-col>
-                        <b-col sm="9" class="mt-2"><b-form-input id="surnamesText" type="text" :value = this.infoUsuario.Apellidos ></b-form-input></b-col>
+                        <b-col sm="9" class="mt-2"><b-form-input :state="surnamesError" id="surnamesText" type="text" :value = this.infoUsuario.Apellidos ></b-form-input></b-col>
                     </b-row>
                     <br>
                     <b-row>
                         <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> Teléfono: </strong> </label></b-col>
-                        <b-col sm="9" class="mt-2"><b-form-input id="phoneText" type="number" :value = this.infoUsuario.Telefono></b-form-input></b-col>
+                        <b-col sm="9" class="mt-2"><b-form-input :state="telephoneError" id="phoneText" type="number" :value = this.infoUsuario.Telefono></b-form-input></b-col>
                     </b-row>
                     <br>
                     <b-row>
                         <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> Email: </strong> </label></b-col>
-                        <b-col sm="9" class="mt-2"><b-form-input id="emailText" type="text" :value = this.infoUsuario.Email></b-form-input></b-col>
+                        <b-col sm="9" class="mt-2"><b-form-input :state="emailError" id="emailText" type="text" :value = this.infoUsuario.Email></b-form-input></b-col>
                     </b-row>
                     <br>    
                     <b-row>
                         <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> IBAN: </strong> </label></b-col>
-                        <b-col sm="9" class="mt-2"><b-form-input id="ibanText" type="text" :value = this.infoUsuario.IBAN></b-form-input></b-col>
+                        <b-col sm="9" class="mt-2"><b-form-input :state="ibanError" id="ibanText" type="text" :value = this.infoUsuario.IBAN></b-form-input></b-col>
                     </b-row>
                     <br>  
                     <b-row>
                         <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> C. bancaria: </strong> </label></b-col>
-                        <b-col sm="9" class="mt-2"><b-form-input id="numeroCuentaBancariaText" type="number" :value = this.infoUsuario.NumeroCuentaBancaria></b-form-input></b-col>
+                        <b-col sm="9" class="mt-2"><b-form-input :state="cuentaBancariaError" id="numeroCuentaBancariaText" type="number" :value = this.infoUsuario.NumeroCuentaBancaria></b-form-input></b-col>
                     </b-row>
                     <br>                               
                     <div v-if="isCarrierLogged()">
@@ -116,7 +117,7 @@
                         <br>
                         <b-row>   
                             <b-col sm="3"> <label id="labels" class="mt-3 mb-0"> <strong> Capacidad: </strong> </label></b-col>
-                            <b-col sm="9" class="mt-2"><b-form-input id="capacityText" type="text" :value = this.infoUsuario.Capacidad></b-form-input></b-col>
+                            <b-col sm="9" class="mt-2"><b-form-input :state="capacityError" id="capacityText" type="text" :value = this.infoUsuario.Capacidad></b-form-input></b-col>
                         </b-row>                                                   
                     </div>
                     <div v-if="!isCarrierLogged()">
@@ -136,6 +137,15 @@
 </template>
 
 <script>
+
+function containsANumber(y) {
+  let x = 0;
+  while (!y.includes(x) && x<10) {
+  x++;
+  }
+  return y.includes(x);
+}
+
 const axios = require("axios");
 import Sidebar from "../components/Sidebar";
 
@@ -146,6 +156,14 @@ export default {
     },
     data() {
         return {
+            error: undefined,
+            capacityError: undefined,
+            ibanError: undefined,
+            cuentaBancariaError: undefined,
+            nameError: undefined,
+            surnamesError: undefined,
+            telephoneError: undefined,
+            emailError: undefined,
             personDNI: undefined,
             isCarrier: undefined,
             isEditingProfile: undefined,
@@ -176,10 +194,52 @@ export default {
         this.updateMyProfile();
     },
     methods: {
+        next(){
+            this.error = false;
+
+            this.nameError = true;
+            this.surnamesError = true;
+            this.telephoneError = true;
+            this.emailError = true;
+            this.ibanError = true;
+            this.cuentaBancariaError = true;
+            this.capacityError = true;
+
+            if (nameText.value.trim() == "" || containsANumber(nameText.value.trim())) {
+                //this.showNameTextError = true;
+                this.nameError = false;
+                this.error = true;
+            }
+            if (surnamesText.value.trim() == "" || containsANumber(surnamesText.value.trim())) {
+                //this.showSurnamesTextError = true;
+                this.surnamesError = false;
+                this.error = true;
+            }
+            if (phoneText.value.trim() == "" || phoneText.value.trim().length != 9) {
+                this.telephoneError = false;
+                this.error = true;
+            }
+            if (emailText.value.trim() == "" || !emailText.value.trim().includes("@") || !emailText.value.trim().includes(".")) {
+                this.emailError = false;
+                this.error = true;
+            }
+            if (numeroCuentaBancariaText.value == "" || numeroCuentaBancariaText.value.length != 20) {
+                this.cuentaBancariaError = false;
+                this.error = true;
+            }
+            if (ibanText.value == "" || ibanText.value.length != 4 || !isNaN(ibanText.value.substring(0, 2)) || isNaN(ibanText.value.substring(2, 4))) {
+                this.ibanError = false;
+                this.error = true;
+            }
+            if (this.isCarrier && (capacityText.value == "" || capacityText.value.trim().includes("-") || capacityText.value.trim().includes("e")) ) {
+                //this.showCapacityTextError = true;
+                this.capacityError = false;
+                this.error = true;
+            }
+        },
         isCarrierLogged(){
             return this.isCarrier
         },
-
         onEditProfile(){
             this.isEditingProfile = true
         },
@@ -200,15 +260,12 @@ export default {
                     return "Mercancías peligrosas"
             }
         },
-        nombre(){
-            return this.infoUsuario.Nombre
-        },
         async updateValorations(){
             let updated = false
 
             while(!updated){
                 try{
-                    var srcYellowStar = starImage1.src
+                    var srcYellowStar = starImageInvisible.src
                     switch(Math.round(this.infoUsuario.MediaValoracionTiempo)){
                         case 5: 
                             starImage5.src = srcYellowStar
@@ -218,6 +275,9 @@ export default {
                             starImage3.src = srcYellowStar
                         case 2:
                             starImage2.src = srcYellowStar
+                        case 1:
+                            starImage1.src = srcYellowStar
+                        
                     }
 
                     switch(Math.round(this.infoUsuario.MediaValoracionEstado)){
@@ -229,6 +289,8 @@ export default {
                             starImage8.src = srcYellowStar
                         case 2:
                             starImage7.src = srcYellowStar
+                        case 1:
+                            starImage6.src = srcYellowStar
                     }
                     updated = true;
                 }
@@ -270,64 +332,72 @@ export default {
             return res[0]
         },
         async saveChanges(){
-            this.$bvModal.msgBoxConfirm('¿Desea guardar los cambios?',{
-                title: 'Confirmación',
-                size: 'sm',
-                buttonSize: 'sm',
-                okVariant: 'success',
-                okTitle:'Sí',
-                cancelTitle: 'No',
-                centered: true
-            })
-            .then(async (value)=>{
-                if(value == true) {
-                    if (this.isCarrier) {
-                        await axios.put("http://localhost:3300/api/transportista/" + this.personDNI, {
-                            DNI: this.personDNI,
-                            Capacidad: capacityText.value,
-                            NaturalezaCamion: natureText.value
+            this.next()
+            if(!this.error){
+                this.$bvModal.msgBoxConfirm('¿Desea guardar los cambios?',{
+                    title: 'Confirmación',
+                    size: 'sm',
+                    buttonSize: 'sm',
+                    okVariant: 'success',
+                    okTitle:'Sí',
+                    cancelTitle: 'No',
+                    centered: true
+                })
+                .then(async (value)=>{
+                    if(value == true) {
+                        if (this.isCarrier) {
+                            await axios.put("http://localhost:3300/api/transportista/" + this.personDNI, {
+                                DNI: this.personDNI,
+                                Capacidad: capacityText.value,
+                                NaturalezaCamion: natureText.value
+                            })
+                            .then((error) => {
+                                console.log(error);
+                            })
+                        } else {
+                            await axios.put("http://localhost:3300/api/cliente/" + this.personDNI, {
+                                DNI: this.personDNI,
+                                Empresa: companyText.value
+                            })
+                            .then((error) => {
+                                console.log(error);
+                            })                            
+                        }
+                        await axios.put("http://localhost:3300/api/personas/" + this.personDNI, {
+                            Nombre: nameText.value,
+                            Apellidos: surnamesText.value,
+                            Telefono: phoneText.value,
+                            Email: emailText.value,
+                            IBAN: ibanText.value,
+                            NumeroCuentaBancaria: numeroCuentaBancariaText.value
                         })
-                        .then((error) => {
+                        .then(() => {
+                            this.$bvModal.msgBoxOk('Sus datos se han guardado correctamente',{
+                                title: 'Confirmación',
+                                size: 'sm',
+                                buttonSize: 'sm',
+                                okVariant: 'info',
+                                headerClass: 'p-2 border-bottom-0',
+                                footerClass: 'p-2 border-top-0',
+                                centered: true
+                            })
+                            .then(()=> {
+                                this.updateMyProfile()
+                                this.onViewProfile()
+                            })
+                        }),
+                        (error) => {
                             console.log(error);
-                        })
-                    } else {
-                        await axios.put("http://localhost:3300/api/cliente/" + this.personDNI, {
-                            DNI: this.personDNI,
-                            Empresa: companyText.value
-                        })
-                        .then((error) => {
-                            console.log(error);
-                        })                            
+                        }
                     }
-                    await axios.put("http://localhost:3300/api/personas/" + this.personDNI, {
-                        Nombre: nameText.value,
-                        Apellidos: surnamesText.value,
-                        Telefono: phoneText.value,
-                        Email: emailText.value,
-                        IBAN: ibanText.value,
-                        NumeroCuentaBancaria: numeroCuentaBancariaText.value
-                    })
-                    .then(() => {
-                        this.$bvModal.msgBoxOk('Sus datos se han guardado correctamente',{
-                            title: 'Confirmación',
-                            size: 'sm',
-                            buttonSize: 'sm',
-                            okVariant: 'info',
-                            headerClass: 'p-2 border-bottom-0',
-                            footerClass: 'p-2 border-top-0',
-                            centered: true
-                        })
-                        .then(()=> {
-                            this.updateMyProfile()
-                            this.onViewProfile()
-                        })
-                    }),
-                    (error) => {
-                        console.log(error);
-                    }
-                }
-            })  
+                })  
+
+            }
         },
+        getEmpresa(empresa){
+            if(empresa) return empresa
+            else return "No tiene empresa"
+        }
     }
 };
 </script>
@@ -397,5 +467,10 @@ export default {
 #starImage10{
     max-width: 35px;
     max-height: 35px;
+}
+#starImageInvisible{
+    max-width: 0px;
+    max-height: 0px;
+    visibility: hidden;
 }
 </style>
