@@ -177,13 +177,7 @@ export default {
         this.initializeHereMap();
         await this.makerObjectsEncargos(map);
         await this.addEncargosToList();
-        this.$nextTick(function (map) {
-            window.setInterval((map) => {
-               this.getTrackingLocation(map);
-               var now = new Date();
-               console.log("Ubicación real actualizada: " + now.toUTCString());
-            },5000);
-        })
+        this.getTrackingLocation(map);
     },
 
     methods: {

@@ -49,10 +49,6 @@ export default {
           name: "Mi perfil",
           path: "/profile",
         },
-         {
-          name: "Ubicación del transportista",
-          path: "/navegator",
-        },
       ],
       pagesTransportist: [
         {
