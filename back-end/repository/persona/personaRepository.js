@@ -190,6 +190,16 @@ function PersonaRepository(dbContext) {
             });
         }
     }
+    function searchPersona(req, res) {
+        var parameters = [];
+
+        parameters.push({name: 'Nombre', type: TYPES.VarChar, val: req.query.Nombre});
+        var query = "exec GetPersonasFiltered @Nombre = '%"+ req.query.Nombre +"%'";
+
+        dbContext.getQuery(query, parameters, true, function (error, data) {
+            return res.json(response(data, error));
+        });
+    }
     return {
             getAll: getPersonas,
             get: getPersona,
@@ -200,7 +210,8 @@ function PersonaRepository(dbContext) {
             intercept: findPersona,
             delete: deletePersona,
             usernameExists: isUsernameAlreadyExists,
-            deleteByDNI: deleteByDNI
+            deleteByDNI: deleteByDNI,
+            searchPersona: searchPersona
         }
 }
 module.exports = PersonaRepository;
