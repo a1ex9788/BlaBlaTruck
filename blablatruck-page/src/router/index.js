@@ -63,6 +63,12 @@ const routes = [
       import("../views/AccessForbidden.vue")
   },
   {
+    path: "/profileBrowser",
+    name: "ProfileBrowser",
+    component: () => 
+      import("../views/ProfileBrowser.vue")
+  },
+  {
     path: "/navegator",
     name: "Navegator",
     component: () =>
