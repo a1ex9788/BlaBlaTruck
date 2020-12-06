@@ -38,7 +38,7 @@
                     </b-row>
                     <b-row>
                         <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Cuenta bancaria:</strong> </label></b-col>
-                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.NumeroCuentaBancaria}} </label></b-col>
+                        <b-col sm="6"><label id="labels" class="mt-3 mb-0"> {{formatCuentaBancaria(this.infoUsuario.NumeroCuentaBancaria)}} </label></b-col>
                     </b-row>
                     <div v-if="isCarrierLogged()">
                         <b-row>
@@ -397,6 +397,10 @@ export default {
         getEmpresa(empresa){
             if(empresa) return empresa
             else return "No tiene empresa"
+        },
+        formatCuentaBancaria(cuentaBancaria){
+            return cuentaBancaria.substring(0,4) + " " + cuentaBancaria.substring(4,8) + " " + cuentaBancaria.substring(8,12) + " " 
+                + cuentaBancaria.substring(12,16) + " " + cuentaBancaria.substring(16,20)
         }
     }
 };
