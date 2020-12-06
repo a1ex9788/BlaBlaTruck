@@ -14,18 +14,18 @@ CREATE PROCEDURE InsertOrUpdatePersona
 @Telefono int,
 @Email varchar(40),
 @Usuario varchar(25),
-@Contraseña varchar(25),
+@Contraseï¿½a varchar(25),
 @IBAN varchar(4),
-@NumeroCuentaBancaria varchar(4)
+@NumeroCuentaBancaria varchar(20)
 as
 IF (NOT EXISTS (SELECT DNI FROM Persona WHERE DNI = @DNI))
 BEGIN
-INSERT INTO Persona(Nombre, Apellidos, DNI, Telefono, Email, Usuario, Contraseña, IBAN, NumeroCuentaBancaria)
-VALUES (@Nombre, @Apellidos, @DNI, @Telefono, @Email, @Usuario, @Contraseña, @IBAN, @NumeroCuentaBancaria)
+INSERT INTO Persona(Nombre, Apellidos, DNI, Telefono, Email, Usuario, Contraseï¿½a, IBAN, NumeroCuentaBancaria)
+VALUES (@Nombre, @Apellidos, @DNI, @Telefono, @Email, @Usuario, @Contraseï¿½a, @IBAN, @NumeroCuentaBancaria)
 END
 ELSE
 BEGIN
-UPDATE Persona SET Nombre = @Nombre, Apellidos = @Apellidos, Telefono = @Telefono, Email = @Email, Usuario = @Usuario, Contraseña = @Contraseña, IBAN = @IBAN, NumeroCuentaBancaria = @NumeroCuentaBancaria
+UPDATE Persona SET Nombre = @Nombre, Apellidos = @Apellidos, Telefono = @Telefono, Email = @Email, Usuario = @Usuario, Contraseï¿½a = @Contraseï¿½a, IBAN = @IBAN, NumeroCuentaBancaria = @NumeroCuentaBancaria
 WHERE DNI = @DNI
 END;
 
@@ -38,18 +38,18 @@ CREATE PROCEDURE InsertOrUpdateEncargo
 @Telefono int,
 @Email varchar(40),
 @Usuario varchar(25),
-@Contraseña varchar(25),
+@Contraseï¿½a varchar(25),
 @IBAN varchar(4),
 @NumeroCuentaBancaria varchar(4)
 as
 IF (NOT EXISTS (SELECT DNI FROM Persona WHERE DNI = @DNI))
 BEGIN
-INSERT INTO Persona(Nombre, Apellidos, DNI, Telefono, Email, Usuario, Contraseña, IBAN, NumeroCuentaBancaria)
-VALUES (@Nombre, @Apellidos, @DNI, @Telefono, @Email, @Usuario, @Contraseña, @IBAN, @NumeroCuentaBancaria)
+INSERT INTO Persona(Nombre, Apellidos, DNI, Telefono, Email, Usuario, Contraseï¿½a, IBAN, NumeroCuentaBancaria)
+VALUES (@Nombre, @Apellidos, @DNI, @Telefono, @Email, @Usuario, @Contraseï¿½a, @IBAN, @NumeroCuentaBancaria)
 END
 ELSE
 BEGIN
-UPDATE Persona SET Nombre = @Nombre, Apellidos = @Apellidos, Telefono = @Telefono, Email = @Email, Usuario = @Usuario, Contraseña = @Contraseña, IBAN = @IBAN, NumeroCuentaBancaria = @NumeroCuentaBancaria
+UPDATE Persona SET Nombre = @Nombre, Apellidos = @Apellidos, Telefono = @Telefono, Email = @Email, Usuario = @Usuario, Contraseï¿½a = @Contraseï¿½a, IBAN = @IBAN, NumeroCuentaBancaria = @NumeroCuentaBancaria
 WHERE DNI = @DNI
 END;
 
