@@ -12,6 +12,7 @@
         <p>Hola {{ this.nombreUsuario }}, ¿que quiere hacer?</p>
         <SidebarItem id="sidebarItem" hidden="true" />
       </div>
+    <b-button id='closeSesionButton' class="ml-3" @click="cerrarSesion"> Cerrar sesión </b-button>
     </b-sidebar>
     <nav class="navbar navbar-dark bg-dark">
       <b-button
@@ -80,22 +81,23 @@ export default {
       transportista: undefined,
       cliente: undefined,
       personaDNI: undefined,
+      loginPath: "/login"
     };
   },
   methods: {
       async nombre(){
           var res;
-          await axios
-        .get("http://localhost:3300/api/personas/" + this.$cookies.get("loginToken").Dni, {})
-        .then(
-          (response) => {
-            res = response.data[0];
-          },
-          (error) => {
-            console.log(error);
-          }
-        );
-        this.nombreUsuario = res[0].Nombre;
+        //   await axios
+        // .get("http://localhost:3300/api/personas/" + this.$cookies.get("loginToken").Dni, {})
+        // .then(
+        //   (response) => {
+        //     res = response.data[0];
+        //   },
+        //   (error) => {
+        //     console.log(error);
+        //   }
+        // );
+        // this.nombreUsuario = res[0].Nombre;
         return;
       },
 
@@ -121,6 +123,10 @@ export default {
         });
       }
     },
+    cerrarSesion(){
+      this.$router.push({name: "Login"})
+      this.$cookies.remove("loginToken")
+    }
   },
 };
 </script>
@@ -138,5 +144,12 @@ export default {
   outline: transparent;
   width: 100%;
   text-align: left;
+}
+#closeSesionButton{
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  width: 90%;
 }
 </style>
