@@ -82,6 +82,7 @@
 import $ from 'jquery'
 const axios = require("axios");
 var map;
+const filterCapacity = require("../scripts/filterUtility.js")
 
 export default {
     name: "HereMap",
@@ -601,7 +602,7 @@ export default {
                 let promiseTamanyo = new Promise((resolve) => {
 
                     let filteredPackagesTamanyo = [];
-                    if (this.packages != null && this.packages.length > 0) {
+                    /*if (this.packages != null && this.packages.length > 0) {
                         for (let i = 0; i < this.packages.length; i++) {
                             if (this.packages[i].Alto <= this.tamanyoFilter.altura &&
                                 this.packages[i].Ancho <= this.tamanyoFilter.anchura &&
@@ -612,7 +613,9 @@ export default {
                         }
                         resolve(filteredPackagesTamanyo);
 
-                    };
+                    };*/
+                    filteredPackagesTamanyo = filterCapacity(this.packages, this.tamanyoFilter);
+                    resolve(filteredPackagesTamanyo);
                 });
 
                 promiseTamanyo.then((filteredPackagesTamanyo) => {
