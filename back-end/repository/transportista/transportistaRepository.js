@@ -148,10 +148,33 @@ function TransportistaRepository(dbContext) {
             });
         }
     }
+
+    function setCoord(req,res) {
+
+        if (req.body.DNI) {
+            var option = {"precision":18,"scale":9}
+            console.log("cambiando coord");
+            var parameters = [];
+            console.log(req.body.Latitud);
+            console.log(req.body.Altitud);
+            parameters.push({name: 'DNI', type: TYPES.VarChar, val: req.body.DNI});
+            parameters.push({name: 'Latitud', type: TYPES.Float, val: req.body.Latitud});
+            parameters.push({name: 'Altitud', type: TYPES.Float, val: req.body.Altitud});
+
+            var query = "update transportista set Altitud = @Altitud, Latitud = @Latitud where DNI = @DNI"
+            dbContext.getQuery(query, parameters, true, function (error, data) {            
+                return res.json(response(data, error));
+            });
+        } else {
+            console.log("The parameters are not correct")
+            return res.send("The parameters are not correct");
+        }
+    }
     return {
             getAll: getTransportistas,
             get: getTransportista,
             put: putTransportista,
+            putCoord: setCoord,
             post: postTransportista,
             find: searchTransportistaNaturaleza,
             intercept: findTransportista,
