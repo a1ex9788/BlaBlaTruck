@@ -92,6 +92,7 @@ export default {
     },
     data() {
         return {
+            isStarted: false,
             platform: null,
             apikey: "h_XTwwPMEk8Iz2QvPW6rtB5D99xqPDwbW9aVqNRe1HI",
             packages: undefined,
@@ -156,6 +157,10 @@ export default {
                 }
             }],
             personDNI: undefined,
+            actualLocation:{
+                longitude: undefined,
+                latitude: undefined
+            }
         }
     },
 
@@ -174,11 +179,18 @@ export default {
         this.initializeHereMap();
         await this.makerObjectsEncargos(map);
         await this.addEncargosToList();
+        this.$nextTick(function (map) {
+            window.setInterval((map) => {
+               this.getTrackingLocation(map);
+               var now = new Date();
+               console.log("Ubicación real actualizada: " + now.toUTCString());
+            },5000);
+        })
+        this.isStarted = true;
     },
 
     methods: {
         initializeHereMap() { // rendering map
-
             const mapContainer = this.$refs.hereMap;
             const H = window.H;
             // Obtain the default map types from the platform object
@@ -261,6 +273,7 @@ export default {
                 .then(
                     (response) => {
                         this.packages = response.data[0];
+                        console.log(response.data[0])
                     },
                     (error) => {
                         console.log(error);
@@ -274,7 +287,8 @@ export default {
 
             //Limpiar de marcadores el mapa
             map.removeObjects(map.getObjects())
-            if (res.length > 0)
+
+            if (res != undefined && res.length > 0 && this.$cookies.get("loginToken").Type == 'Transportista'){
                 res.forEach((element) => {
                     var calle = element.Origen;
                     var service = this.platform.getSearchService();
@@ -350,6 +364,7 @@ export default {
                         }
                     }, alert);
                 })
+                }
             else
                 this.$bvModal.show("noPackagesInMap")
         },
@@ -782,7 +797,7 @@ export default {
                                     if (distance <= this.originDestinationFilter.destination.radius) {
                                         filteredPackagesOriginDestination.push(packageItem);
                                     }
-                                    if (index === array.length - 1) {
+                                    if (index === array.length - 1 ) {
                                         this.packages = filteredPackagesOriginDestination;
                                         this.updateMap(filteredPackagesOriginDestination, map)
                                         this.originDestinationFilter.isActive = true;
@@ -850,9 +865,10 @@ export default {
                         map.getViewModel().setLookAtData({
                             bounds: polyline.getBoundingBox()
                         });
-
+                      
                     }
-
+                     map.setCenter({lat:this.actualLocation.latitude, lng:this.actualLocation.longitude});
+                     console.log("Centrado en la ubicación actual:"+this.actualLocation.latitude + ", " + this.actualLocation.longitude);
                 },
 
                 error => {
@@ -867,7 +883,7 @@ export default {
         },
 
         async getEncargos() {
-
+            if(this.isStarted){
             var respuesta = [];
             var todas_respuestas = [];
             var service = this.platform.getSearchService();
@@ -877,13 +893,12 @@ export default {
             await axios
                 .get("http://localhost:3300/api/encargo/transportista", {
                     params: {
-                        DNITransportista: this.personDNI,
+                        DNI: this.personDNI,
                     },
                 })
                 .then(
                     (response) => {
                         todas_respuestas = response.data[0];
-                        
                         todas_respuestas.forEach(element => {
                             if (!element.FechaEntrega && element.NombreCompleto != "Por reservar") {
                                 respuesta.push(element);
@@ -954,15 +969,104 @@ export default {
                         console.log(error);
                     }
                 );
+                }
         },
         modifyFormat(dateTime) {
             if (dateTime) {
                 return dateTime.substring(0, 10)
             } else return "No hay"
+        },
+
+        getTrackingLocation(map) {
+            var options = {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            };
+        
+         if (navigator.geolocation){
+             navigator.geolocation.getCurrentPosition(this.successFindLocation, this.errorFindLocation, options);
+             }
+         else{
+             alert("Geolocation is not supported by this browser");
+             console.log("Geolocation is not supported by this browser");
+             }
+  
+        },
+
+        successFindLocation(pos) {
+            const url = "https://cdn0.iconfinder.com/data/icons/pinpoint-interface/48/address-shipping-512.png"
+            var pngIcon = new H.map.Icon(url, {size: {w: 40, h: 40}});
+            let userCookie = this.$cookies.get("loginToken");
+            if(userCookie.Type == 'Transportista'){
+                console.log(userCookie);
+                var crd = pos.coords;
+                console.log('Tu posición actual es: ');
+                console.log('Latitude : ' + crd.latitude);
+                this.actualLocation.latitude = crd.latitude
+                console.log('Longitude: ' + crd.longitude);
+                this.actualLocation.longitude = crd.longitude;
+                console.log('Error de estimación: ' + crd.accuracy + ' metros.');
+                let dni = userCookie.Dni;
+                if(dni != undefined && this.isStarted){
+                    axios.put('http://localhost:3300/api/transportista' , {
+                        DNI: dni,
+                        Altitud: crd.longitude,
+                        Latitud: crd.latitude
+            })}
+            var locationMarker = new H.map.Marker (
+                new H.geo.Point(
+                    this.actualLocation.latitude, this.actualLocation.longitude),
+                    {
+                    icon: pngIcon
+                    }
+                );
+                map.addObject(locationMarker);
+            }
+            else { 
+                // si el usuario es cliente en vez de coger la info del dispositivo recogeremos la info de la bd del transportista
+                let dni = userCookie.Dni;
+                let url = 'http://localhost:3300/api/cliente/' + dni + '/coords';
+                axios
+                .get(url)
+                .then(
+                    (response) => {
+                        let coordsTransportistas = response.data[0];
+                        coordsTransportistas.forEach(element => {
+                            this.actualLocation.latitude = element.Latitud;
+                            this.actualLocation.longitude = element.Altitud;
+                            var locationMarker = new H.map.Marker (
+                            new H.geo.Point(
+                                this.actualLocation.latitude, this.actualLocation.longitude),
+                                {
+                                icon: pngIcon
+                                }
+                            );
+                            map.addObject(locationMarker);
+                        });
+
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+
+            }
+         
+         
+         
+        console.log("icono añadido");
+        },
+
+        errorFindLocation(err) {
+        console.warn('ERROR(' + err.code + '): ' + err.message);
+        alert("Ha habido un error en encontrar su localización");
         }
 
     }
+        
 }
+
 </script>
 
 <style>

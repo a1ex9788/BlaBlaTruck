@@ -5,8 +5,8 @@ module.exports = function (router) {
     router.route('/transportista')
         .get(transportistaRepository.getAll)
         .post(transportistaRepository.post)
-        .delete(transportistaRepository.deleteByDNI);
-        
+        .delete(transportistaRepository.deleteByDNI)
+        .put(transportistaRepository.putCoord);
 
     router.use('/transportista/:transportistaDNI', transportistaRepository.intercept);
 

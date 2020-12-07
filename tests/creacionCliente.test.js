@@ -1,59 +1,58 @@
 const request = require('supertest');
 
-describe('Post transportista', () => {
-    it('Insertar un persona en la BD sin fallos', async () =>{
-        await request('http://localhost:3300')
+/*Creamos un cliente con su respectiva persona en la BD  */
+beforeAll(async () => {
+    await request('http://localhost:3300')
         .post('/api/personas')
-        .send({ params: {
-            Nombre: "NombreTest",
-            Apellidos: "TEST CLIENTE",           
-            DNI: "40040404A",
+        .send({ 
+            Nombre: 'TestName',
+            Apellidos: 'TestApellidos',
+            DNI: '50501010A',
             Telefono: 123456789,
-            Email: "test@gmail.com",
-            Usuario: "clienteTest",
-            Contraseña: "1234",
-            IBAN: "ES65",
-            NumeroCuentaBancaria: "01234567890123456789"
-
-        }})
-        .on('requestCompleted',async (resInsert) => {
-            expect(resInsert.statusCode).toEqual(200);
+            Email: 'test@gmail.com',
+            Usuario: 'test',
+            Contraseña: 'test',
+            IBAN: 'ES65',
+            NumeroCuentaBancaria: '01234567890123456789',
         })
-    })
+    await request('http://localhost:3300')
+        .post('/api/cliente')
+        .send({
+            DNI: '50501010A',
+            Empresa: 'Producto frágil',             
+        })       
+})
 
-    it('Insertar un cliente en la BD sin fallos', async () =>{
-        await request('http://localhost:3300')
-        .post('/api/cliente', {
-            DNI: "40040404A",
-            Empresa: "Empresa"   
-        })
-        .on('requestCompleted',async (resInsert) => {
-            expect(resInsert.statusCode).toEqual(true);
-        })
-    })
+/*Borramos el cliente y persona creado de la bd */
+afterAll(async() => {
+    await request('http://localhost:3300')
+      .delete('/api/cliente')
+      .send({
+        dni: '50501010A'
+      })
+    await request('http://localhost:3300')
+      .delete('/api/personas')
+      .send({
+        dni: '50501010A'
+      })
+})
 
-    it('Comprobar la inserción del cliente', async() => {
+/*Comprobamos que el cliente ha sido creado correctamente en la BD */
+describe('Post cliente', () => {
+    it('Debería comprobar la inserción del cliente', async() => {
         let isInserted = false;
-        let transportista;
+        let cliente;
 
         await request('http://localhost:3300')
-        .get('/api/cliente/40040404A')
+        .get('/api/cliente/50501010A')
         .then((response) => {
-            transportista = response           
+            cliente = response           
         })
         
-        if(transportista.text !== "Not Found") {
+        if(cliente.text !== "Not Found") {
             isInserted = true;
         }
 
         expect(isInserted).toBe(true);
-        if(isInserted){
-            await request('http://localhost:3300')
-            .delete('/api/transportista/50501010A')
-            .delete('/api/persona/50501010A')
-        }    
     })
-
-
-
 })

@@ -14,7 +14,21 @@ function ClientRepository(dbContext) {
     }
 
     function getCliente(req,res) {
-        return res.json(req.data);
+        if (req.params.clienteDNI) {
+            console.log("getCliente");
+            var parameters = [];
+            parameters.push({name: 'DNI', type: TYPES.VarChar, val: req.params.clienteDNI});
+
+            var query = "select c.DNI, c.Empresa, p.Nombre, p.Apellidos, p.Email, p.Telefono, p.IBAN, p.NumeroCuentaBancaria, p.Usuario "
+                + "from Cliente c, Persona p "
+                + "where c.DNI like @DNI and p.DNI like @DNI"
+            dbContext.getQuery(query, parameters, true, function (error, data) {            
+                return res.json(response(data, error));
+            });
+        } else {
+            console.log("The parameters are not correct")
+            return res.send("The parameters are not correct");
+        }
     }
 
     function findCliente(req, res, next) {
@@ -22,16 +36,15 @@ function ClientRepository(dbContext) {
             var parameters = [];
 
             parameters.push({name: 'clienteDNI', type: TYPES.VarChar, val: req.params.clienteDNI});
-            var query = "select * from Cliente where DNI LIKE @clienteDNI";
+            var query = "select * from Persona p, Cliente c where p.DNI = c.DNI and p.DNI LIKE @clienteDNI";
+
             dbContext.getQuery(query, parameters, false, function(err, data) {
                 if(data) {
                     req.data = data[0];
                     return next();
                 }
-                console.log("error 404");
                 return res.sendStatus(404);
-            });
-            
+            });            
         }
         else
         {
@@ -40,34 +53,17 @@ function ClientRepository(dbContext) {
         }
     }
 
-     function putCliente(req, res) {
-        var parameters = [];
+    function putCliente(req, res) {
+        console.log("putCliente");
+        
+        var query = "UPDATE Cliente SET Empresa = '" + req.body.Empresa + "' WHERE DNI = '" + req.body.DNI + "'"
 
-        Object.entries(req.data).forEach((property) => {
-            if (req.body[property[0]]) {
-                parameters.push(
-                    {
-                        name: property[0],
-                        val: req.body[property[0]],
-                        type: TYPES.VarChar
-                    });
-            } else {
-
-                parameters.push(
-                    {
-                        name: property[0],
-                        val: property[1],
-                        type: TYPES.VarChar
-                    });
-            }
-        });
-
-        dbContext.post("InsertOrUpdateClient", parameters, function (error, data) {
+        dbContext.getQuery(query, [], true, function (error, data) {
             return res.json(response(data, error));
         });
     }
     
-     function postCliente(req, res) {
+    function postCliente(req, res) {
         var parameters = [];
 
         //parameters.push({ name: 'Nombre', type: TYPES.VarChar, val: req.body.Nombre });
@@ -112,11 +108,13 @@ function ClientRepository(dbContext) {
             });
         }
     }
+
     function getClienteEmpresa(req, res) {
         dbContext.get("getClienteEmpresa", function (error, data) {
             return res.json(response(data, error));
         });
     }
+
     function searchCliente(req,res) {
         var parameters = [];
         parameters.push({name: 'Empresa', type: TYPES.VarChar, val: req.query.Empresa});
@@ -127,6 +125,7 @@ function ClientRepository(dbContext) {
             return res.json(response(data,error));
         });
     }
+
     function deleteByDNI(req, res) {
         if (req.body.dni) {
             var parameters = [];
@@ -144,6 +143,20 @@ function ClientRepository(dbContext) {
         }
     }
 
+    function getEncargosCoords(req,res) {
+        console.log(req.params);
+        if(req.params.clienteDNI) {
+            var parameters = [];
+
+            parameters.push({name: 'clienteDNI', type: TYPES.VarChar, val: req.params.clienteDNI});
+            var query = 'SELECT Latitud, Altitud from Transportista t where t.DNI in (select e.DNITransportista FROM Encargo e WHERE e.DNICliente LIKE @clienteDNI AND e.FechaRecogida Is not NULL and e.FechaEntrega is NULL)'
+            
+            dbContext.getQuery(query, parameters, true, function (error, data) {
+                return res.json(response(data, error));
+            });
+        }
+    }
+
     return {
             getAll: getClientes,
             get: getCliente,
@@ -153,7 +166,8 @@ function ClientRepository(dbContext) {
             find: searchCliente,
             intercept: findCliente,
             delete: deleteClient,
-            deleteByDNI: deleteByDNI
+            deleteByDNI: deleteByDNI,
+            getEncargoCoords: getEncargosCoords
         }
 }
 module.exports = ClientRepository;

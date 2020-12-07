@@ -2,6 +2,8 @@ const _personaRepository = require('./personaRepository');
 const dbContext = require('../../dataBase/dbContext');
 module.exports = function (router) {
     const personaRepository = _personaRepository(dbContext);
+    router.route('/personas/filter')
+        .get(personaRepository.searchPersona)
     router.route('/personas')
         .get(personaRepository.getAll)
         .post(personaRepository.post)

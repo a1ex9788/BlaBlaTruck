@@ -8,11 +8,13 @@ module.exports = function (router) {
         .delete(clienteRepository.deleteByDNI);
     router.route('/cliente/empresa')
         .get(clienteRepository.getMulti);
-
+    router.route('/cliente/:clienteDNI/coords')
+        .get(clienteRepository.getEncargoCoords);
     router.use('/cliente/:clienteDNI', clienteRepository.intercept);
 
     router.route('/cliente/:clienteDNI')
         .get(clienteRepository.get)
         .put(clienteRepository.put) 
-        .delete(clienteRepository.delete)   
+        .delete(clienteRepository.delete);
+
 }

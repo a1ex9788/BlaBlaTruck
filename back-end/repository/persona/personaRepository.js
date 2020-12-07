@@ -14,8 +14,14 @@ function PersonaRepository(dbContext) {
             });
     }
     function getPersona(req,res) {
-        console.log("getPersona");
-        return res.json(req.data);
+        var parameters = [];
+        parameters.push({name: 'personaDNI', type: TYPES.VarChar, val: req.params.personaDNI});
+        var query = "select * from Persona where DNI LIKE @personaDNI";
+        dbContext.getQuery(query, parameters, true, function (error, data){
+            console.log(data);
+            return res.json(response(data,error));
+        });
+       
     }
     function findPersona(req, res, next) {
         if(req.params.personaDNI){
@@ -40,11 +46,12 @@ function PersonaRepository(dbContext) {
         console.log("esto no funciona idk why");
     }
     }
-     function putPersona(req, res) {
+    
+    function putPersona(req, res) {
+        console.log("putPersona");
+         
         var parameters = [];
-
         Object.entries(req.data).forEach((property) => {
-            console.log("putPersona");
             if (req.body[property[0]]) {
                 parameters.push(
                     {
@@ -53,7 +60,6 @@ function PersonaRepository(dbContext) {
                         type: TYPES.VarChar
                     });
             } else {
-
                 parameters.push(
                     {
                         name: property[0],
@@ -184,6 +190,16 @@ function PersonaRepository(dbContext) {
             });
         }
     }
+    function searchPersona(req, res) {
+        var parameters = [];
+
+        parameters.push({name: 'Nombre', type: TYPES.VarChar, val: req.query.Nombre});
+        var query = "exec GetPersonasFiltered @Nombre = '%"+ req.query.Nombre +"%'";
+
+        dbContext.getQuery(query, parameters, true, function (error, data) {
+            return res.json(response(data, error));
+        });
+    }
     return {
             getAll: getPersonas,
             get: getPersona,
@@ -194,7 +210,8 @@ function PersonaRepository(dbContext) {
             intercept: findPersona,
             delete: deletePersona,
             usernameExists: isUsernameAlreadyExists,
-            deleteByDNI: deleteByDNI
+            deleteByDNI: deleteByDNI,
+            searchPersona: searchPersona
         }
 }
 module.exports = PersonaRepository;
