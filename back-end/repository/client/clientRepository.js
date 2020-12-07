@@ -149,7 +149,7 @@ function ClientRepository(dbContext) {
             var parameters = [];
 
             parameters.push({name: 'clienteDNI', type: TYPES.VarChar, val: req.params.clienteDNI});
-            var query = 'SELECT Latitud, Altitud from Transportista t where t.DNI in (select e.DNITransportista FROM Encargo e WHERE e.DNICliente LIKE @clienteDNI)'
+            var query = 'SELECT Latitud, Altitud from Transportista t where t.DNI in (select e.DNITransportista FROM Encargo e WHERE e.DNICliente LIKE @clienteDNI AND e.FechaRecogida Is not NULL and e.FechaEntrega is NULL)'
             
             dbContext.getQuery(query, parameters, true, function (error, data) {
                 return res.json(response(data, error));

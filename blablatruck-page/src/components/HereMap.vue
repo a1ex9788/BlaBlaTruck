@@ -287,7 +287,7 @@ export default {
             //Limpiar de marcadores el mapa
             map.removeObjects(map.getObjects())
 
-            if (res != undefined && res.length > 0){
+            if (res != undefined && res.length > 0 && this.$cookies.get("loginToken").Type == 'Transportista'){
                 res.forEach((element) => {
                     var calle = element.Origen;
                     var service = this.platform.getSearchService();
@@ -794,7 +794,7 @@ export default {
                                     if (distance <= this.originDestinationFilter.destination.radius) {
                                         filteredPackagesOriginDestination.push(packageItem);
                                     }
-                                    if (index === array.length - 1) {
+                                    if (index === array.length - 1 ) {
                                         this.packages = filteredPackagesOriginDestination;
                                         this.updateMap(filteredPackagesOriginDestination, map)
                                         this.originDestinationFilter.isActive = true;
