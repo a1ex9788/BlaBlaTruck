@@ -992,6 +992,8 @@ export default {
         },
 
         successFindLocation(pos) {
+            const url = "https://cdn0.iconfinder.com/data/icons/pinpoint-interface/48/address-shipping-512.png"
+            var pngIcon = new H.map.Icon(url, {size: {w: 40, h: 40}});
             let userCookie = this.$cookies.get("loginToken");
             if(userCookie.Type == 'Transportista'){
                 console.log(userCookie);
@@ -1009,21 +1011,47 @@ export default {
                         Altitud: crd.longitude,
                         Latitud: crd.latitude
             })}
+            var locationMarker = new H.map.Marker (
+                new H.geo.Point(
+                    this.actualLocation.latitude, this.actualLocation.longitude),
+                    {
+                    icon: pngIcon
+                    }
+                );
+                map.addObject(locationMarker);
             }
             else { 
                 // si el usuario es cliente en vez de coger la info del dispositivo recogeremos la info de la bd del transportista
+                let dni = userCookie.Dni;
+                let url = 'http://localhost:3300/api/cliente/' + dni + '/coords';
+                axios
+                .get(url)
+                .then(
+                    (response) => {
+                        let coordsTransportistas = response.data[0];
+                        coordsTransportistas.forEach(element => {
+                            this.actualLocation.latitude = element.Latitud;
+                            this.actualLocation.longitude = element.Altitud;
+                            var locationMarker = new H.map.Marker (
+                            new H.geo.Point(
+                                this.actualLocation.latitude, this.actualLocation.longitude),
+                                {
+                                icon: pngIcon
+                                }
+                            );
+                            map.addObject(locationMarker);
+                        });
+
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
 
             }
-         const url = "https://cdn0.iconfinder.com/data/icons/pinpoint-interface/48/address-shipping-512.png"
-         var pngIcon = new H.map.Icon(url, {size: {w: 40, h: 40}});
-         var locationMarker = new H.map.Marker (
-         new H.geo.Point(
-             this.actualLocation.latitude, this.actualLocation.longitude),
-            {
-             icon: pngIcon
-            }
-          );
-        map.addObject(locationMarker);
+         
+         
+         
         console.log("icono añadido");
         },
 

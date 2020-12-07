@@ -143,6 +143,20 @@ function ClientRepository(dbContext) {
         }
     }
 
+    function getEncargosCoords(req,res) {
+        console.log(req.params);
+        if(req.params.clienteDNI) {
+            var parameters = [];
+
+            parameters.push({name: 'clienteDNI', type: TYPES.VarChar, val: req.params.clienteDNI});
+            var query = 'SELECT Latitud, Altitud from Transportista t where t.DNI in (select e.DNITransportista FROM Encargo e WHERE e.DNICliente LIKE @clienteDNI)'
+            
+            dbContext.getQuery(query, parameters, true, function (error, data) {
+                return res.json(response(data, error));
+            });
+        }
+    }
+
     return {
             getAll: getClientes,
             get: getCliente,
@@ -152,7 +166,8 @@ function ClientRepository(dbContext) {
             find: searchCliente,
             intercept: findCliente,
             delete: deleteClient,
-            deleteByDNI: deleteByDNI
+            deleteByDNI: deleteByDNI,
+            getEncargoCoords: getEncargosCoords
         }
 }
 module.exports = ClientRepository;

@@ -21,18 +21,10 @@ function TransportistaRepository(dbContext) {
 
             var query = "select t.DNI, t.Capacidad, t.NaturalezaCamion, p.Nombre, p.Apellidos, p.Email, p.Telefono, p.IBAN, p.NumeroCuentaBancaria, p.Usuario, AVG(e.ValoracionTiempoEntrega) as MediaValoracionTiempo, AVG(e.ValoracionEstadoPaquete) as MediaValoracionEstado "
                 + "from Transportista t, Persona p, Encargo e "
-                + "where t.DNI like @DNI and p.DNI like @DNI and e.DNITransportista like t.DNI "
+                + "where t.DNI = @DNI and p.DNI = @DNI and e.DNITransportista = t.DNI "
                 + "group by t.DNI, t.Capacidad, t.NaturalezaCamion, p.Nombre, p.Apellidos, p.Email, p.Telefono, p.IBAN, p.NumeroCuentaBancaria, p.Usuario"
             dbContext.getQuery(query, parameters, true, function (error, data) {            
-                if(data){
-                    return res.json(response(data, error))
-                }
-                query = "select t.DNI, t.Capacidad, t.NaturalezaCamion, p.Nombre, p.Apellidos, p.Email, p.Telefono, p.IBAN, p.NumeroCuentaBancaria, p.Usuario, 0 as MediaValoracionTiempo, 0 as MediaValoracionEstado "
-                    + "from Transportista t, Persona p "
-                    + "where t.DNI like @DNI and p.DNI like @DNI"
-                dbContext.getQuery(query, parameters, true, function (error, data) {  
-                    return res.json(response(data, error))     
-                })
+                return res.json(response(data, error));
             });
         } else {
             console.log("The parameters are not correct")
