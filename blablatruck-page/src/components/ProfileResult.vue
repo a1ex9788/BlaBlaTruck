@@ -1,12 +1,8 @@
 <template>
-<div>
-    <Sidebar />
-    <div id="groupForm">
+    
+<div id="groupForm">
         <div id="groupTitle" class="container-fluid">
             <div class="row mt-2">
-                <div class="col-md-10" id="titleDiv">
-                <h2 id="title" class="mt-4" style= "font-weight: bold">Mi perfil</h2>
-                </div>
                 <div v-if="!isEditing()" id="groupForm2" class="container-fluid">
                     <b-row>
                         <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Nombre:</strong> </label></b-col>
@@ -17,37 +13,17 @@
                         <b-col sm="7"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.Apellidos}} </label></b-col>
                     </b-row>
                     <b-row>
-                        <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> DNI:</strong> </label></b-col>
-                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.DNI}} </label></b-col>
-                    </b-row>
-                    <b-row>
                         <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Telefono:</strong> </label></b-col>
                         <b-col sm="3"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.Telefono}} </label></b-col>
                     </b-row>
-                    <b-row>
+                    <b-row  v-if="isCarrier">
                         <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Email:</strong> </label></b-col>
                         <b-col sm="7"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.Email}} </label></b-col>
-                    </b-row>
-                    <b-row>
-                        <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Usuario:</strong> </label></b-col>
-                        <b-col sm="7"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.Usuario}} </label></b-col>
-                    </b-row>
-                    <b-row>
-                        <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> IBAN:</strong> </label></b-col>
-                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.IBAN}} </label></b-col>
-                    </b-row>
-                    <b-row>
-                        <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Cuenta bancaria:</strong> </label></b-col>
-                        <b-col sm="6"><label id="labels" class="mt-3 mb-0"> {{formatCuentaBancaria(this.infoUsuario.NumeroCuentaBancaria)}} </label></b-col>
                     </b-row>
                     <div v-if="isCarrierLogged()">
                         <b-row>
                             <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Naturaleza Camión:</strong> </label></b-col>
                             <b-col sm="5"><label id="labels" class="mt-3 mb-0"> {{this.getNaturalezaCamion(this.infoUsuario.NaturalezaCamion)}} </label></b-col>
-                        </b-row>
-                        <b-row>
-                            <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Capacidad:</strong> </label></b-col>
-                            <b-col sm="3"><label id="labels" class="mt-3 mb-0"> {{this.infoUsuario.Capacidad}} </label></b-col>
                         </b-row>
                         <b-row>
                             <b-col sm="5"><label id="labels" class="mt-3 mb-0"> <strong> Valoración Tiempo:</strong> </label></b-col>
@@ -78,81 +54,22 @@
                     </b-row>
                     </div>
                 </div>
-                <div v-if="isEditing()" id="groupForm2" class="container-fluid">
-                    <b-row>
-                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> Nombre: </strong> </label></b-col>
-                        <b-col sm="9" class="mt-2"><b-form-input :state="nameError" id="nameText" type="text" :value = this.infoUsuario.Nombre class=""></b-form-input></b-col>
-                    </b-row>
-                    <br>
-                    <b-row>
-                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> Apellidos: </strong> </label></b-col>
-                        <b-col sm="9" class="mt-2"><b-form-input :state="surnamesError" id="surnamesText" type="text" :value = this.infoUsuario.Apellidos ></b-form-input></b-col>
-                    </b-row>
-                    <br>
-                    <b-row>
-                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> Teléfono: </strong> </label></b-col>
-                        <b-col sm="9" class="mt-2"><b-form-input :state="telephoneError" id="phoneText" type="number" :value = this.infoUsuario.Telefono></b-form-input></b-col>
-                    </b-row>
-                    <br>
-                    <b-row>
-                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> Email: </strong> </label></b-col>
-                        <b-col sm="9" class="mt-2"><b-form-input :state="emailError" id="emailText" type="text" :value = this.infoUsuario.Email></b-form-input></b-col>
-                    </b-row>
-                    <br>    
-                    <b-row>
-                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> IBAN: </strong> </label></b-col>
-                        <b-col sm="9" class="mt-2"><b-form-input :state="ibanError" id="ibanText" type="text" :value = this.infoUsuario.IBAN></b-form-input></b-col>
-                    </b-row>
-                    <br>  
-                    <b-row>
-                        <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> C. bancaria: </strong> </label></b-col>
-                        <b-col sm="9" class="mt-2"><b-form-input :state="cuentaBancariaError" id="numeroCuentaBancariaText" type="number" :value = this.infoUsuario.NumeroCuentaBancaria></b-form-input></b-col>
-                    </b-row>
-                    <br>                               
-                    <div v-if="isCarrierLogged()">
-                        <b-row>   
-                            <b-col sm="3"><label id="labels" class="mt-3 mb-0"> <strong> Naturaleza Camión: </strong> </label></b-col>
-                            <b-col sm="9" class="mt-2"><b-form-select id="natureText" type="text" :options="natureOptions" :value = this.infoUsuario.NaturalezaCamion></b-form-select></b-col>
-                        </b-row> 
-                        <br>
-                        <b-row>   
-                            <b-col sm="3"> <label id="labels" class="mt-3 mb-0"> <strong> Capacidad: </strong> </label></b-col>
-                            <b-col sm="9" class="mt-2"><b-form-input :state="capacityError" id="capacityText" type="text" :value = this.infoUsuario.Capacidad></b-form-input></b-col>
-                        </b-row>                                                   
-                    </div>
-                    <div v-if="!isCarrierLogged()">
-                        <b-row>   
-                            <b-col sm="3"> <label id="labels" class="mt-3 mb-0"> <strong> Empresa: </strong> </label></b-col>
-                            <b-col sm="9" class="mt-2"><b-form-input id="companyText" type="text" :value = this.infoUsuario.Empresa></b-form-input></b-col>
-                        </b-row>                                                   
-                    </div>
-                </div>                
             </div>
-            <b-button v-if="!isEditing()" class="btn-info mt-5" @click="onEditProfile()">  Editar perfil </b-button>
-            <b-button v-if="isEditing()" id="buttons" class="btn-danger mt-5" @click="onViewProfile()">  Cancelar </b-button> 
-            <b-button v-if="isEditing()" id="buttons" class="btn-success mt-5" @click="saveChanges()">  Guardar </b-button>  
         </div>
     </div>
-</div>
 </template>
 
 <script>
-
-function containsANumber(y) {
-  let x = 0;
-  while (!y.includes(x) && x<10) {
-  x++;
-  }
-  return y.includes(x);
-}
-
 const axios = require("axios");
-import Sidebar from "../components/Sidebar";
 
 export default {
-    name: "Profile",
-    components: {
-        Sidebar,
+    name: "ProfileResult",
+    props: {
+        dni: String,
+        tipo: Boolean,
+    },
+    created() {
+        
     },
     data() {
         return {
@@ -188,55 +105,22 @@ export default {
         };
     },
     created() {
-        this.personDNI = this.$cookies.get("loginToken").Dni;
+        /*this.personDNI = this.$cookies.get("loginToken").Dni;
         this.isCarrier = this.$cookies.get("loginToken").Type === "Transportista";
         this.isEditingProfile = false;
-        this.updateMyProfile();
+        this.updateMyProfile();*/
+        this.isEditingProfile = false;
+        
+    },
+    watch: {
+        dni: function(n, o) {
+            this.personDNI = this.dni;
+            this.isCarrier = this.tipo;
+            if(this.dni != undefined)
+                this.updateMyProfile();
+        }
     },
     methods: {
-        next(){
-            this.error = false;
-
-            this.nameError = true;
-            this.surnamesError = true;
-            this.telephoneError = true;
-            this.emailError = true;
-            this.ibanError = true;
-            this.cuentaBancariaError = true;
-            this.capacityError = true;
-
-            if (nameText.value.trim() == "" || containsANumber(nameText.value.trim())) {
-                //this.showNameTextError = true;
-                this.nameError = false;
-                this.error = true;
-            }
-            if (surnamesText.value.trim() == "" || containsANumber(surnamesText.value.trim())) {
-                //this.showSurnamesTextError = true;
-                this.surnamesError = false;
-                this.error = true;
-            }
-            if (phoneText.value.trim() == "" || phoneText.value.trim().length != 9) {
-                this.telephoneError = false;
-                this.error = true;
-            }
-            if (emailText.value.trim() == "" || !emailText.value.trim().includes("@") || !emailText.value.trim().includes(".")) {
-                this.emailError = false;
-                this.error = true;
-            }
-            if (numeroCuentaBancariaText.value == "" || numeroCuentaBancariaText.value.length != 20) {
-                this.cuentaBancariaError = false;
-                this.error = true;
-            }
-            if (ibanText.value == "" || ibanText.value.length != 4 || !isNaN(ibanText.value.substring(0, 2)) || isNaN(ibanText.value.substring(2, 4))) {
-                this.ibanError = false;
-                this.error = true;
-            }
-            if (this.isCarrier && (capacityText.value == "" || capacityText.value.trim().includes("-") || capacityText.value.trim().includes("e")) ) {
-                //this.showCapacityTextError = true;
-                this.capacityError = false;
-                this.error = true;
-            }
-        },
         isCarrierLogged(){
             return this.isCarrier
         },
@@ -397,10 +281,6 @@ export default {
         getEmpresa(empresa){
             if(empresa) return empresa
             else return "No tiene empresa"
-        },
-        formatCuentaBancaria(cuentaBancaria){
-            return cuentaBancaria.substring(0,4) + " " + cuentaBancaria.substring(4,8) + " " + cuentaBancaria.substring(8,12) + " " 
-                + cuentaBancaria.substring(12,16) + " " + cuentaBancaria.substring(16,20)
         }
     }
 };
@@ -409,24 +289,14 @@ export default {
 <style>
 #groupForm {
     max-width: 800px;
-    margin: 0 auto;
 }
 #groupTitle {
     max-width: 800px;
-    min-width: 800px;
-    text-align: center;
+
 }
 #groupForm2 {
   max-width: 500px;
   text-align: left;
-}
-#titleDiv {
-  padding-left: 19%;
-}
-@media (max-width: 480px) {
-  #titleDiv {
-    padding-right: 0%;
-  }
 }
 #buttons {
   margin: 10%;

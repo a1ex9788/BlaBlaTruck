@@ -21,7 +21,7 @@ function ClientRepository(dbContext) {
 
             var query = "select c.DNI, c.Empresa, p.Nombre, p.Apellidos, p.Email, p.Telefono, p.IBAN, p.NumeroCuentaBancaria, p.Usuario "
                 + "from Cliente c, Persona p "
-                + "where c.DNI = @DNI and p.DNI = @DNI"
+                + "where c.DNI like @DNI and p.DNI like @DNI"
             dbContext.getQuery(query, parameters, true, function (error, data) {            
                 return res.json(response(data, error));
             });
