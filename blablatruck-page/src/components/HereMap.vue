@@ -365,8 +365,8 @@ export default {
                     }, alert);
                 })
                 }
-            else
-                this.$bvModal.show("noPackagesInMap")
+            else if(this.$cookies.get("loginToken").Type == 'Transportista')
+                    this.$bvModal.show("noPackagesInMap")
         },
 
         comprobarTamanyoAltura() {
