@@ -1029,6 +1029,7 @@ export default {
                 .then(
                     (response) => {
                         let coordsTransportistas = response.data[0];
+                        if(coordsTransportistas != undefined){
                         coordsTransportistas.forEach(element => {
                             this.actualLocation.latitude = element.Latitud;
                             this.actualLocation.longitude = element.Altitud;
@@ -1040,7 +1041,7 @@ export default {
                                 }
                             );
                             map.addObject(locationMarker);
-                        });
+                        });}
 
                     },
                     (error) => {
