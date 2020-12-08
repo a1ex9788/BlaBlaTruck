@@ -71,6 +71,16 @@
             <b-form-select id="input-Naturaleza" v-model="natureFilter.nature" :options="optionsNaturaleza" :state="natureError" v-on:input="comprobarNaturaleza"></b-form-select>
         </b-form-group>
     </b-modal>
+    <b-modal id="modalMejorRutaDialog"  hide="false" title="Encuentra tu mejor ruta!">
+        <b-row class="mt-2 ml-2">
+            <p class="mt-1 mr-2">Escoge un origen:</p>
+             <b-input autocomplete="off" list="originAutocompleteList" :state="originDestinationFilter.errorOrigin" id="originForm" type="text" style="width: 350px" />
+        </b-row>
+        <b-row class="mt-2 ml-2">
+            <p class="mt-1 mr-1">Escoge un destino:</p>
+            <b-input id="destinationForm" :state="originDestinationFilter.errorDestination" type="text" style="width: 350px" />
+        </b-row> 
+    </b-modal>
     <b-modal id="modalDialog" @ok="this.hide = true; window.location.reload();">Su paquete ha sido reservado con éxito!</b-modal>
     <!--In the following div the HERE Map will render-->
     <div id="mapContainer" ref="hereMap"></div>
@@ -231,7 +241,8 @@ export default {
                 el.innerHTML = "<p class='mt-2 h4'>Filtrar por:</p>" +
                     '<button class="btn" id="originDestinationButton">Origen-Destino</button><br>' +
                     '<button class="btn" id="tamanyoButton">Tamaño</button><br>' +
-                    '<button class="btn" id="natureButton">Naturaleza</button>';
+                    '<button class="btn" id="natureButton">Naturaleza</button>'+
+                    '<button class = "btn" id="mejorRutaButton">Mejor ruta</button>';
                 el.style.color = "black"
             };
 
@@ -245,6 +256,7 @@ export default {
             $('#originDestinationButton')[0].onclick = this.openOriginDestinationModalWindow;
             $('#tamanyoButton')[0].onclick = this.openTamanyoModalWindow;
             $('#natureButton')[0].onclick = this.openNatureModalWindow;
+            $('#mejorRutaButton')[0].onclick = this.openMejorRutaModalWindow;
 
         },
         async makerObjectsEncargos(map) {
@@ -443,6 +455,9 @@ export default {
 
         },
         
+        async openMejorRutaModalWindow(){
+             await this.$bvModal.show('modalMejorRutaDialog');
+        },
 
         async openOriginDestinationModalWindow() {
             if (!this.originDestinationFilter.isActive) {
