@@ -40,6 +40,7 @@
                                 <b-button v-bind:id="item.Id" @click="onRecogida" v-if="isCarrierM() &&!item.FechaRecogida && !item.FechaEntrega" class="btn-info mt-2 ml-2">Confirmar recogida</b-button>
                                 <!-- Cliente -->
                                 <b-button v-bind:id="item.Id" @click="onConfirmation" v-if="!isCarrierM() && item.FechaRecogida && item.FechaEntrega && !item.ConfirmadoPorCliente" class="btn-success mt-2">Confirmar entrega</b-button>
+                                <b-button v-bind:id="item.Id" @click="onCancelation" v-if="!isCarrierM() && !item.FechaRecogida " class="btn-danger mt-2">Cancelar encargo</b-button>
                             </b-col>
                             <b-col md="auto">
                                 <div>
@@ -436,6 +437,54 @@ export default {
                 console.log("error al confirmar"+ err);
             });  
         },
+
+        async onCancelation(event){
+            this.$bvModal.msgBoxConfirm('¿Desea cancelar el encargo?',{
+                title: 'Confirmación',
+                size: 'sm',
+                buttonSize: 'sm',
+                okVariant: 'success',
+                okTitle:'Sí',
+                cancelTitle: 'No',
+                centered: true
+            })
+            .then((value) =>{
+                if (value == true){     
+                    this.refreshOnCancelAssessmentModal = true;
+                    this.currentShipmentId = event.target.id;
+
+                    //cambiar esto
+                    axios.put("http://localhost:3300/api/encargo/cancelar",{
+                        params: {
+                            IdEncargo: this.currentShipmentId,
+                            EsCliente: !this.isCarrier
+                        }
+                    })
+                    .then(() => {
+                        this.$bvModal.msgBoxOk('Ha cancelado su encargo',{
+                            title: 'Confirmación',
+                            size: 'sm',
+                            buttonSize: 'sm',
+                            okVariant: 'info',
+                            headerClass: 'p-2 border-bottom-0',
+                            footerClass: 'p-2 border-top-0',
+                            centered: true
+                        })
+                        .then(() => {
+                            if (!this.isCarrier) this.$bvModal.show('carrierAssessmentDialog')
+                            else window.location.reload()
+                        })
+                    }),
+                    (error) => {
+                        console.log(error);
+                    }
+                }
+            })
+            .catch(err => {
+                console.log("error al confirmar"+ err);
+            });  
+        },
+
         async onCancelButton(event) {
             this.$bvModal.msgBoxConfirm('¿Está seguro que quiere cancelar la reserva?', {
             title: 'Confirmación',
