@@ -15,6 +15,7 @@
                                 <div><strong>Fecha máxima de entrega: </strong>{{ modifyFormat(item.FechaMaximaEntrega, true) }}</div>
                                 <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida, false) }}</div>
                                 <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega, false) }}</div>
+                                <b-button v-bind:id="item.Id" @click="onEliminar" v-if="!isCarrierM() && !item.FechaRecogida " class="btn-danger mt-2">Eliminar encargo</b-button>
                             </b-col>
                             <b-col md="auto">
                                 <div>
@@ -34,13 +35,13 @@
                                 <div><strong>Fecha máxima de entrega: </strong>{{ modifyFormat(item.FechaMaximaEntrega, true) }}</div>
                                 <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida, false) }}</div>
                                 <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega, false) }}</div>
-                                <b-button v-bind:id="item.Id" @click="onCancelButton" v-if="!item.FechaRecogida" class="btn-danger mt-2">Cancelar</b-button>
+                                <b-button v-bind:id="item.Id" @click="onCancelButton" v-if="!item.FechaRecogida" class="btn-danger mt-2">Cancelar reserva</b-button>
                                 <!-- Transportista -->
                                 <b-button v-bind:id="item.Id" @click="onConfirmation" v-if="isCarrierM() &&item.FechaRecogida && !item.FechaEntrega" class="btn-success mt-2">Confirmar entrega</b-button>
                                 <b-button v-bind:id="item.Id" @click="onRecogida" v-if="isCarrierM() &&!item.FechaRecogida && !item.FechaEntrega" class="btn-info mt-2 ml-2">Confirmar recogida</b-button>
                                 <!-- Cliente -->
                                 <b-button v-bind:id="item.Id" @click="onConfirmation" v-if="!isCarrierM() && item.FechaRecogida && item.FechaEntrega && !item.ConfirmadoPorCliente" class="btn-success mt-2">Confirmar entrega</b-button>
-                                <b-button v-bind:id="item.Id" @click="onCancelation" v-if="!isCarrierM() && !item.FechaRecogida " class="btn-danger mt-2">Cancelar encargo</b-button>
+                                <b-button v-bind:id="item.Id" @click="onEliminar" v-if="!isCarrierM() && !item.FechaRecogida " class="btn-danger mt-2 mr-2 ml-2">Eliminar encargo</b-button>
                             </b-col>
                             <b-col md="auto">
                                 <div>
@@ -438,30 +439,24 @@ export default {
             });  
         },
 
-        async onCancelation(event){
-            this.$bvModal.msgBoxConfirm('¿Desea cancelar el encargo?',{
+        async onEliminar(event){
+            this.$bvModal.msgBoxConfirm('¿Desea eliminar el encargo?',{
                 title: 'Confirmación',
                 size: 'sm',
                 buttonSize: 'sm',
-                okVariant: 'success',
+                okVariant: 'danger',
                 okTitle:'Sí',
                 cancelTitle: 'No',
                 centered: true
             })
             .then((value) =>{
                 if (value == true){     
-                    this.refreshOnCancelAssessmentModal = true;
                     this.currentShipmentId = event.target.id;
 
                     //cambiar esto
-                    axios.put("http://localhost:3300/api/encargo/cancelar",{
-                        params: {
-                            IdEncargo: this.currentShipmentId,
-                            EsCliente: !this.isCarrier
-                        }
-                    })
+                    axios.delete("http://localhost:3300/api/encargo/" + event.target.id)
                     .then(() => {
-                        this.$bvModal.msgBoxOk('Ha cancelado su encargo',{
+                        this.$bvModal.msgBoxOk('Ha eliminado su encargo',{
                             title: 'Confirmación',
                             size: 'sm',
                             buttonSize: 'sm',
@@ -471,8 +466,7 @@ export default {
                             centered: true
                         })
                         .then(() => {
-                            if (!this.isCarrier) this.$bvModal.show('carrierAssessmentDialog')
-                            else window.location.reload()
+                            window.location.reload()
                         })
                     }),
                     (error) => {
@@ -481,7 +475,7 @@ export default {
                 }
             })
             .catch(err => {
-                console.log("error al confirmar"+ err);
+                console.log("error al eliminar su encargo"+ err);
             });  
         },
 
