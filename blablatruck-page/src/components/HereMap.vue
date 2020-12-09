@@ -71,16 +71,7 @@
             <b-form-select id="input-Naturaleza" v-model="natureFilter.nature" :options="optionsNaturaleza" :state="natureError" v-on:input="comprobarNaturaleza"></b-form-select>
         </b-form-group>
     </b-modal>
-    <b-modal id="modalMejorRutaDialog"  hide="false" title="Encuentra tu mejor ruta!">
-        <b-row class="mt-2 ml-2">
-            <p class="mt-1 mr-2">Escoge un origen:</p>
-             <b-input autocomplete="off" list="originAutocompleteList" :state="originDestinationFilter.errorOrigin" id="originForm" type="text" style="width: 350px" />
-        </b-row>
-        <b-row class="mt-2 ml-2">
-            <p class="mt-1 mr-1">Escoge un destino:</p>
-            <b-input id="destinationForm" :state="originDestinationFilter.errorDestination" type="text" style="width: 350px" />
-        </b-row> 
-    </b-modal>
+    
     <b-modal id="modalDialog" @ok="this.hide = true; window.location.reload();">Su paquete ha sido reservado con éxito!</b-modal>
     <!--In the following div the HERE Map will render-->
     <div id="mapContainer" ref="hereMap"></div>
@@ -126,6 +117,9 @@ export default {
                 altura: undefined,
                 anchura: undefined,
                 largo: undefined
+            },
+            mejorRuta:{
+                isActive: false,
             },
             natureFilter: {
                 isActive: false,
@@ -250,8 +244,7 @@ export default {
                 el.innerHTML = "<p class='mt-2 h4'>Filtrar por:</p>" +
                     '<button class="btn" id="originDestinationButton">Origen-Destino</button><br>' +
                     '<button class="btn" id="tamanyoButton">Tamaño</button><br>' +
-                    '<button class="btn" id="natureButton">Naturaleza</button>'+
-                    '<button class = "btn" id="mejorRutaButton">Mejor ruta</button>';
+                    '<button class="btn" id="natureButton">Naturaleza</button>';
                 el.style.color = "black"
             };
 
@@ -265,7 +258,37 @@ export default {
             $('#originDestinationButton')[0].onclick = this.openOriginDestinationModalWindow;
             $('#tamanyoButton')[0].onclick = this.openTamanyoModalWindow;
             $('#natureButton')[0].onclick = this.openNatureModalWindow;
-            $('#mejorRutaButton')[0].onclick = this.openMejorRutaModalWindow;
+
+
+            // Add Ruta button
+            let controlRuta = new H.ui.Control();
+            
+            var buttonRuta = new H.ui.base.Button({
+                label: '<img src="http://localhost:8080/rutaIcon.png" fuild width="20 px" heigth="20 px" class="filterButton"/>',
+                onStateChange: function () {
+                    if (buttonRuta.getState() == "down") {
+                        overlayRutaPanel.pointToControl(controlRuta);
+                        overlayRutaPanel.setState(overlayRutaPanel.getState() === "open" ? "close" : "open");
+                    }
+                }
+            });
+
+            let overlayRutaPanel = new H.ui.base.OverlayPanel();
+            overlayRutaPanel.renderInternal = function (el) {
+                /* Añadir aquí todos los botones que accederán las opciones de las rutas*/
+                el.innerHTML = "<p class='mt-2 h4'>Rutas hasta tu destino:</p>" +
+                    '<button class="btn" id="mejorRutaButton">Mejor ruta</button><br>';
+                el.style.color = "black"
+            };
+
+            // Añadiendo el boton embudo y el overlay de la opcion de rutas a ui del map
+            controlRuta.addChild(buttonRuta);
+            controlRuta.addChild(overlayRutaPanel);
+            controlRuta.setAlignment('right-top');
+            this.ui.addControl('Rutas', controlRuta);
+
+            // Añadir aqui las funciones para ejecutar las opciones de ruta
+            $('#mejorRutaButton')[0].onclick = this.setMejorRuta;
 
         },
         async makerObjectsEncargos(map) {
@@ -274,6 +297,10 @@ export default {
             await this.updateMap(this.packages, map);
         },
 
+        async setMejorRuta(){
+           this.changeButtonFilter(this.mejorRuta,"mejorRutaButton","Mejor Ruta");
+
+        },
         async filterBy() {
             if (this.originDestinationFilter.isActive)
             {
@@ -465,10 +492,7 @@ export default {
 
         },
         
-        async openMejorRutaModalWindow(){
-             await this.$bvModal.show('modalMejorRutaDialog');
-        },
-
+       
         async openOriginDestinationModalWindow() {
             if (!this.originDestinationFilter.isActive) {
                 await this.$bvModal.show('modalOriginDestinationFilterDialog')
