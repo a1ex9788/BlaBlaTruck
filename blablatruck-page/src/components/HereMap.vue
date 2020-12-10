@@ -71,7 +71,7 @@
             <b-form-select id="input-Naturaleza" v-model="natureFilter.nature" :options="optionsNaturaleza" :state="natureError" v-on:input="comprobarNaturaleza"></b-form-select>
         </b-form-group>
     </b-modal>
-    
+
     <b-modal id="modalDialog" @ok="this.hide = true; window.location.reload();">Su paquete ha sido reservado con éxito!</b-modal>
     <!--In the following div the HERE Map will render-->
     <div id="mapContainer" ref="hereMap"></div>
@@ -95,7 +95,7 @@ export default {
         return {
             isStarted: false,
             platform: null,
-            apikey: "h_XTwwPMEk8Iz2QvPW6rtB5D99xqPDwbW9aVqNRe1HI",
+            apikey: "4yJZecedrsLcfyAjXP3EznY4ICgVb7OwA_44ANFgOHE",
             packages: undefined,
             /* Lista de paquetes del mapa */
             originDestinationFilter: {
@@ -118,15 +118,14 @@ export default {
                 anchura: undefined,
                 largo: undefined
             },
-            mejorRuta:{
+            mejorRuta: {
                 isActive: false,
             },
             natureFilter: {
                 isActive: false,
                 nature: null
             },
-            optionsNaturaleza: [
-                {
+            optionsNaturaleza: [{
                     value: null,
                     text: "Selecciona una opción"
                 },
@@ -161,7 +160,7 @@ export default {
                 }
             }],
             personDNI: undefined,
-            actualLocation:{
+            actualLocation: {
                 longitude: undefined,
                 latitude: undefined
             },
@@ -175,7 +174,6 @@ export default {
 
     async mounted() {
 
-        
         // Initialize the platform object:
         const platform = new window.H.service.Platform({
             apikey: this.apikey
@@ -187,18 +185,18 @@ export default {
         this.añadirEncargosARespuesta();
         this.$nextTick(function (map) {
             window.setInterval((map) => {
-               this.getTrackingLocation(map);
-               var now = new Date();
-               console.log("Ubicación real actualizada: " + now.toUTCString());
-            },5000);
+                this.getTrackingLocation(map);
+                var now = new Date();
+                // console.log("Ubicación real actualizada: " + now.toUTCString());
+            }, 5000);
         });
-        
+
         this.$nextTick(function () {
             window.setInterval(() => {
                 this.reloadEncargos();
-            },30000);
-        }); 
-        
+            }, 30000);
+        });
+
         this.isStarted = true;
     },
 
@@ -259,10 +257,9 @@ export default {
             $('#tamanyoButton')[0].onclick = this.openTamanyoModalWindow;
             $('#natureButton')[0].onclick = this.openNatureModalWindow;
 
-
             // Add Ruta button
             let controlRuta = new H.ui.Control();
-            
+
             var buttonRuta = new H.ui.base.Button({
                 label: '<img src="http://localhost:8080/rutaIcon.png" fuild width="20 px" heigth="20 px" class="filterButton"/>',
                 onStateChange: function () {
@@ -297,21 +294,18 @@ export default {
             await this.updateMap(this.packages, map);
         },
 
-        async setMejorRuta(){
-           this.changeButtonFilter(this.mejorRuta,"mejorRutaButton","Mejor Ruta");
+        async setMejorRuta() {
+            this.changeButtonFilter(this.mejorRuta, "mejorRutaButton", "Mejor Ruta");
 
         },
         async filterBy() {
-            if (this.originDestinationFilter.isActive)
-            {
+            if (this.originDestinationFilter.isActive) {
                 this.filterByOriginDestination();
             }
-            if (this.tamanyoFilter.isActive)
-            {
+            if (this.tamanyoFilter.isActive) {
                 this.filterByTamanyo();
             }
-            if (this.natureFilter.isActive)
-            {
+            if (this.natureFilter.isActive) {
                 this.filterByNature();
             }
         },
@@ -336,7 +330,7 @@ export default {
             //Limpiar de marcadores el mapa
             map.removeObjects(map.getObjects())
 
-            if (res != undefined && res.length > 0 && this.$cookies.get("loginToken").Type == 'Transportista'){
+            if (res != undefined && res.length > 0 && this.$cookies.get("loginToken").Type == 'Transportista') {
                 res.forEach((element) => {
                     var calle = element.Origen;
                     var service = this.platform.getSearchService();
@@ -362,7 +356,7 @@ export default {
                                         " Destino: ".bold().fontsize(5) + "<br>" + element.Destino.fontsize(3).fontcolor('#0055FF') + "<br>" +
                                         " Fecha máx.: ".bold().fontsize(4) + "<br>" + this.modifyFormat(element.FechaMaximaEntrega).fontsize(3).fontcolor('#0055FF') + "<br>" +
                                         " Naturaleza: ".bold().fontsize(4) + "<br>" + element.NaturalezaEncargo.fontsize(3).fontcolor('#0055FF') + "<br>" +
-                                        " Dimensiones: ".bold().fontsize(4) + "<br>" + element.Alto.toString().fontsize(3).fontcolor('#0055FF') + 
+                                        " Dimensiones: ".bold().fontsize(4) + "<br>" + element.Alto.toString().fontsize(3).fontcolor('#0055FF') +
                                         " x " + element.Ancho.toString().fontsize(3).fontcolor('#0055FF') +
                                         " x " + element.Largo.toString().fontsize(3).fontcolor('#0055FF') +
                                         "<button type='button' id='" + element.Id.toString() + "' class='btn btn-primary mt-2'>Reservar</button>"
@@ -412,10 +406,9 @@ export default {
                         }
                     }, alert);
                 })
-                }
-            else if(this.$cookies.get("loginToken").Type == 'Transportista')
-                    this.$bvModal.show("noPackagesInMap")
-           // this.añadirEncargosARespuesta()      
+            } else if (this.$cookies.get("loginToken").Type == 'Transportista')
+                this.$bvModal.show("noPackagesInMap")
+            // this.añadirEncargosARespuesta()      
         },
 
         comprobarTamanyoAltura() {
@@ -480,19 +473,18 @@ export default {
             this.messageError = true;
         },
 
-        comprobarNaturaleza(){
+        comprobarNaturaleza() {
             var naturaleza = document.getElementById("input-Naturaleza");
             if (naturaleza.value === '') {
                 this.natureError = false;
                 this.messageError = false;
-            } else {              
+            } else {
                 this.natureError = true;
                 this.messageError = true;
             }
 
         },
-        
-       
+
         async openOriginDestinationModalWindow() {
             if (!this.originDestinationFilter.isActive) {
                 await this.$bvModal.show('modalOriginDestinationFilterDialog')
@@ -596,14 +588,13 @@ export default {
             }
         },
         async openNatureModalWindow() {
-           
+
             if (!this.natureFilter.isActive) {
                 await this.$bvModal.show('modalNatureFilterDialog');
 
-                $("#input-Naturaleza")[0].addEventListener("change",()=> {
+                $("#input-Naturaleza")[0].addEventListener("change", () => {
                     this.natureFilter.nature = document.getElementById("input-Naturaleza");
-                }
-                );
+                });
             } else {
                 this.natureFilter.isActive = false;
                 this.changeButtonFilter(this.natureFilter, 'natureButton', 'Naturaleza');
@@ -697,8 +688,7 @@ export default {
             }
             this.añadirEncargosARespuesta()
         },
-        async filterByNature(bvModalEvt)
-        {
+        async filterByNature(bvModalEvt) {
             /*
             var naturaleza = document.getElementById("input-Naturaleza");
 
@@ -714,7 +704,7 @@ export default {
                 this.messageError = false;
             }
 
-            if (this.natureError){               
+            if (this.natureError) {
                 let promiseNature = new Promise((resolve) => {
 
                     let filteredPackagesNature = [];
@@ -846,7 +836,7 @@ export default {
                                     if (distance <= this.originDestinationFilter.destination.radius) {
                                         filteredPackagesOriginDestination.push(packageItem);
                                     }
-                                    if (index === array.length - 1 ) {
+                                    if (index === array.length - 1) {
                                         this.packages = filteredPackagesOriginDestination;
                                         this.updateMap(filteredPackagesOriginDestination, map)
                                         this.originDestinationFilter.isActive = true;
@@ -882,7 +872,7 @@ export default {
             }
         },
         drawRoute(start, finish, map) {
-  
+
             this.routingService.calculateRoute({
                     "mode": "fastest;car;traffic:enabled",
                     "waypoint0": `${start.lat},${start.lng}`,
@@ -912,13 +902,65 @@ export default {
                         );
                         map.addObject(polyline);
                         //Saltaba un error y molestaba al actualizar la página
-                      /*  map.getViewModel().setLookAtData({
-                            bounds: polyline.getBoundingBox()
-                        }); */
-                      
+                        /*  map.getViewModel().setLookAtData({
+                              bounds: polyline.getBoundingBox()
+                          }); */
+
                     }
-                     //map.setCenter({lat:this.actualLocation.latitude, lng:this.actualLocation.longitude}); //Saltaba un error y molestaba al actualizar la página
-                     //console.log("Centrado en la ubicación actual:"+this.actualLocation.latitude + ", " + this.actualLocation.longitude);
+                    //map.setCenter({lat:this.actualLocation.latitude, lng:this.actualLocation.longitude}); //Saltaba un error y molestaba al actualizar la página
+                    //console.log("Centrado en la ubicación actual:"+this.actualLocation.latitude + ", " + this.actualLocation.longitude);
+                },
+
+                error => {
+                    console.error(error);
+                }
+
+            );
+
+        },
+
+        drawRouteAlternative(encargos, map) {
+            
+            let encargosPoints = {
+                "mode": "fastest;truck;",
+                'waypoint0': `${this.actualLocation.latitude},${this.actualLocation.longitude}`,
+                "representation": "display",
+                "alternatives": `1`,
+            };
+            for (let i = 0; i <= encargos.length; i++) {
+                encargosPoints['waypoint' + (i+1)] = encargos[i];
+            };
+
+            this.routingService.calculateRoute(encargosPoints,
+
+                data => {
+                    //console.log("Mostrando datos de CalculateRoute:");
+                    //console.log(data);
+                    if (data.response.route.length > 0) {
+                        let lineString = new window.H.geo.LineString();
+                        data.response.route[0].shape.forEach(point => {
+                            let [lat, lng] = point.split(",");
+                            lineString.pushPoint({
+                                lat: lat,
+                                lng: lng
+                            });
+                        });
+                        let polyline = new window.H.map.Polyline(
+                            lineString, {
+                                style: {
+                                    lineWidth: 5
+                                }
+                            }
+
+                        );
+                        map.addObject(polyline);
+                        //Saltaba un error y molestaba al actualizar la página
+                        /*  map.getViewModel().setLookAtData({
+                              bounds: polyline.getBoundingBox()
+                          }); */
+
+                    }
+                    
                 },
 
                 error => {
@@ -945,78 +987,107 @@ export default {
                         console.log(error);
                     }
                 );
-                
-                return todas_respuestas;
+
+            return todas_respuestas;
         },
-        async añadirEncargosARespuesta(){
+        async añadirEncargosARespuesta() {
             var todas_respuestas = await this.getEncargos();
-            todas_respuestas.forEach(element => {
-                if (!element.FechaEntrega && element.NombreCompleto != "Por reservar") {
-                    this.respuesta.push(element);
-                    }
-            });
-            this.dibujarRuta();
+            //console.log(todas_respuestas);
+            for (let element in todas_respuestas) {
+               // console.log(todas_respuestas[element]);
+                if (todas_respuestas[element].FechaRecogida != null && !todas_respuestas[element].FechaEntrega && todas_respuestas[element].NombreCompleto != "Por reservar") {
+                    this.respuesta.push(todas_respuestas[element]);
+                }
+            }
+            // console.log(this.respuesta);
+            await this.dibujarRuta();
         },
-        dibujarRuta(){
-        var service = this.platform.getSearchService();
-        var coordOrigen;
-        var coordDestino;
-        if (this.respuesta.length != 0) {
-                service.geocode({
-                     q: this.respuesta[0].Origen
-                }, (res) => {
-                        coordOrigen = res.items[0].position;
-                        this.coordenadasEncargosPendientes[0].origen.lat = coordOrigen.lat;
-                        this.coordenadasEncargosPendientes[0].origen.lng = coordOrigen.lng;
 
-                        service.geocode({
-                             q: this.respuesta[0].Destino
-                        }, (res) => {
-                            coordDestino = res.items[0].position;
-                            this.coordenadasEncargosPendientes[0].destino.lat = coordDestino.lat;
-                            this.coordenadasEncargosPendientes[0].destino.lng = coordDestino.lng;
-
-                            var svgMarkup = '<svg width="18" height="18" ' +
-                                        'xmlns="http://www.w3.org/2000/svg">' +
-                                        '<circle cx="8" cy="8" r="8" ' +
-                                        'fill="green" stroke="black" stroke-width="2"  />' +
-                                        '</svg>'; 
-                                   
-                            var customIcon = new H.map.Icon(svgMarkup);
-                                    //var customIcon = new H.map.Icon("..\assets\Destino.png"); //No funciona por ruta :(                               
-                            var customMarker = new H.map.Marker({
-                                    lat: this.coordenadasEncargosPendientes[0].origen.lat,
-                                    lng: this.coordenadasEncargosPendientes[0].origen.lng
-                            }, {icon: customIcon});
-
-                            map.addObject(customMarker);
-                                    
-                            var svgMarkup2 = '<svg width="18" height="18" ' +
-                                        'xmlns="http://www.w3.org/2000/svg">' +
-                                        '<circle cx="8" cy="8" r="8" ' +
-                                        'fill="red" stroke="black" stroke-width="2"  />' +
-                                        '</svg>'; 
-
-                            var customIcon2 = new H.map.Icon(svgMarkup2.replace('${FILL}', 'blue').replace('${STROKE}', 'red'));
-
-                            var customMarker2 = new H.map.Marker({
-                                    lat: this.coordenadasEncargosPendientes[0].destino.lat,
-                                    lng: this.coordenadasEncargosPendientes[0].destino.lng
-                            }, {icon: customIcon2});
-
-                            map.addObject(customMarker2);
-
-                            this.drawRoute({
-                                    lat: this.coordenadasEncargosPendientes[0].origen.lat,
-                                    lng: this.coordenadasEncargosPendientes[0].origen.lng
-                            }, {
-                                    lat: this.coordenadasEncargosPendientes[0].destino.lat,
-                                    lng: this.coordenadasEncargosPendientes[0].destino.lng
-                            },
-                            map
-                        );
+        async dibujarRuta() {
+            var service = this.platform.getSearchService();
+            //var coordOrigen;
+            //var coordDestino;
+            var coordPaquetes = [];
+            if (this.respuesta.length != 0) {
+                for (let paquete in this.respuesta) {
+                    await service.geocode({
+                        q: this.respuesta[paquete].Destino
+                    }, (response) => {
+                        coordPaquetes.push(response.items[0].position.lat + "," + response.items[0].position.lng);
                     })
-                 })
+
+                }
+
+                this.drawRouteAlternative(
+                    coordPaquetes,
+                    map
+                );
+                /* service.geocode({
+                      q: this.respuesta[0].Origen
+                 }, (res) => {
+                         coordOrigen = res.items[0].position;
+                         this.coordenadasEncargosPendientes[0].origen.lat = coordOrigen.lat;
+                         this.coordenadasEncargosPendientes[0].origen.lng = coordOrigen.lng;
+
+                         service.geocode({
+                              q: this.respuesta[0].Destino
+                         }, (res) => {
+                             coordDestino = res.items[0].position;
+                             this.coordenadasEncargosPendientes[0].destino.lat = coordDestino.lat;
+                             this.coordenadasEncargosPendientes[0].destino.lng = coordDestino.lng;
+
+                             var svgMarkup = '<svg width="18" height="18" ' +
+                                         'xmlns="http://www.w3.org/2000/svg">' +
+                                         '<circle cx="8" cy="8" r="8" ' +
+                                         'fill="green" stroke="black" stroke-width="2"  />' +
+                                         '</svg>'; 
+
+                             var customIcon = new H.map.Icon(svgMarkup);
+                                     //var customIcon = new H.map.Icon("..\assets\Destino.png"); //No funciona por ruta :(                               
+                             var customMarker = new H.map.Marker({
+                                     lat: this.coordenadasEncargosPendientes[0].origen.lat,
+                                     lng: this.coordenadasEncargosPendientes[0].origen.lng
+                             }, {icon: customIcon});
+
+                             map.addObject(customMarker);
+
+                             var svgMarkup2 = '<svg width="18" height="18" ' +
+                                         'xmlns="http://www.w3.org/2000/svg">' +
+                                         '<circle cx="8" cy="8" r="8" ' +
+                                         'fill="red" stroke="black" stroke-width="2"  />' +
+                                         '</svg>'; 
+
+                             var customIcon2 = new H.map.Icon(svgMarkup2.replace('${FILL}', 'blue').replace('${STROKE}', 'red'));
+
+                             var customMarker2 = new H.map.Marker({
+                                     lat: this.coordenadasEncargosPendientes[0].destino.lat,
+                                     lng: this.coordenadasEncargosPendientes[0].destino.lng
+                             }, {icon: customIcon2});
+
+                             map.addObject(customMarker2);
+                             /*
+                             this.drawRoute({
+                                     lat: this.coordenadasEncargosPendientes[0].origen.lat,
+                                     lng: this.coordenadasEncargosPendientes[0].origen.lng
+                             }, {
+                                     lat: this.coordenadasEncargosPendientes[0].destino.lat,
+                                     lng: this.coordenadasEncargosPendientes[0].destino.lng
+                             },
+                             map
+                         );
+
+                        this.drawRouteAlternative({
+                                     lat: this.coordenadasEncargosPendientes[0].origen.lat,
+                                     lng: this.coordenadasEncargosPendientes[0].origen.lng
+                             }, {
+                                     lat: this.coordenadasEncargosPendientes[0].destino.lat,
+                                     lng: this.coordenadasEncargosPendientes[0].destino.lng
+                             },
+                             map
+                         );
+
+                     })
+                  })*/
             }
         },
         modifyFormat(dateTime) {
@@ -1031,22 +1102,26 @@ export default {
                 timeout: 5000,
                 maximumAge: 0
             };
-        
-         if (navigator.geolocation){
-             navigator.geolocation.getCurrentPosition(this.successFindLocation, this.errorFindLocation, options);
-             }
-         else{
-             alert("Geolocation is not supported by this browser");
-             console.log("Geolocation is not supported by this browser");
-             }
-  
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(this.successFindLocation, this.errorFindLocation, options);
+            } else {
+                alert("Geolocation is not supported by this browser");
+                console.log("Geolocation is not supported by this browser");
+            }
+
         },
 
         successFindLocation(pos) {
             const url = "https://cdn0.iconfinder.com/data/icons/pinpoint-interface/48/address-shipping-512.png"
-            var pngIcon = new H.map.Icon(url, {size: {w: 40, h: 40}});
+            var pngIcon = new H.map.Icon(url, {
+                size: {
+                    w: 40,
+                    h: 40
+                }
+            });
             let userCookie = this.$cookies.get("loginToken");
-            if(userCookie.Type == 'Transportista'){
+            if (userCookie.Type == 'Transportista') {
                 //console.log(userCookie);
                 var crd = pos.coords;
                 //console.log('Tu posición actual es: ');
@@ -1056,72 +1131,68 @@ export default {
                 this.actualLocation.longitude = crd.longitude;
                 //console.log('Error de estimación: ' + crd.accuracy + ' metros.');
                 let dni = userCookie.Dni;
-                if(dni != undefined && this.isStarted){
-                    axios.put('http://localhost:3300/api/transportista' , {
+                if (dni != undefined && this.isStarted) {
+                    axios.put('http://localhost:3300/api/transportista', {
                         DNI: dni,
                         Altitud: crd.longitude,
                         Latitud: crd.latitude
-            })}
-            var locationMarker = new H.map.Marker (
-                new H.geo.Point(
-                    this.actualLocation.latitude, this.actualLocation.longitude),
-                    {
-                    icon: pngIcon
+                    })
+                }
+                var locationMarker = new H.map.Marker(
+                    new H.geo.Point(
+                        this.actualLocation.latitude, this.actualLocation.longitude), {
+                        icon: pngIcon
                     }
                 );
                 map.addObject(locationMarker);
-            }
-            else { 
+            } else {
                 // si el usuario es cliente en vez de coger la info del dispositivo recogeremos la info de la bd del transportista
                 let dni = userCookie.Dni;
                 let url = 'http://localhost:3300/api/cliente/' + dni + '/coords';
                 axios
-                .get(url)
-                .then(
-                    (response) => {
-                        let coordsTransportistas = response.data[0];
-                        if(coordsTransportistas != undefined){
-                        coordsTransportistas.forEach(element => {
-                            this.actualLocation.latitude = element.Latitud;
-                            this.actualLocation.longitude = element.Altitud;
-                            var locationMarker = new H.map.Marker (
-                            new H.geo.Point(
-                                this.actualLocation.latitude, this.actualLocation.longitude),
-                                {
-                                icon: pngIcon
-                                }
-                            );
-                            map.addObject(locationMarker);
-                        });}
+                    .get(url)
+                    .then(
+                        (response) => {
+                            let coordsTransportistas = response.data[0];
+                            if (coordsTransportistas != undefined) {
+                                coordsTransportistas.forEach(element => {
+                                    this.actualLocation.latitude = element.Latitud;
+                                    this.actualLocation.longitude = element.Altitud;
+                                    var locationMarker = new H.map.Marker(
+                                        new H.geo.Point(
+                                            this.actualLocation.latitude, this.actualLocation.longitude), {
+                                            icon: pngIcon
+                                        }
+                                    );
+                                    map.addObject(locationMarker);
+                                });
+                            }
 
-                    },
-                    (error) => {
-                        console.log(error);
-                    }
-                );
+                        },
+                        (error) => {
+                            console.log(error);
+                        }
+                    );
 
             }
-         
-         
-         
-        //console.log("icono añadido");
+
+            //console.log("icono añadido");
         },
 
         errorFindLocation(err) {
-        console.warn('ERROR(' + err.code + '): ' + err.message);
-        alert("Ha habido un error en encontrar su localización");
+            console.warn('ERROR(' + err.code + '): ' + err.message);
+            alert("Ha habido un error en encontrar su localización");
         },
 
-        async reloadEncargos(){
+        async reloadEncargos() {
             await this.makerObjectsEncargos(map);
             this.añadirEncargosARespuesta()
             this.getTrackingLocation(map);
         }
 
     }
-        
-}
 
+}
 </script>
 
 <style>
