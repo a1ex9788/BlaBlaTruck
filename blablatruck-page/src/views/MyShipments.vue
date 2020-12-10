@@ -15,6 +15,7 @@
                                 <div><strong>Fecha máxima de entrega: </strong>{{ modifyFormat(item.FechaMaximaEntrega, true) }}</div>
                                 <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida, false) }}</div>
                                 <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega, false) }}</div>
+                                <b-button v-bind:id="item.Id" @click="onEliminar" v-if="!isCarrierM() && !item.FechaRecogida " class="btn-danger mt-2">Eliminar encargo</b-button>
                             </b-col>
                             <b-col md="auto">
                                 <div>
@@ -34,12 +35,12 @@
                                 <div><strong>Fecha máxima de entrega: </strong>{{ modifyFormat(item.FechaMaximaEntrega, true) }}</div>
                                 <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida, false) }}</div>
                                 <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega, false) }}</div>
-                                <b-button v-bind:id="item.Id" @click="onCancelButton" v-if="!item.FechaRecogida" class="btn-danger mt-2">Cancelar</b-button>
+                                <b-button v-bind:id="item.Id" @click="onCancelButton" v-if="!item.FechaRecogida" class="btn-danger mt-2">Cancelar reserva</b-button>
                                 <!-- Transportista -->
                                 <b-button v-bind:id="item.Id" @click="onConfirmation" v-if="isCarrierM() &&item.FechaRecogida && !item.FechaEntrega" class="btn-success mt-2">Confirmar entrega</b-button>
                                 <b-button v-bind:id="item.Id" @click="onRecogida" v-if="isCarrierM() &&!item.FechaRecogida && !item.FechaEntrega" class="btn-info mt-2 ml-2">Confirmar recogida</b-button>
                                 <!-- Cliente -->
-                                <b-button v-bind:id="item.Id" @click="onConfirmation" v-if="!isCarrierM() && item.FechaRecogida && item.FechaEntrega && !item.ConfirmadoPorCliente" class="btn-success mt-2">Confirmar entrega</b-button>
+                                <b-button v-bind:id="item.Id" @click="onEliminar" v-if="!isCarrierM() && !item.FechaRecogida " class="btn-danger mt-2 mr-2 ml-2">Eliminar encargo</b-button>
                             </b-col>
                             <b-col md="auto">
                                 <div>
@@ -59,7 +60,8 @@
                                 <div><strong>Fecha máxima de entrega: </strong>{{ modifyFormat(item.FechaMaximaEntrega, true) }}</div>
                                 <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida, false) }}</div>
                                 <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega, false) }}</div>
-                                <b-button v-bind:id="item.Id" @click="onAssessmentButton" v-if="!isCarrierM() && !item.ValoracionTiempoEntrega" class="btn-info mt-2">Valorar transporte</b-button>
+                                <b-button v-bind:id="item.Id" @click="onAssessmentButton" v-if="!isCarrierM() && !item.ValoracionTiempoEntrega && item.ConfirmadoPorCliente" class="btn-info mt-2">Valorar transporte</b-button>
+                                <b-button v-bind:id="item.Id" @click="onConfirmation" v-if="!isCarrierM() && item.FechaRecogida && item.FechaEntrega && !item.ConfirmadoPorCliente" class="btn-success mt-2">Confirmar entrega</b-button>
                             </b-col>
                             <b-col md="auto">
                                 <div>
@@ -191,9 +193,9 @@ export default {
         async updateMyShipments() {
             var historical = await this.getMyShipments();
             historical.forEach(element => {
-                if (element.ConfirmadoPorCliente) this.endedPackages.push(element)
+                if (element.FechaEntrega) this.endedPackages.push(element)
                 else if (element.NombreCompleto == "Por reservar") this.nonReservedPackages.push(element)
-                else this.ongoingPackages.push(element)                
+                else this.ongoingPackages.push(element)
             });
         },
 
@@ -436,6 +438,47 @@ export default {
                 console.log("error al confirmar"+ err);
             });  
         },
+
+        async onEliminar(event){
+            this.$bvModal.msgBoxConfirm('¿Desea eliminar el encargo?',{
+                title: 'Confirmación',
+                size: 'sm',
+                buttonSize: 'sm',
+                okVariant: 'danger',
+                okTitle:'Sí',
+                cancelTitle: 'No',
+                centered: true
+            })
+            .then((value) =>{
+                if (value == true){     
+                    this.currentShipmentId = event.target.id;
+
+                    //cambiar esto
+                    axios.delete("http://localhost:3300/api/encargo/" + event.target.id)
+                    .then(() => {
+                        this.$bvModal.msgBoxOk('Ha eliminado su encargo',{
+                            title: 'Confirmación',
+                            size: 'sm',
+                            buttonSize: 'sm',
+                            okVariant: 'info',
+                            headerClass: 'p-2 border-bottom-0',
+                            footerClass: 'p-2 border-top-0',
+                            centered: true
+                        })
+                        .then(() => {
+                            window.location.reload()
+                        })
+                    }),
+                    (error) => {
+                        console.log(error);
+                    }
+                }
+            })
+            .catch(err => {
+                console.log("error al eliminar su encargo"+ err);
+            });  
+        },
+
         async onCancelButton(event) {
             this.$bvModal.msgBoxConfirm('¿Está seguro que quiere cancelar la reserva?', {
             title: 'Confirmación',

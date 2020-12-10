@@ -26,4 +26,6 @@ module.exports = function (router) {
     router.route('/encargo/estado').get(encargoRepository.getEstados)
     router.route('/encargo/entregar').put(encargoRepository.entregarEncargo)
     router.route('/encargo/valorar').put(encargoRepository.valorarEncargo)
+    router.route('/encargo/:IdEncargo').delete(encargoRepository.eliminarEncargo)
+
   }
