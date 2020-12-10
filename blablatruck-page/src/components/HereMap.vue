@@ -315,7 +315,7 @@ export default {
                 .then(
                     (response) => {
                         if (response.data[0] != undefined) this.packages = response.data[0];
-                        console.log(response.data[0])
+                        //console.log(response.data[0])
                     },
                     (error) => {
                         console.log(error);
@@ -895,11 +895,14 @@ export default {
                         let polyline = new window.H.map.Polyline(
                             lineString, {
                                 style: {
+
                                     lineWidth: 5
-                                }
+                                },
+
                             }
 
                         );
+
                         map.addObject(polyline);
                         //Saltaba un error y molestaba al actualizar la página
                         /*  map.getViewModel().setLookAtData({
@@ -920,17 +923,17 @@ export default {
         },
 
         drawRouteAlternative(encargos, map) {
-            
+
             let encargosPoints = {
                 "mode": "fastest;truck;",
                 'waypoint0': `${this.actualLocation.latitude},${this.actualLocation.longitude}`,
                 "representation": "display",
                 "alternatives": `1`,
             };
-            for (let i = 0; i <= encargos.length; i++) {
-                encargosPoints['waypoint' + (i+1)] = encargos[i];
+            for (let i = 0; i < encargos.length; i++) {
+                encargosPoints['waypoint' + (i + 1)] = encargos[i];
             };
-
+            console.log(encargos);
             this.routingService.calculateRoute(encargosPoints,
 
                 data => {
@@ -948,19 +951,40 @@ export default {
                         let polyline = new window.H.map.Polyline(
                             lineString, {
                                 style: {
-                                    lineWidth: 5
+                                    lineWidth: 10,
+                                    fillColor: 'white',
+                                    strokeColor: 'rgba(255, 255, 255, 1)',
+                                    lineDash: [0, 2],
+                                    lineTailCap: 'arrow-tail',
+                                    lineHeadCap: 'arrow-head'
+
                                 }
                             }
 
                         );
+
+                        let polylineOutline = new window.H.map.Polyline(
+                            lineString, {
+                                style: {
+                                    lineWidth: 10,
+                                    strokeColor: 'rgba(0, 128, 255, 0.7)',
+                                    lineTailCap: 'arrow-tail',
+                                    lineHeadCap: 'arrow-head'
+                                }
+                            }
+
+                        );
+
+                        map.addObject(polylineOutline);
                         map.addObject(polyline);
+
                         //Saltaba un error y molestaba al actualizar la página
                         /*  map.getViewModel().setLookAtData({
                               bounds: polyline.getBoundingBox()
                           }); */
 
                     }
-                    
+
                 },
 
                 error => {
@@ -994,7 +1018,7 @@ export default {
             var todas_respuestas = await this.getEncargos();
             //console.log(todas_respuestas);
             for (let element in todas_respuestas) {
-               // console.log(todas_respuestas[element]);
+                // console.log(todas_respuestas[element]);
                 if (todas_respuestas[element].FechaRecogida != null && !todas_respuestas[element].FechaEntrega && todas_respuestas[element].NombreCompleto != "Por reservar") {
                     this.respuesta.push(todas_respuestas[element]);
                 }
@@ -1013,9 +1037,10 @@ export default {
                     await service.geocode({
                         q: this.respuesta[paquete].Destino
                     }, (response) => {
+                        
                         coordPaquetes.push(response.items[0].position.lat + "," + response.items[0].position.lng);
                     })
-
+                    
                 }
 
                 this.drawRouteAlternative(
@@ -1185,8 +1210,9 @@ export default {
         },
 
         async reloadEncargos() {
-            await this.makerObjectsEncargos(map);
-            this.añadirEncargosARespuesta()
+            //await this.makerObjectsEncargos(map);
+            this.respuesta = [];
+            this.añadirEncargosARespuesta();
             this.getTrackingLocation(map);
         }
 
