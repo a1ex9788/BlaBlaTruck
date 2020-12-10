@@ -40,7 +40,6 @@
                                 <b-button v-bind:id="item.Id" @click="onConfirmation" v-if="isCarrierM() &&item.FechaRecogida && !item.FechaEntrega" class="btn-success mt-2">Confirmar entrega</b-button>
                                 <b-button v-bind:id="item.Id" @click="onRecogida" v-if="isCarrierM() &&!item.FechaRecogida && !item.FechaEntrega" class="btn-info mt-2 ml-2">Confirmar recogida</b-button>
                                 <!-- Cliente -->
-                                <b-button v-bind:id="item.Id" @click="onConfirmation" v-if="!isCarrierM() && item.FechaRecogida && item.FechaEntrega && !item.ConfirmadoPorCliente" class="btn-success mt-2">Confirmar entrega</b-button>
                                 <b-button v-bind:id="item.Id" @click="onEliminar" v-if="!isCarrierM() && !item.FechaRecogida " class="btn-danger mt-2 mr-2 ml-2">Eliminar encargo</b-button>
                             </b-col>
                             <b-col md="auto">
@@ -61,7 +60,8 @@
                                 <div><strong>Fecha máxima de entrega: </strong>{{ modifyFormat(item.FechaMaximaEntrega, true) }}</div>
                                 <div class="mt-1"><strong>Recogida: </strong>{{ modifyFormat(item.FechaRecogida, false) }}</div>
                                 <div><strong>Entrega: </strong>{{ modifyFormat(item.FechaEntrega, false) }}</div>
-                                <b-button v-bind:id="item.Id" @click="onAssessmentButton" v-if="!isCarrierM() && !item.ValoracionTiempoEntrega" class="btn-info mt-2">Valorar transporte</b-button>
+                                <b-button v-bind:id="item.Id" @click="onAssessmentButton" v-if="!isCarrierM() && !item.ValoracionTiempoEntrega && item.ConfirmadoPorCliente" class="btn-info mt-2">Valorar transporte</b-button>
+                                <b-button v-bind:id="item.Id" @click="onConfirmation" v-if="!isCarrierM() && item.FechaRecogida && item.FechaEntrega && !item.ConfirmadoPorCliente" class="btn-success mt-2">Confirmar entrega</b-button>
                             </b-col>
                             <b-col md="auto">
                                 <div>
@@ -193,9 +193,9 @@ export default {
         async updateMyShipments() {
             var historical = await this.getMyShipments();
             historical.forEach(element => {
-                if (element.ConfirmadoPorCliente) this.endedPackages.push(element)
+                if (element.FechaEntrega) this.endedPackages.push(element)
                 else if (element.NombreCompleto == "Por reservar") this.nonReservedPackages.push(element)
-                else this.ongoingPackages.push(element)                
+                else this.ongoingPackages.push(element)
             });
         },
 

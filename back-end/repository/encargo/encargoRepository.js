@@ -312,7 +312,7 @@ function EncargoRepository(dbContext) {
     
     function añadirValoracion(req, res)
     {
-        if (req.body.params.IdEncargo && req.body.params.ValoracionTiempo && req.body.params.ValoracionEstado && req.body.params.Comentarios){
+        if (req.body.params.IdEncargo && req.body.params.ValoracionTiempo && req.body.params.ValoracionEstado){
             var parameters = [];
 
             parameters.push({ name: 'IdEncargo', type: TYPES.BigInt, val: req.body.params.IdEncargo });
