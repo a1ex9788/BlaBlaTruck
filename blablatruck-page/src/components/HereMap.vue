@@ -1210,7 +1210,7 @@ export default {
         },
 
         async reloadEncargos() {
-            //await this.makerObjectsEncargos(map);
+            await this.makerObjectsEncargos(map);
             this.respuesta = [];
             this.añadirEncargosARespuesta();
             this.getTrackingLocation(map);
