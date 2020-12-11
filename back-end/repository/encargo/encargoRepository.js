@@ -39,7 +39,8 @@ function EncargoRepository(dbContext) {
             + " union all"
             + " (select distinct e.Origen, e.Destino, e.FechaEntrega, e.FechaRecogida, 'Por reservar' as NombreCompleto, e.Id, e.FechaMaximaEntrega, e.ValoracionTiempoEntrega, e.ConfirmadoPorCliente"
             + " from Encargo e"
-            + " where e.DNITransportista is null and DNICliente LIKE @DNICliente)";
+            + " where e.DNITransportista is null and DNICliente LIKE @DNICliente)"
+            + " order by FechaRecogida";
 
                 console.log(query);
             

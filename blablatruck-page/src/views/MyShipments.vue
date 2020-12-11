@@ -108,6 +108,8 @@ export default {
             nonReservedPackages: [],
             ongoingPackages: [],
             endedPackages: [],
+            confirmedPackages: [],
+            nonConfirmedPackages: [],
             personDNI: undefined,
             isCarrier: undefined,
             textAreaComentariosText: "",
@@ -193,7 +195,11 @@ export default {
         async updateMyShipments() {
             var historical = await this.getMyShipments();
             historical.forEach(element => {
-                if (element.FechaEntrega) this.endedPackages.push(element)
+                if (element.FechaEntrega) {
+                    if(element.ConfirmadoPorCliente) this.confirmedPackages.push(element)
+                    else this.nonConfirmedPackages.push(element)
+                    this.endedPackages = this.nonConfirmedPackages.concat(this.confirmedPackages);
+                }
                 else if (element.NombreCompleto == "Por reservar") this.nonReservedPackages.push(element)
                 else this.ongoingPackages.push(element)
             });
