@@ -72,7 +72,7 @@
         </b-form-group>
     </b-modal>
 
-    <b-modal id="modalDestinationMejorRutaDialog" @ok="this.setMejorRuta" hide="false" title=" Busca tu mejor ruta hasta el destino indicado">
+    <b-modal id="modalDestinationMejorRutaDialog" @ok="this.setMejorRuta" @show="resetModalMejorRuta" hide="false" title=" Busca tu mejor ruta hasta el destino indicado">
         <b-form-group id="inputGroup" :state="this.mejorRuta.estado" :invalid-feedback="this.mensaje">
             <vue-bootstrap-typeahead id="destinoMejorRuta" :data="this.mejorRuta.adresses" v-model="addressSearch" placeholder="Introduce una dirección" @hit="selectedAddress = $event">
             </vue-bootstrap-typeahead>
@@ -301,7 +301,7 @@ export default {
             let overlayRutaPanel = new H.ui.base.OverlayPanel();
             overlayRutaPanel.renderInternal = function (el) {
                 /* Añadir aquí todos los botones que accederán las opciones de las rutas*/
-                el.innerHTML = "<p class='mt-2 h4'>Encuentra la ruta a tu destino:</p>" +
+                el.innerHTML = "<p class='mt-2 h4'>Encuentra la ruta a tus paquetes:</p>" +
                     '<button class="btn" id="mejorRutaButton">Buscar ruta</button><br>';
                 el.style.color = "black"
             };
@@ -342,30 +342,27 @@ export default {
             if (!this.mejorRuta.isActive) {
 
                 await this.$bvModal.show('modalDestinationMejorRutaDialog');
-                /**
-                 * addEventListener al destino, para que se mantenga
-                 */
-                 $("#altura")[0].addEventListener("input", (evento) => {
+                $("#altura")[0].addEventListener("input", (evento) => {
                     this.mejorRuta.destino = document.getElementById("altura").value;
-
                 });
-                
+
             } else {
                 this.mejorRuta.estado = true;
                 this.mejorRuta.isActive = false;
                 this.changeButtonFilter(this.mejorRuta, "mejorRutaButton", "Buscar Ruta");
                 //que no se vean las flechas en el mapa
+                this.updateMap(this.packages, map);
 
             }
         },
 
         async setMejorRuta(bvModalEvt) {
             if (this.mejorRuta.destino != "") {
+
                 this.mejorRuta.isActive = true;
                 this.changeButtonFilter(this.mejorRuta, "mejorRutaButton", "Buscar Ruta");
                 this.respuesta = [];
                 console.log("destino: ", this.mejorRuta.destino);
-
                 await this.añadirEncargosARespuesta();
 
             } else {
@@ -697,6 +694,11 @@ export default {
 
             this.natureError = null;
             this.messageError = true;
+        },
+        resetModalMejorRuta(){
+            this.mejorRuta.destino = "";
+            this.mejorRuta.estado = null;
+            this.mensaje = null;
         },
         comprobarTamanyoVacios() {
 
