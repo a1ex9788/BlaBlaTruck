@@ -72,11 +72,12 @@
         </b-form-group>
     </b-modal>
 
-    <b-modal id="modalDestinationMejorRutaDialog" @ok="this.setMejorRuta" hide="false" title="Mejor ruta hasta destino">
-        <p>Introduce tu destino:</p>
-        <b-row class="mt-2 ml-2">
-            <b-input autocomplete="off" :state="mejorRuta.estado" id="destinoForm" type="text" style="width: 350px" />
-        </b-row>
+    <b-modal id="modalDestinationMejorRutaDialog" @ok="this.setMejorRuta" hide="false" title=" Busca tu mejor ruta hasta el destino indicado">
+        <b-form-group id="inputGroup" :state="this.mejorRuta.estado" :invalid-feedback="this.mensaje">
+            <vue-bootstrap-typeahead id="destinoMejorRuta" :data="this.mejorRuta.adresses" v-model="addressSearch" placeholder="Introduce una dirección" @hit="selectedAddress = $event">
+            </vue-bootstrap-typeahead>
+        </b-form-group>
+
     </b-modal>
 
     <b-modal id="modalDialog" @ok="this.hide = true; window.location.reload();">Su paquete ha sido reservado con éxito!</b-modal>
@@ -88,20 +89,27 @@
 
 <script>
 import $ from 'jquery'
+import _ from 'underscore'
+import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 const axios = require("axios");
 var map;
 const filterCapacity = require("../scripts/filterUtility.js")
 
 export default {
     name: "HereMap",
+
     props: {
         center: Object
         // center object { lat: 40.730610, lng: -73.935242 }
+    },
+    components: {
+        VueBootstrapTypeahead,
     },
     data() {
         return {
             isStarted: false,
             platform: null,
+            service: null,
             apikey: "4yJZecedrsLcfyAjXP3EznY4ICgVb7OwA_44ANFgOHE",
             packages: undefined,
             /* Lista de paquetes del mapa */
@@ -126,10 +134,15 @@ export default {
                 largo: undefined
             },
             mejorRuta: {
+                destino: "",
+                coordDestino: null,
                 isActive: false,
-                visible: false,
-                lugaresAutocompleList: [],
+                estado: null,
+                adresses: [],
+                selectedAddress: null,
             },
+            addressSearch: '',
+            mensaje: '',
             natureFilter: {
                 isActive: false,
                 nature: null
@@ -173,7 +186,8 @@ export default {
                 longitude: undefined,
                 latitude: undefined
             },
-            respuesta: []
+            respuesta: [],
+
         }
     },
 
@@ -189,6 +203,7 @@ export default {
         });
         this.platform = platform;
         this.routingService = this.platform.getRoutingService(null, 8);
+        this.service = platform.getSearchService();
         this.initializeHereMap();
         await this.makerObjectsEncargos(map);
         this.$nextTick(function (map) {
@@ -207,7 +222,12 @@ export default {
 
         this.isStarted = true;
     },
-
+    watch: {
+        addressSearch: _.debounce(function (addr) {
+            this.mejorRuta.destino = addr;
+            this.getAddresses(addr);
+        }, 500),
+    },
     methods: {
         initializeHereMap() { // rendering map
             const mapContainer = this.$refs.hereMap;
@@ -281,8 +301,8 @@ export default {
             let overlayRutaPanel = new H.ui.base.OverlayPanel();
             overlayRutaPanel.renderInternal = function (el) {
                 /* Añadir aquí todos los botones que accederán las opciones de las rutas*/
-                el.innerHTML = "<p class='mt-2 h4'>Rutas hasta tu destino:</p>" +
-                    '<button class="btn" id="mejorRutaButton">Mejor ruta</button><br>';
+                el.innerHTML = "<p class='mt-2 h4'>Encuentra la ruta a tu destino:</p>" +
+                    '<button class="btn" id="mejorRutaButton">Buscar ruta</button><br>';
                 el.style.color = "black"
             };
 
@@ -302,6 +322,21 @@ export default {
             await this.updateMap(this.packages, map);
         },
 
+        async getAddresses(query) {
+            console.log("buscando sugerencias");
+            await this.service.autosuggest({
+                q: query,
+                at: '39.46975,-0.37739'
+            }, (result) => {
+                var suggestions = [];
+                var resultLength = result.items.length;
+                for (var i = 0; i < resultLength; i++) {
+                    var suggest = result.items[i].title;
+                    suggestions.push(suggest);
+                }
+                this.mejorRuta.adresses = suggestions;
+            });
+        },
         async openMejorRutaModalWindow() {
             console.log("is active: ", this.mejorRuta.isActive);
             if (!this.mejorRuta.isActive) {
@@ -310,24 +345,34 @@ export default {
                 /**
                  * addEventListener al destino, para que se mantenga
                  */
-                this.mejorRuta.visible = true;
+                 $("#altura")[0].addEventListener("input", (evento) => {
+                    this.mejorRuta.destino = document.getElementById("altura").value;
 
+                });
+                
             } else {
-                this.mejorRuta.visible = false;
+                this.mejorRuta.estado = true;
                 this.mejorRuta.isActive = false;
-                this.changeButtonFilter(this.mejorRuta, "mejorRutaButton", "Mejor Ruta");
+                this.changeButtonFilter(this.mejorRuta, "mejorRutaButton", "Buscar Ruta");
                 //que no se vean las flechas en el mapa
 
             }
         },
 
-        async setMejorRuta() {
-            this.mejorRuta.isActive = true;
-            this.changeButtonFilter(this.mejorRuta, "mejorRutaButton", "Mejor Ruta");
-            this.respuesta = [];
-            console.log("variable visible: ", this.mejorRuta.visible);
-            if (this.mejorRuta.visible) {
+        async setMejorRuta(bvModalEvt) {
+            if (this.mejorRuta.destino != "") {
+                this.mejorRuta.isActive = true;
+                this.changeButtonFilter(this.mejorRuta, "mejorRutaButton", "Buscar Ruta");
+                this.respuesta = [];
+                console.log("destino: ", this.mejorRuta.destino);
+
                 await this.añadirEncargosARespuesta();
+
+            } else {
+                this.mejorRuta.estado = false;
+                this.mensaje = "Tienes que añadir una dirección";
+                await bvModalEvt.preventDefault();
+                this.changeButtonFilter(this.mejorRuta, "mejorRutaButton", "Buscar Ruta");
             }
 
         },
@@ -1036,7 +1081,16 @@ export default {
             //var coordOrigen;
             //var coordDestino;
             var coordPaquetes = [];
-            var destino = '42.7551,-7.8662';
+            //var destino = '42.7551,-7.8662';
+            var destino = '';
+            service.geocode({
+                q: this.mejorRuta.destino,
+            }, (res) => {
+                if (res.items[0] != null) {
+                    destino = `${res.items[0].position.lat},${res.items[0].position.lng}`;
+                    console.log("coord destino:", destino);
+                }
+            })
             if (this.respuesta.length != 0) {
                 for (let paquete in this.respuesta) {
                     await service.geocode({
