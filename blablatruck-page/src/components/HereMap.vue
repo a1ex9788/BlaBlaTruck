@@ -18,7 +18,7 @@
                 <template #button-content>
                     &#x1f50d;<span class="sr-only">Search</span>
                 </template>
-                <b-dropdown-item v-bind:address="place.address.label" v-for="place in originDestinationFilter.placesAutocompleList" v-bind:key="place.id" @click="clickItemDropPlaces(place.address.label, true)">
+                <b-dropdown-item v-bind:address="place.address.label" v-for="place in originDestinationFilter.placesAutocompleList" v-bind:key="place.id">
                     {{ place.address.label }}
                 </b-dropdown-item>
             </b-dropdown>
@@ -72,6 +72,13 @@
         </b-form-group>
     </b-modal>
 
+    <b-modal id="modalDestinationMejorRutaDialog" @ok="this.setMejorRuta" hide="false" title="Mejor ruta hasta destino">
+        <p>Introduce tu destino:</p>
+        <b-row class="mt-2 ml-2">
+            <b-input autocomplete="off" :state="mejorRuta.estado" id="destinoForm" type="text" style="width: 350px" />
+        </b-row>
+    </b-modal>
+
     <b-modal id="modalDialog" @ok="this.hide = true; window.location.reload();">Su paquete ha sido reservado con éxito!</b-modal>
     <!--In the following div the HERE Map will render-->
     <div id="mapContainer" ref="hereMap"></div>
@@ -120,6 +127,8 @@ export default {
             },
             mejorRuta: {
                 isActive: false,
+                visible: false,
+                lugaresAutocompleList: [],
             },
             natureFilter: {
                 isActive: false,
@@ -179,10 +188,9 @@ export default {
             apikey: this.apikey
         });
         this.platform = platform;
-        this.routingService = this.platform.getRoutingService();
+        this.routingService = this.platform.getRoutingService(null, 8);
         this.initializeHereMap();
         await this.makerObjectsEncargos(map);
-        this.añadirEncargosARespuesta();
         this.$nextTick(function (map) {
             window.setInterval((map) => {
                 this.getTrackingLocation(map);
@@ -285,7 +293,7 @@ export default {
             this.ui.addControl('Rutas', controlRuta);
 
             // Añadir aqui las funciones para ejecutar las opciones de ruta
-            $('#mejorRutaButton')[0].onclick = this.setMejorRuta;
+            $('#mejorRutaButton')[0].onclick = this.openMejorRutaModalWindow;
 
         },
         async makerObjectsEncargos(map) {
@@ -294,10 +302,36 @@ export default {
             await this.updateMap(this.packages, map);
         },
 
+        async openMejorRutaModalWindow() {
+            console.log("is active: ", this.mejorRuta.isActive);
+            if (!this.mejorRuta.isActive) {
+
+                await this.$bvModal.show('modalDestinationMejorRutaDialog');
+                /**
+                 * addEventListener al destino, para que se mantenga
+                 */
+                this.mejorRuta.visible = true;
+
+            } else {
+                this.mejorRuta.visible = false;
+                this.mejorRuta.isActive = false;
+                this.changeButtonFilter(this.mejorRuta, "mejorRutaButton", "Mejor Ruta");
+                //que no se vean las flechas en el mapa
+
+            }
+        },
+
         async setMejorRuta() {
+            this.mejorRuta.isActive = true;
             this.changeButtonFilter(this.mejorRuta, "mejorRutaButton", "Mejor Ruta");
+            this.respuesta = [];
+            console.log("variable visible: ", this.mejorRuta.visible);
+            if (this.mejorRuta.visible) {
+                await this.añadirEncargosARespuesta();
+            }
 
         },
+
         async filterBy() {
             if (this.originDestinationFilter.isActive) {
                 this.filterByOriginDestination();
@@ -408,7 +442,11 @@ export default {
                 })
             } else if (this.$cookies.get("loginToken").Type == 'Transportista')
                 this.$bvModal.show("noPackagesInMap")
-            // this.añadirEncargosARespuesta()      
+            if (this.mejorRuta.isActive) {
+                this.respuesta = [];
+                this.añadirEncargosARespuesta();
+            }
+
         },
 
         comprobarTamanyoAltura() {
@@ -560,7 +598,6 @@ export default {
                 this.originDestinationFilter.destination.position.lng = undefined;
                 this.changeButtonFilter(this.originDestinationFilter, "originDestinationButton", "Origen-Destino");
                 await this.makerObjectsEncargos(map);
-                this.añadirEncargosARespuesta()
             }
         },
         async openTamanyoModalWindow() {
@@ -584,7 +621,6 @@ export default {
                 this.tamanyoFilter.isActive = false;
                 this.changeButtonFilter(this.tamanyoFilter, 'tamanyoButton', 'Tamaño');
                 await this.makerObjectsEncargos(map);
-                this.añadirEncargosARespuesta()
             }
         },
         async openNatureModalWindow() {
@@ -599,7 +635,6 @@ export default {
                 this.natureFilter.isActive = false;
                 this.changeButtonFilter(this.natureFilter, 'natureButton', 'Naturaleza');
                 await this.makerObjectsEncargos(map);
-                this.añadirEncargosARespuesta()
             }
         },
         resetModalTamanyo() {
@@ -686,17 +721,8 @@ export default {
                 this.comprobarDecimales();
                 this.changeButtonFilter(this.tamanyoFilter, 'tamanyoButton', 'Tamaño');
             }
-            this.añadirEncargosARespuesta()
         },
         async filterByNature(bvModalEvt) {
-            /*
-            var naturaleza = document.getElementById("input-Naturaleza");
-
-            if (naturaleza.value === '') {
-                this.natureError = false;
-                this.messageError = false;
-            }
-             */
 
             if (this.natureFilter.nature === null) {
                 //console.log(this.natureFilter.nature);
@@ -729,11 +755,9 @@ export default {
 
             } else {
                 await bvModalEvt.preventDefault();
-                //this.comprobarTamanyoVacios();
-                //this.comprobarDecimales();
                 this.changeButtonFilter(this.natureFilter, 'natureButton', 'Naturaleza');
             }
-            this.añadirEncargosARespuesta()
+
         },
         clickItemDropPlaces(address, isOrigin) {
             if (isOrigin) {
@@ -858,7 +882,6 @@ export default {
                 if ($("#destinationForm")[0].value == undefined || $("#destinationForm")[0].value.trim().length <= 3)
                     this.originDestinationFilter.errorDestination = false;
             }
-            this.añadirEncargosARespuesta()
         },
         changeButtonFilter(filter, buttonName, buttonText) {
             let button = '#' + buttonName
@@ -871,99 +894,40 @@ export default {
                 $(button).html(buttonText);
             }
         },
-        drawRoute(start, finish, map) {
 
-            this.routingService.calculateRoute({
-                    "mode": "fastest;car;traffic:enabled",
-                    "waypoint0": `${start.lat},${start.lng}`,
-                    "waypoint1": `${finish.lat},${finish.lng}`,
-                    "representation": "display"
-                },
-
-                data => {
-                    //console.log("Mostrando datos de CalculateRoute:");
-                    //console.log(data);
-                    if (data.response.route.length > 0) {
-                        let lineString = new window.H.geo.LineString();
-                        data.response.route[0].shape.forEach(point => {
-                            let [lat, lng] = point.split(",");
-                            lineString.pushPoint({
-                                lat: lat,
-                                lng: lng
-                            });
-                        });
-                        let polyline = new window.H.map.Polyline(
-                            lineString, {
-                                style: {
-
-                                    lineWidth: 5
-                                },
-
-                            }
-
-                        );
-
-                        map.addObject(polyline);
-                        //Saltaba un error y molestaba al actualizar la página
-                        /*  map.getViewModel().setLookAtData({
-                              bounds: polyline.getBoundingBox()
-                          }); */
-
-                    }
-                    //map.setCenter({lat:this.actualLocation.latitude, lng:this.actualLocation.longitude}); //Saltaba un error y molestaba al actualizar la página
-                    //console.log("Centrado en la ubicación actual:"+this.actualLocation.latitude + ", " + this.actualLocation.longitude);
-                },
-
-                error => {
-                    console.error(error);
-                }
-
-            );
-
-        },
-
-        drawRouteAlternative(encargos, map) {
+        drawRouteAlternative(encargos, destino, map) {
 
             let encargosPoints = {
-                "mode": "fastest;truck;",
-                'waypoint0': `${this.actualLocation.latitude},${this.actualLocation.longitude}`,
+                'routingMode': 'fast',
+                'transportMode': 'truck',
+                'origin': `${this.actualLocation.latitude},${this.actualLocation.longitude}`,
+                'destination': `${destino}`,
+                'via': new H.service.Url.MultiValueQueryParameter(encargos),
                 "representation": "display",
                 "alternatives": `1`,
+                'return': 'polyline',
             };
-            for (let i = 0; i < encargos.length; i++) {
-                encargosPoints['waypoint' + (i + 1)] = encargos[i];
-            };
-            console.log(encargos);
-            this.routingService.calculateRoute(encargosPoints,
 
-                data => {
-                    //console.log("Mostrando datos de CalculateRoute:");
-                    //console.log(data);
-                    if (data.response.route.length > 0) {
-                        let lineString = new window.H.geo.LineString();
-                        data.response.route[0].shape.forEach(point => {
-                            let [lat, lng] = point.split(",");
-                            lineString.pushPoint({
-                                lat: lat,
-                                lng: lng
-                            });
-                        });
-                        let polyline = new window.H.map.Polyline(
-                            lineString, {
-                                style: {
-                                    lineWidth: 10,
-                                    fillColor: 'white',
-                                    strokeColor: 'rgba(255, 255, 255, 1)',
-                                    lineDash: [0, 2],
-                                    lineTailCap: 'arrow-tail',
-                                    lineHeadCap: 'arrow-head'
+            let onResult = function (result) {
+                if (result.routes.length) {
+                    result.routes[0].sections.forEach((section) => {
 
-                                }
+                        let lineString = H.geo.LineString.fromFlexiblePolyline(section.polyline);
+
+                        // Creamos un polyline para mostrar las lineas y flechas
+                        let routeArrows = new H.map.Polyline(lineString, {
+                            style: {
+                                lineWidth: 10,
+                                fillColor: 'white',
+                                strokeColor: 'rgba(255, 255, 255, 1)',
+                                lineDash: [0, 2],
+                                lineTailCap: 'arrow-tail',
+                                lineHeadCap: 'arrow-head'
+
                             }
+                        });
 
-                        );
-
-                        let polylineOutline = new window.H.map.Polyline(
+                        let routeOutline = new window.H.map.Polyline(
                             lineString, {
                                 style: {
                                     lineWidth: 10,
@@ -971,27 +935,67 @@ export default {
                                     lineTailCap: 'arrow-tail',
                                     lineHeadCap: 'arrow-head'
                                 }
-                            }
-
+                            },
                         );
+                        //Añadiendo las lineas con flechas en el mapa 
+                        var routeLine = new H.map.Group();
+                        routeLine.addObjects([routeOutline, routeArrows]);
 
-                        map.addObject(polylineOutline);
-                        map.addObject(polyline);
+                        var svgMarkup = '<svg width="18" height="18" ' +
+                            'xmlns="http://www.w3.org/2000/svg">' +
+                            '<circle cx="8" cy="8" r="8" ' +
+                            'fill="green" stroke="black" stroke-width="1"  />' +
+                            '</svg>';
 
-                        //Saltaba un error y molestaba al actualizar la página
-                        /*  map.getViewModel().setLookAtData({
-                              bounds: polyline.getBoundingBox()
-                          }); */
+                        var svgMarkup2 = '<svg width="18" height="18" ' +
+                            'xmlns="http://www.w3.org/2000/svg">' +
+                            '<circle cx="8" cy="8" r="8" ' +
+                            'fill="purple" stroke="black" stroke-width="1"  />' +
+                            '</svg>';
 
-                    }
+                        var customIcon = new H.map.Icon(svgMarkup);
+                        var customIcon2 = new H.map.Icon(svgMarkup2);
 
-                },
+                        var paquetesMarker;
+                        var objetosADibujar = [routeLine];
 
-                error => {
-                    console.error(error);
-                }
+                        for (let encargo in encargos) {
 
-            );
+                            let [latitud, longitud] = encargos[encargo].split(",");
+                            paquetesMarker = new H.map.Marker({
+                                lat: latitud,
+                                lng: longitud,
+                            }, {
+                                icon: customIcon
+                            });
+                            objetosADibujar.push(paquetesMarker);
+
+                        }
+
+                        var [l, lo] = destino.split(",");
+                        var destinoMarker = new H.map.Marker({
+                            lat: l,
+                            lng: lo,
+                        }, {
+                            icon: customIcon2
+                        });
+
+                        objetosADibujar.push(destinoMarker);
+                        map.addObjects(objetosADibujar);
+
+                        // Set the map's viewport to make the whole route visible:
+                        map.getViewModel().setLookAtData({
+                            bounds: routeLine.getBoundingBox()
+                        });
+
+                    });
+                };
+            };
+
+            console.log("encargos: ", encargos);
+            this.routingService.calculateRoute(encargosPoints, onResult, function (error) {
+                alert(error.message);
+            });
 
         },
 
@@ -1032,19 +1036,20 @@ export default {
             //var coordOrigen;
             //var coordDestino;
             var coordPaquetes = [];
+            var destino = '42.7551,-7.8662';
             if (this.respuesta.length != 0) {
                 for (let paquete in this.respuesta) {
                     await service.geocode({
                         q: this.respuesta[paquete].Destino
                     }, (response) => {
-                        
+
                         coordPaquetes.push(response.items[0].position.lat + "," + response.items[0].position.lng);
                     })
-                    
-                }
 
+                }
                 this.drawRouteAlternative(
                     coordPaquetes,
+                    destino,
                     map
                 );
                 /* service.geocode({
@@ -1115,6 +1120,7 @@ export default {
                   })*/
             }
         },
+
         modifyFormat(dateTime) {
             if (dateTime) {
                 return dateTime.substring(0, 10)
@@ -1212,12 +1218,10 @@ export default {
         async reloadEncargos() {
             await this.makerObjectsEncargos(map);
             this.respuesta = [];
-            this.añadirEncargosARespuesta();
             this.getTrackingLocation(map);
         }
 
-    }
-
+    },
 }
 </script>
 

@@ -97,7 +97,7 @@
 
 <script>
 const platform = new window.H.service.Platform({
-            apikey: 'h_XTwwPMEk8Iz2QvPW6rtB5D99xqPDwbW9aVqNRe1HI'
+            apikey: '4yJZecedrsLcfyAjXP3EznY4ICgVb7OwA_44ANFgOHE'
         });
 var service = platform.getSearchService();
 import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
