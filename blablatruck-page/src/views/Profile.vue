@@ -399,8 +399,10 @@ export default {
             else return "No tiene empresa"
         },
         formatCuentaBancaria(cuentaBancaria){
+            if (!cuentaBancaria){return "";}
             return cuentaBancaria.substring(0,4) + " " + cuentaBancaria.substring(4,8) + " " + cuentaBancaria.substring(8,12) + " " 
                 + cuentaBancaria.substring(12,16) + " " + cuentaBancaria.substring(16,20)
+
         }
     }
 };
